@@ -1,0 +1,186 @@
+/* root styles */
+:root {
+  --primary-color: #ff6b6b;
+  --secondary-color: #f9f871;
+  --tertiary-color: #f9f871;
+  --dark-color: #333;
+  --light-color: #f4f4f4;
+  --white-color: #fff;
+  --black-color: #000;
+  --font-color: #333;
+  --font-color-light: #f4f4f4;
+  --font-color-dark: #333;
+  --font-color-white: #fff;
+  --font-color-black: #000;
+  --font-family: "Poppins", sans-serif;
+  --font-size: 1rem;
+  --font-weight: 400;
+  --line-height: 1.5;
+  --pallet-dark-blue: "#010f24";
+  --pallet-orange: #fe9000;
+  --pallet-green: #028090;
+  --pallet-red: #f45b69;
+  --pallet-brown: #621b00;
+  --pallet-grey: #818aa3;
+  --pallet-dark-grey: #56607c;
+  --pallet-light-grey: #b5bcce;
+  --pallet-lighter-grey: #dce1ec;
+  --pallet-light-blue: #7db0ff;
+  --pallet-lighter-blue: #98c0fc;
+  --pallet-lightest-blue: #afcaf1;
+  --pallet-main-blue: #010f24;
+  --pallet-border-blue: #95979c;
+  --pallet-blue: #00327e;
+  --pallet-pink: #ad6fc1;
+
+  --eco-waste-primary-green: #67C090;
+  --eco-waste-secondary-green: #DDF4E7;
+  --eco-waste-blue: #124170;
+}
+
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font-family);
+  font-weight: var(--font-weight);
+}
+
+/* Poppins Font */
+.poppins-thin {
+  font-family: "Poppins", sans-serif;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.poppins-extralight {
+  font-family: "Poppins", sans-serif;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.poppins-light {
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.poppins-regular {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.poppins-medium {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.poppins-semibold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.poppins-bold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.poppins-extrabold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-style: normal;
+}
+
+.poppins-black {
+  font-family: "Poppins", sans-serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.poppins-thin-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 100;
+  font-style: italic;
+}
+
+.poppins-extralight-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 200;
+  font-style: italic;
+}
+
+.poppins-light-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.poppins-regular-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.poppins-medium-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.poppins-semibold-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.poppins-bold-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.poppins-extrabold-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-style: italic;
+}
+
+.poppins-black-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 900;
+  font-style: italic;
+}
+
+/* Modern browsers (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #b5bcce;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #7db0ff;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b5bcce;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #7db0ff transparent;
+}
+
+/* Fallback for IE */
+.scrollable-div {
+  -ms-overflow-style: scrollbar; /* Force visible scrollbar in IE */
+}
