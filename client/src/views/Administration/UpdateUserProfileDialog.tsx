@@ -52,8 +52,6 @@ export default function UpdateUserProfile({
     },
   });
 
-  const isAvailability = watch("availability");
-
   const { mutate: profileUpdateMutation, isPending } = useMutation({
     mutationFn: updateUserProfileDetails,
     onSuccess: () => {
@@ -80,9 +78,8 @@ export default function UpdateUserProfile({
 
   const onSubmitForm = (data: User) => {
     profileUpdateMutation({
-      id: data.id!,
-      name: data.name!,
-      gender: data.gender!,
+      id: data._id!,
+      name: data.username!,
       mobile: data.mobile,
     });
   };
@@ -126,63 +123,35 @@ export default function UpdateUserProfile({
       <Divider />
       <DialogContent>
         <Stack direction="column" gap={1}>
-          {isAvailability && (
-            <>
-              <Box sx={{ display: "flex" }}>
-                <TextField
-                  id="name"
-                  type="text"
-                  label="Full Name"
-                  required
-                  error={!!errors.name}
-                  helperText={errors.name ? "Required *" : ""}
-                  size="small"
-                  sx={{ flex: 1, margin: "0.5rem" }}
-                  {...register("name", { required: true })}
-                />
-              </Box>
+          <>
+            <Box sx={{ display: "flex" }}>
+              <TextField
+                id="name"
+                type="text"
+                label="Full Name"
+                required
+                error={!!errors.username}
+                helperText={errors.username ? "Required *" : ""}
+                size="small"
+                sx={{ flex: 1, margin: "0.5rem" }}
+                {...register("username", { required: true })}
+              />
+            </Box>
 
-              <Box sx={{ display: "flex" }}>
-                <TextField
-                  id="mobile"
-                  type="text"
-                  label="Mobile Number"
-                  required
-                  error={!!errors.mobile}
-                  helperText={errors.mobile ? "Required *" : ""}
-                  size="small"
-                  sx={{ flex: 1, margin: "0.5rem" }}
-                  {...register("mobile", { required: true })}
-                />
-              </Box>
-
-              <Box sx={{ flex: 1 }}>
-                <Controller
-                  control={control}
-                  name="gender"
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Autocomplete
-                      options={genderOptions}
-                      size="small"
-                      sx={{ flex: 1, margin: "0.5rem" }}
-                      value={field.value || null}
-                      onChange={(_, value) => field.onChange(value)}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          required
-                          error={!!errors.gender}
-                          label="Gender"
-                          name="gender"
-                        />
-                      )}
-                    />
-                  )}
-                />
-              </Box>
-            </>
-          )}
+            <Box sx={{ display: "flex" }}>
+              <TextField
+                id="mobile"
+                type="text"
+                label="Mobile Number"
+                required
+                error={!!errors.mobile}
+                helperText={errors.mobile ? "Required *" : ""}
+                size="small"
+                sx={{ flex: 1, margin: "0.5rem" }}
+                {...register("mobile", { required: true })}
+              />
+            </Box>
+          </>
         </Stack>
       </DialogContent>
       <Divider />

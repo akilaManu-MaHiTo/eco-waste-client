@@ -114,14 +114,14 @@ function ResetEmailDialog({
     if (!showOTPField && !showEmail) {
       resetProfileEmailMutation({
         currentEmail: data.email,
-        id: defaultValues.id,
+        id: defaultValues._id,
       });
     } else if (showOTPField) {
-      otpVerificationMutation({ otp: data.otp, id: defaultValues.id });
+      otpVerificationMutation({ otp: data.otp, id: defaultValues._id });
     } else if (showEmail) {
       resetEmailConfirmMutation({
         newEmail: data.newEmail,
-        id: defaultValues.id,
+        id: defaultValues._id,
       });
     }
   };

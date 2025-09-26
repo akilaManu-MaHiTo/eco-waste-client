@@ -22,7 +22,7 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import KeyIcon from "@mui/icons-material/Key";
 import { PermissionKeys } from "../../views/Administration/SectionList";
-
+import PaymentOutlinedIcon from '@mui/icons-material/PaymentOutlined';
 export interface SidebarItem {
   title?: string;
   headline?: string;
@@ -50,24 +50,24 @@ export interface SidebarItem {
 
 export const sidebarItems: Array<SidebarItem> = [
   {
-    headline: "Main",
-    accessKey: PermissionKeys.INSIGHT_VIEW,
+    headline: "Home",
+    accessKey: PermissionKeys.HOME_TEXT,
   },
   {
     title: "Insight",
     href: "/home",
     icon: <HomeIcon fontSize="small" />,
-    accessKey: PermissionKeys.INSIGHT_VIEW,
+    accessKey: PermissionKeys.HOME_VIEW,
+  },
+  {
+    title: "Payment",
+    href: "/payment",
+    icon: <PaymentOutlinedIcon fontSize="small" />,
+    accessKey: PermissionKeys.HOME_VIEW,
   },
   {
     headline: "Administration",
-    accessKey: PermissionKeys.INSIGHT_VIEW,
-  },
-  {
-    title: "Organization Settings",
-    icon: <SettingsOutlinedIcon fontSize="small" />,
-    href: "/admin/organization-settings",
-    accessKey: PermissionKeys.ADMIN_USERS_VIEW,
+    accessKey: PermissionKeys.ADMIN_TEXT,
   },
   {
     title: "Users",
@@ -81,5 +81,20 @@ export const sidebarItems: Array<SidebarItem> = [
     href: "/admin/access-management",
     accessKey: PermissionKeys.ADMIN_ACCESS_MNG_VIEW,
   },
-  
+  {
+    headline: "Waste Management",
+    accessKey: PermissionKeys.WASTE_MNG_TEXT,
+  },
+  {
+    title: "Dashboard",
+    icon: <DashboardIcon fontSize="small" />,
+    href: "/waste-management/dashboard",
+    accessKey: PermissionKeys.WASTE_MNG_DASHBOARD,
+  },
+  {
+    title: "History",
+    icon: <LayersIcon fontSize="small" />,
+    href: "/waste-management/history",
+    accessKey: PermissionKeys.WASTE_MNG_HISTORY,
+  },
 ];

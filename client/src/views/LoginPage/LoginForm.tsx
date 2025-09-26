@@ -48,7 +48,7 @@ function LoginForm() {
     mutationFn: login,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["current-user"] });
-      localStorage.setItem("token", data?.access_token);
+      localStorage.setItem("token", data?.token);
       enqueueSnackbar("Welcome Back!", { variant: "success" });
       navigate("/home");
     },

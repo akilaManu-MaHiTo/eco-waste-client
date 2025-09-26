@@ -101,7 +101,7 @@ export default function PasswordResetDialog({
         }}
       >
         <Typography variant="h6" textAlign={"center"}>
-          Password Reset For {defaultValues.name}
+          Password Reset For {defaultValues.username}
         </Typography>
         <IconButton
           onClick={() => {

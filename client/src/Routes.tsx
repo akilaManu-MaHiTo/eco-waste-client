@@ -13,7 +13,7 @@ const RegistrationPage = React.lazy(
   () => import("./views/RegistrationPage/RegistrationPage")
 );
 const InsightsPage = React.lazy(() => import("./views/Insights/Insight"));
-
+const PaymentPage = React.lazy(() => import("./views/Insights/Payment"));
 //Administration
 const UserTable = React.lazy(() => import("./views/Administration/UserTable"));
 const AccessManagementTable = React.lazy(
@@ -92,7 +92,7 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             InsightsPage,
-            !userPermissionObject?.[PermissionKeys.INSIGHT_VIEW]
+            !userPermissionObject?.[PermissionKeys.HOME_VIEW]
           )}
         />
 
@@ -120,6 +120,14 @@ const AppRoutes = () => {
             MainLayout,
             AccessManagementTable,
             !userPermissionObject?.[PermissionKeys.ADMIN_ACCESS_MNG_VIEW]
+          )}
+        />
+        <Route
+          path="/payment"
+          element={withLayout(
+            MainLayout,
+            PaymentPage,
+            !userPermissionObject?.[PermissionKeys.HOME_VIEW]
           )}
         />
       </Route>

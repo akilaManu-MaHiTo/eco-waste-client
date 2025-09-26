@@ -274,7 +274,7 @@ function AccessManagementTable() {
           }
           handleClose={() => setDeleteDialogOpen(false)}
           deleteFunc={async () => {
-            deleteAccessMutation(selectedRole.id);
+            deleteAccessMutation(selectedRole._id);
           }}
           onSuccess={() => {
             setOpenAccessManagementViewDrawer(false);

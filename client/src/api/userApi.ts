@@ -4,64 +4,37 @@ import { PermissionKeysObjectSchema } from "../views/Administration/SectionList"
 import { StorageFileSchema } from "../utils/StorageFiles.util";
 
 export const userRoleSchema = z.object({
-  id: z.number(),
+  _id: z.string(),
   userType: z.string(),
   description: z.string().optional(),
   permissionObject: PermissionKeysObjectSchema,
-  created_at: z.string(),
+  createdAt: z.string(),
 });
-
 export type UserRole = z.infer<typeof userRoleSchema>;
 
 export const userTypeSchema = z.object({
-  id: z.number(),
+  _id: z.string(),
   userType: z.string(),
   description: z.string().optional(),
   permissionObject: PermissionKeysObjectSchema,
-  created_at: z.string(),
+  createdAt: z.string(),
 });
-
-export const userLevelSchema = z.object({
-  id: z.number(),
-  levelId: z.number(),
-  levelName: z.string().optional(),
-  created_at: z.string(),
-  updated_at: z.string(),
-});
-
-export type UserLevel = z.infer<typeof userLevelSchema>;
-
 export type UserType = z.infer<typeof userTypeSchema>;
 
 export const userSchema = z.object({
-  id: z.number(),
+  _id: z.string(),
   email: z.string(),
+  username: z.string().nullable(),
   userTypeId: z.number(),
-  name: z.string(),
   mobile: z.string(),
-  emailVerifiedAt: z.string().nullable(),
-  role: z.string(),
-  roleId: z.string(),
-  gender: z.string(),
-  availability: z.boolean(),
-  responsibleSection: z.array(z.string()),
   userType: userTypeSchema,
-  userLevel: userLevelSchema,
   profileImage: z
     .array(z.union([z.instanceof(File), StorageFileSchema]))
     .optional(),
-  status: z.string(),
-  isCompanyEmployee: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
-  department: z.string(),
-  assignedFactory: z.array(z.string()),
-  employeeNumber: z.string(),
-  jobPosition: z.string(),
-  assigneeLevel: z.number(),
   permissionObject: PermissionKeysObjectSchema,
 });
-
 export type User = z.infer<typeof userSchema>;
 
 export const passwordResetSchema = z.object({
@@ -69,7 +42,6 @@ export const passwordResetSchema = z.object({
   newPassword: z.string(),
   newPassword_confirmation: z.string(),
 });
-
 export type PasswordReset = z.infer<typeof passwordResetSchema>;
 
 export async function login({
@@ -79,7 +51,7 @@ export async function login({
   email: string;
   password: string;
 }) {
-  const res = await axios.post("/api/login", {
+  const res = await axios.post("/api/auth/login", {
     email,
     password,
   });
@@ -92,7 +64,7 @@ export async function userPasswordReset(data: PasswordReset) {
 }
 
 export async function registerUser({
-  name,
+  username,
   email,
   mobileNumber: mobile,
   password,
@@ -105,7 +77,7 @@ export async function registerUser({
 }: {
   email: string;
   password: string;
-  name: string;
+  username: string;
   mobileNumber: string;
   confirmPassword: string;
   isCompanyEmployee: boolean;
@@ -114,10 +86,10 @@ export async function registerUser({
   assignedFactory: string[];
   employeeNumber: string;
 }) {
-  const res = await axios.post("/api/register", {
+  const res = await axios.post("/api/auth/register", {
     email,
     password,
-    name,
+    username,
     mobile,
     password_confirmation,
     isCompanyEmployee,
@@ -130,12 +102,12 @@ export async function registerUser({
 }
 
 export async function validateUser() {
-  const res = await axios.get("/api/user");
+  const res = await axios.get("/api/auth/user");
   return res.data;
 }
 
 export async function fetchAllUsers() {
-  const res = await axios.get("/api/all-users");
+  const res = await axios.get("/api/auth/users");
   return res.data;
 }
 
@@ -179,40 +151,15 @@ export async function fetchAllAssigneeLevel() {
   return res.data;
 }
 
-export async function updateUserType({
-  id,
+export async function updateUserTypes({
+  _id,
   userTypeId,
-  assigneeLevel,
-  department,
-  availability,
-  jobPosition,
-  assignedFactory,
-  responsibleSection,
 }: {
-  id: number;
-  userTypeId: number;
-  assigneeLevel: number;
-  department: string;
-  availability: boolean;
-  jobPosition: string;
-  assignedFactory: string[];
-  responsibleSection: string[];
+  _id: string;
+  userTypeId: string;
 }) {
-  const parsedAssignedFactory = Array.isArray(assignedFactory)
-    ? assignedFactory
-    : JSON.parse(assignedFactory || "[]");
-  const parsedResponsibleSection = Array.isArray(responsibleSection)
-    ? responsibleSection
-    : JSON.parse(responsibleSection || "[]");
-
-  const res = await axios.post(`/api/users/${id}/update`, {
+  const res = await axios.put(`/api/auth/user-role/${_id}`, {
     userType: userTypeId.toString(),
-    assigneeLevel: assigneeLevel.toString(),
-    department,
-    availability,
-    jobPosition,
-    assignedFactory: parsedAssignedFactory,
-    responsibleSection: parsedResponsibleSection,
   });
 
   return res.data;
@@ -258,7 +205,7 @@ export async function updateUserProfileImage({
   id,
   imageFile,
 }: {
-  id: number;
+  id: string;
   imageFile: File;
 }) {
   const formData = new FormData();
@@ -276,17 +223,14 @@ export async function updateUserProfileImage({
 export async function updateUserProfileDetails({
   id,
   name,
-  gender,
   mobile,
 }: {
-  id: number;
+  id: string;
   name: string;
-  gender: string;
   mobile: string;
 }) {
   const data = {
     name,
-    gender,
     mobile,
   };
 
@@ -300,7 +244,7 @@ export async function resetProfileEmail({
   id,
 }: {
   currentEmail: string;
-  id: number;
+  id: string;
 }) {
   const res = await axios.post(`/api/user/${id}/email-change`, {
     currentEmail,
@@ -313,7 +257,7 @@ export async function resetProfileEmailVerification({
   id,
 }: {
   otp: string;
-  id: number;
+  id: string;
 }) {
   const res = await axios.post(`/api/user/${id}/email-change-verify`, {
     otp,
@@ -326,7 +270,7 @@ export async function resetProfileEmailConfirm({
   id,
 }: {
   newEmail: string;
-  id: number;
+  id: string;
 }) {
   const res = await axios.post(`/api/user/${id}/email-change-confirm`, {
     newEmail,
@@ -335,6 +279,6 @@ export async function resetProfileEmailConfirm({
 }
 
 export async function searchUser({ query }: { query: string }) {
-  const res = await axios.get(`/api/users/search?keyword=${query}`)
+  const res = await axios.get(`/api/users/search?keyword=${query}`);
   return res.data;
 }
