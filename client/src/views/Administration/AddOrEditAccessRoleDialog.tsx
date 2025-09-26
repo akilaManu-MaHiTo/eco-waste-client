@@ -76,7 +76,6 @@ function AddOrEditAccessRoleDialog({
     description: string;
   }) => {
     const submitData: UserRole = {
-      id: defaultValues?.id ?? generateRandomNumberId(),
       userType: data.userType,
       description: data.description,
       permissionObject: rolePermissions,

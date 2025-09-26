@@ -42,7 +42,7 @@ import ViewProfileDataDrawer, {
 import ProfileImage from "../ProfileImageComponent";
 import { useQuery } from "@tanstack/react-query";
 // import { getOrganization } from "../../api/OrganizationSettings/organizationSettingsApi";
-import Logo from "../../assets/group-logo.png";
+import Logo from "../../assets/eco waste logo.png";
 const drawerWidth = 265;
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -140,7 +140,6 @@ export default function MainLayout({ children }: Props) {
   const [openViewProfileDrawer, setOpenViewProfileDrawer] = useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const [openEditUserRoleDialog, setOpenEditUserRoleDialog] = useState(false);
-  const statusColor = user?.availability ? "#44b700" : "#f44336";
 
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
@@ -224,7 +223,7 @@ export default function MainLayout({ children }: Props) {
                   noWrap
                   component="div"
                   sx={{
-                    color: "var(--pallet-blue)",
+                    color: "var(--eco-waste-primary-green)",
                     display: "flex",
                     marginRight: "0.5rem",
                   }}
@@ -238,13 +237,13 @@ export default function MainLayout({ children }: Props) {
                   sx={{ color: "#000", display: "flex" }}
                 >
                   <span className="slider-text" style={{ fontWeight: 600 }}>
-                    Sustainability
+                    Environment
                   </span>
                   <span className="slider-text" style={{ fontWeight: 600 }}>
-                    Health & Safety
+                    Recycling
                   </span>
                   <span className="slider-text" style={{ fontWeight: 600 }}>
-                    Social
+                    Smart Cities
                   </span>
                 </Typography>
               </Box>
@@ -291,28 +290,12 @@ export default function MainLayout({ children }: Props) {
                 {user?.name?.charAt(0).toUpperCase()}
               </Avatar> */}
 
-              <Badge
-                overlap="circular"
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                variant="dot"
-                sx={{
-                  "& .MuiBadge-badge": {
-                    backgroundColor: statusColor,
-                    color: statusColor,
-                    boxShadow: "0 0 0 2px white",
-                    height: "8px",
-                    width: "8px",
-                    borderRadius: "50%",
-                  },
-                }}
-              >
-                <ProfileImage
-                  name={user?.name}
-                  files={user?.profileImage}
-                  size="2rem"
-                  onClick={() => setOpenViewProfileDrawer(true)}
-                />
-              </Badge>
+              <ProfileImage
+                name={user?.username}
+                files={user?.profileImage}
+                size="2rem"
+                onClick={() => setOpenViewProfileDrawer(true)}
+              />
               <ViewProfileDataDrawer
                 open={openViewProfileDrawer}
                 handleClose={() => setOpenViewProfileDrawer(false)}

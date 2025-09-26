@@ -49,7 +49,7 @@ function RegistrationForm() {
       email: "",
       password: "",
       mobileNumber: null,
-      name: "",
+      username: "",
       confirmPassword: "",
       isCompanyEmployee: false,
       jobPosition: "",
@@ -65,7 +65,7 @@ function RegistrationForm() {
     mutationFn: registerUser,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["current-user"] });
-      localStorage.setItem("token", data?.access_token);
+      localStorage.setItem("token", data?.token);
       enqueueSnackbar("Account Created Successfully!", { variant: "success" });
       navigate("/home");
     },
@@ -115,12 +115,12 @@ function RegistrationForm() {
           required
           id="name"
           label="Name"
-          error={!!errors.name}
+          error={!!errors.username}
           fullWidth
           size="small"
           sx={{ marginTop: "1rem" }}
-          helperText={errors.name ? errors.name.message : ""}
-          {...register("name", {
+          helperText={errors.username ? errors.username.message : ""}
+          {...register("username", {
             required: {
               value: true,
               message: "Required",

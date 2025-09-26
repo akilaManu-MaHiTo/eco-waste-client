@@ -35,9 +35,9 @@ function Insight() {
       <Typography
         variant="h3"
         align="center"
-        sx={{ mt: 2, mb: 2, fontWeight: "bold", color: "var(--pallet-orange)" }}
+        sx={{ mt: 2, mb: 2, fontWeight: "bold", color: "var(--eco-waste-primary-green)" }}
       >
-        {`Welcome ${user?.name}!`}
+        {`Welcome ${user?.username}!`}
       </Typography>
       <Box
         component="img"
@@ -57,7 +57,7 @@ function Insight() {
         align="center"
         sx={{ mt: 2, color: "var(--pallet-main-blue)" }}
       >
-        Hello
+        View real-time insights on waste generation, collection efficiency, and trends.
       </Typography>
     </Stack>
   );

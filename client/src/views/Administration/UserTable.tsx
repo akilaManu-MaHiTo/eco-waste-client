@@ -27,7 +27,7 @@ import { useSnackbar } from "notistack";
 import {
   fetchAllUsers,
   searchUser,
-  updateUserType,
+  updateUserTypes,
   User,
 } from "../../api/userApi";
 import ViewUserContent from "./ViewUserContent";
@@ -39,6 +39,7 @@ import { green, grey } from "@mui/material/colors";
 import queryClient from "../../state/queryClient";
 import SearchBar from "../../components/SearchBar";
 import { useDebounce } from "../../util/useDebounce";
+import { set } from "zod";
 
 function UserTable() {
   const { enqueueSnackbar } = useSnackbar();
@@ -83,7 +84,7 @@ function UserTable() {
     isFetching: isSearchingUser,
   } = useQuery({
     queryKey: ["users", debouncedQuery],
-    queryFn: ({ queryKey }) => searchUser({ query: queryKey[1] }),
+    queryFn: fetchAllUsers,
   });
 
   // useEffect(() => {
@@ -112,13 +113,17 @@ function UserTable() {
   }, [searchedUserData, page, rowsPerPage]);
 
   const { mutate: updateUserRoleMutation, isPending } = useMutation({
-    mutationFn: updateUserType,
+    mutationFn: updateUserTypes,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["current-user"] });
       setOpenEditUserRoleDialog(false);
       enqueueSnackbar("User Role Updated Successfully!", {
         variant: "success",
       });
+      setSelectedRow(null);
+      setOpenViewDrawer(false);
+      setOpenEditUserRoleDialog(false);
     },
     onError: () => {
       enqueueSnackbar(`User Role Update Failed`, {
@@ -142,15 +147,7 @@ function UserTable() {
         <Breadcrumb breadcrumbs={breadcrumbItems} />
       </Box>
 
-      <Box mb={2} display="flex" justifyContent="flex-end">
-        <SearchBar
-          placeholder="Search Users..."
-          value={searchQuery}
-          onChange={setSearchQuery}
-          onSearch={handleSearch}
-          isSearching={isSearchingUser}
-        />
-      </Box>
+      
 
       <Stack sx={{ alignItems: "center" }}>
         <TableContainer
@@ -169,8 +166,6 @@ function UserTable() {
                 <TableCell align="left">Name</TableCell>
                 <TableCell align="left">Email</TableCell>
                 <TableCell align="left">Role</TableCell>
-                <TableCell align="right">Job Position</TableCell>
-                <TableCell align="center">Status</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -187,32 +182,10 @@ function UserTable() {
                       setOpenViewDrawer(true);
                     }}
                   >
-                    <TableCell align="left">{row.id}</TableCell>
-                    <TableCell align="left">{row.name}</TableCell>
+                    <TableCell align="left">{row._id}</TableCell>
+                    <TableCell align="left">{row.username}</TableCell>
                     <TableCell align="left">{row.email}</TableCell>
                     <TableCell align="left">{row.userType?.userType}</TableCell>
-                    <TableCell align="right">
-                      {row.jobPosition ?? "--"}
-                    </TableCell>
-                    <TableCell align="center">
-                      {row.availability ? (
-                        <Chip
-                          label="Active"
-                          sx={{
-                            backgroundColor: green[100],
-                            color: green[800],
-                          }}
-                        />
-                      ) : (
-                        <Chip
-                          label="Inactive"
-                          sx={{
-                            backgroundColor: grey[100],
-                            color: grey[800],
-                          }}
-                        />
-                      )}
-                    </TableCell>
                   </TableRow>
                 ))
               ) : (
@@ -259,7 +232,7 @@ function UserTable() {
                 setOpenEditUserRoleDialog(true);
               }}
               disableEdit={
-                !useCurrentUserHaveAccess(PermissionKeys.ADMIN_USERS_EDIT)
+                !useCurrentUserHaveAccess(PermissionKeys.ADMIN_USERS_VIEW)
               }
               // onDelete={() => setDeleteDialogOpen(true)}
               // disableDelete={

@@ -37,7 +37,7 @@ const ProfileImage: React.FC<ProfileImageProps> = ({
     <Avatar
       onClick={onClick}
       sx={{
-        bgcolor: "var(--pallet-light-blue)",
+        bgcolor: "var(--eco-waste-primary-green)",
         height: size,
         width: size,
         fontSize: {fontSize},

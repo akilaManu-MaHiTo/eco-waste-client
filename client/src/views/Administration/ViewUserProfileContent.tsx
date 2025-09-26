@@ -53,8 +53,6 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
     }
   };
 
-  const statusColor = selectedUser?.availability ? "#44b700" : "#f44336";
-
   const { mutate: profileUpdateMutation, isPending } = useMutation({
     mutationFn: updateUserProfileImage,
     onSuccess: () => {
@@ -68,7 +66,7 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
 
   const saveImage = () => {
     if (imageFile) {
-      profileUpdateMutation({ id: selectedUser.id, imageFile });
+      profileUpdateMutation({ id: selectedUser._id, imageFile });
     }
   };
   const [openViewProfileDrawer, setOpenViewProfileDrawer] = useState(false);
@@ -99,27 +97,11 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
         }}
         gap={2}
       >
-        <Badge
-          overlap="circular"
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          variant="dot"
-          sx={{
-            "& .MuiBadge-badge": {
-              backgroundColor: statusColor,
-              color: statusColor,
-              boxShadow: "0 0 0 2px white",
-              height: "16px",
-              width: "16px",
-              borderRadius: "50%",
-            },
-          }}
-        >
-          <ProfileImage
-            name={selectedUser?.name}
-            files={imageFile ? [imageFile] : selectedUser?.profileImage}
-            fontSize="5rem"
-          />
-        </Badge>
+        <ProfileImage
+          name={selectedUser?.username}
+          files={imageFile ? [imageFile] : selectedUser?.profileImage}
+          fontSize="5rem"
+        />
         <Typography
           variant="h4"
           textAlign={"center"}
@@ -128,7 +110,7 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
             color: "var(--pallet-dark-blue)",
           }}
         >
-          {selectedUser?.name}
+          {selectedUser?.username}
         </Typography>
         <Box
           sx={{
@@ -212,7 +194,7 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
         <Stack direction={isTablet ? "column" : "row"}>
           <DrawerContentItem
             label="Employee Id"
-            value={selectedUser?.id}
+            value={selectedUser?._id}
             sx={{ flex: 1 }}
           />
           <DrawerContentItem
@@ -225,25 +207,12 @@ function ViewUserContent({ selectedUser }: { selectedUser: User }) {
         <Stack direction={isTablet ? "column" : "row"}>
           <DrawerContentItem
             label="Full Name"
-            value={selectedUser?.name}
+            value={selectedUser?.username}
             sx={{ flex: 1 }}
           />
           <DrawerContentItem
             label="Mobile Number"
             value={selectedUser?.mobile}
-            sx={{ flex: 1 }}
-          />
-        </Stack>
-
-        <Stack direction={isTablet ? "column" : "row"}>
-          <DrawerContentItem
-            label="Designation"
-            value={selectedUser?.jobPosition}
-            sx={{ flex: 1 }}
-          />
-          <DrawerContentItem
-            label="Gender"
-            value={selectedUser?.gender}
             sx={{ flex: 1 }}
           />
         </Stack>
