@@ -156,7 +156,7 @@ function AccessManagementTable() {
               }}
               disabled={
                 !useCurrentUserHaveAccess(
-                  PermissionKeys.ADMIN_ACCESS_MNG_CREATE
+                  PermissionKeys.ADMIN_ACCESS_MNG_VIEW
                 )
               }
             >
@@ -229,12 +229,12 @@ function AccessManagementTable() {
                 setAddOrEditAccessRoleDialogOpen(true);
               }}
               disableEdit={
-                !useCurrentUserHaveAccess(PermissionKeys.ADMIN_ACCESS_MNG_EDIT)
+                !useCurrentUserHaveAccess(PermissionKeys.ADMIN_ACCESS_MNG_VIEW)
               }
               onDelete={() => setDeleteDialogOpen(true)}
               disableDelete={
                 !useCurrentUserHaveAccess(
-                  PermissionKeys.ADMIN_ACCESS_MNG_DELETE
+                  PermissionKeys.ADMIN_ACCESS_MNG_VIEW
                 )
               }
             />

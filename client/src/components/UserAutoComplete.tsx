@@ -40,10 +40,10 @@ function UserAutoComplete({
           options={userData && Array.isArray(userData) ? userData : []}
           sx={{ flex: 1, margin: "0.5rem", ...style }}
           defaultValue={defaultValue}
-          getOptionLabel={(option) => option?.name || ""}
+          getOptionLabel={(option) => option?.username || ""}
           renderOption={(props, option) => (
-            <li {...props} key={option.id}>
-              {option.name}
+            <li {...props} key={option._id}>
+              {option.username}
             </li>
           )}
           renderInput={(params) => (
