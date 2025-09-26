@@ -289,10 +289,10 @@ const SectionAccordion = ({
                             checked={Boolean(
                               rolePermissions[`${row.key}_VIEW`] ||
                                 `${row.key}_VIEW` ===
-                                  PermissionKeys.INSIGHT_VIEW
+                                  PermissionKeys.HOME_VIEW
                             )}
                             disabled={
-                              `${row.key}_VIEW` === PermissionKeys.INSIGHT_VIEW
+                              `${row.key}_VIEW` === PermissionKeys.HOME_VIEW
                             }
                             onChange={() => {
                               if (rolePermissions[`${row.key}_VIEW`]) {
