@@ -4,7 +4,7 @@ import useIsMobile from "../../customHooks/useIsMobile";
 import { DrawerContentItem } from "../../components/ViewDataDrawer";
 import { Garbage } from "../../api/garbage";
 
-function ViewMedicineRequestContent({ garbage }: { garbage: Garbage }) {
+function ViewGarbageContent({ garbage }: { garbage: Garbage }) {
   const { isTablet } = useIsMobile();
   return (
     <Stack
@@ -36,7 +36,7 @@ function ViewMedicineRequestContent({ garbage }: { garbage: Garbage }) {
         /> */}
         <DrawerContentItem
           label="Garbage Bin ID"
-          value={garbage?.garbageId}
+          value={garbage?.binId?.binId}
           sx={{ flex: 1 }}
         />
         <DrawerContentItem
@@ -54,4 +54,4 @@ function ViewMedicineRequestContent({ garbage }: { garbage: Garbage }) {
   );
 }
 
-export default ViewMedicineRequestContent;
+export default ViewGarbageContent;

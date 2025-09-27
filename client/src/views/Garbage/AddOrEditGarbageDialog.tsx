@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import CloseIcon from "@mui/icons-material/Close";
 import { grey } from "@mui/material/colors";
 import { useEffect } from "react";
@@ -22,12 +22,15 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import {
   createGarbage,
+  fetchGarbageBins,
   Garbage,
   garbageBinId,
   garbageCategory,
+  updateGarbage,
 } from "../../api/garbage";
 import queryClient from "../../state/queryClient";
 import { enqueueSnackbar } from "notistack";
+import UserAutoComplete from "../../components/UserAutoComplete";
 
 type DialogProps = {
   open: boolean;
@@ -36,13 +39,13 @@ type DialogProps = {
   onSubmit?: (data: Garbage) => void;
 };
 
-export default function AddOrEditMedicineRequestDialog({
+export default function AddOrEditGarbageDialog({
   open,
   handleClose,
   defaultValues,
   onSubmit,
 }: DialogProps) {
-  const { isTablet } = useIsMobile();
+  const { isTablet, isMobile } = useIsMobile();
 
   const {
     register,
@@ -70,16 +73,16 @@ export default function AddOrEditMedicineRequestDialog({
   const handleCreateDocument = (data: Garbage) => {
     if (defaultValues) {
       data._id = defaultValues._id;
-      // updateChemicalRequestMutation({ data: submitData });
+      updateGarbageMutation(data);
     } else {
       createGarbageMutation(data);
     }
   };
 
-  //   const { data: medicineData, isFetching: isDoctorDataFetching } = useQuery({
-  //     queryKey: ["medicine"],
-  //     queryFn: fetchMedicineList,
-  //   });
+  const { data: garbageBinData, isFetching: isDoctorDataFetching } = useQuery({
+    queryKey: ["waste-bin"],
+    queryFn: fetchGarbageBins,
+  });
 
   //   const { data: divisionData, isFetching: isDivisionDataFetching } = useQuery({
   //     queryKey: ["divisions"],
@@ -99,7 +102,7 @@ export default function AddOrEditMedicineRequestDialog({
   const { mutate: createGarbageMutation } = useMutation({
     mutationFn: createGarbage,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hazardRisks"] });
+      queryClient.invalidateQueries({ queryKey: ["garbage"] });
       enqueueSnackbar("Waste Added To Bin Successfully!", {
         variant: "success",
       });
@@ -113,6 +116,22 @@ export default function AddOrEditMedicineRequestDialog({
     },
   });
 
+  const { mutate: updateGarbageMutation } = useMutation({
+    mutationFn: updateGarbage,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["hazardRisks"] });
+      enqueueSnackbar("Waste Updated Successfully!", {
+        variant: "success",
+      });
+      reset();
+      handleClose();
+    },
+    onError: () => {
+      enqueueSnackbar(`Waste Update Failed!`, {
+        variant: "error",
+      });
+    },
+  });
   return (
     <Dialog
       open={open}
@@ -120,8 +139,8 @@ export default function AddOrEditMedicineRequestDialog({
         resetForm();
         handleClose();
       }}
-      fullScreen={isTablet}
-      maxWidth={isTablet ? "lg" : "md"}
+      fullScreen={isTablet || isMobile}
+      maxWidth={isTablet ? "lg" : "lg"}
       PaperProps={{
         style: {
           backgroundColor: grey[50],
@@ -138,9 +157,7 @@ export default function AddOrEditMedicineRequestDialog({
         }}
       >
         <Typography variant="h6" component="div">
-          {defaultValues
-            ? "Edit Medicine Request"
-            : "Add a New Medicine Request"}
+          {defaultValues ? "Edit Waste" : "Add Waste"}
         </Typography>
         <IconButton
           aria-label="open drawer"
@@ -201,7 +218,7 @@ export default function AddOrEditMedicineRequestDialog({
               sx={{ flex: 1, margin: "0.5rem" }}
               {...register("wasteWeight", { required: true })}
             />
-            <Autocomplete
+            {/* <Autocomplete
               {...register("garbageId", { required: true })}
               size="small"
               options={
@@ -218,20 +235,40 @@ export default function AddOrEditMedicineRequestDialog({
                   name="garbageId"
                 />
               )}
-            />
+            /> */}
 
-            {/* <Box sx={{ flex: 1 }}>
-              <UserAutoComplete
-                name="approver"
-                label="Approver"
+            <Box sx={{ flex: 1 }}>
+              <Controller
+                name="binId"
                 control={control}
-                register={register}
-                errors={errors}
-                userData={asigneeData}
-                defaultValue={defaultValues?.approver}
-                required={true}
+                defaultValue={defaultValues?.binId}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <Autocomplete
+                    {...field}
+                    onChange={(_, data) => field.onChange(data)}
+                    getOptionLabel={(option) => option?.binId || ""}
+                    size="small"
+                    options={garbageBinData || []}
+                    sx={{ flex: 1, margin: "0.5rem" }}
+                    renderOption={(props, option) => (
+                      <li {...props} key={option._id}>
+                        {option.binId}
+                      </li>
+                    )}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        required
+                        error={!!errors.binId}
+                        label="Bin Id"
+                        name="binId"
+                      />
+                    )}
+                  />
+                )}
               />
-            </Box> */}
+            </Box>
           </Stack>
         </Stack>
       </DialogContent>
@@ -242,21 +279,21 @@ export default function AddOrEditMedicineRequestDialog({
             resetForm();
             handleClose();
           }}
-          sx={{ color: "var(--pallet-blue)" }}
+          sx={{ color: "var(--eco-waste-blue)" }}
         >
           Cancel
         </Button>
         <CustomButton
           variant="contained"
           sx={{
-            backgroundColor: "var(--pallet-blue)",
+            backgroundColor: "var(--eco-waste-blue)",
           }}
           size="medium"
           onClick={handleSubmit((data) => {
             handleCreateDocument(data);
           })}
         >
-          {defaultValues ? "Update Changes" : "Save Medical Request"}
+          {defaultValues ? "Update Bin" : "Add to Bin"}
         </CustomButton>
       </DialogActions>
     </Dialog>

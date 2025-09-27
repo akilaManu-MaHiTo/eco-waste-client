@@ -122,7 +122,7 @@ export function DrawerEditAndDeleteButtons({
                 sx={{
                   color: disableEdit
                     ? "var(--pallet-grey)"
-                    : "var(--pallet-blue)",
+                    : "var(--eco-waste-blue)",
                 }}
               />
             </IconButton>
@@ -130,7 +130,7 @@ export function DrawerEditAndDeleteButtons({
             <CustomButton
               variant="contained"
               sx={{
-                backgroundColor: "var(--pallet-blue)",
+                backgroundColor: "var(--eco-waste-blue)",
               }}
               size="medium"
               onClick={onEdit}
