@@ -155,9 +155,7 @@ function AccessManagementTable() {
                 setAddOrEditAccessRoleDialogOpen(true);
               }}
               disabled={
-                !useCurrentUserHaveAccess(
-                  PermissionKeys.ADMIN_ACCESS_MNG_VIEW
-                )
+                !useCurrentUserHaveAccess(PermissionKeys.ADMIN_ACCESS_MNG_VIEW)
               }
             >
               Create New Role
@@ -167,6 +165,7 @@ function AccessManagementTable() {
           <Table aria-label="simple table">
             <TableHead sx={{ backgroundColor: "var(--pallet-lighter-blue)" }}>
               <TableRow>
+                <TableCell>ID</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell align="left">Description</TableCell>
                 <TableCell align="center"></TableCell>
@@ -176,12 +175,13 @@ function AccessManagementTable() {
               {roles?.length > 0 ? (
                 roles.map((row) => (
                   <TableRow
-                    key={`${row.id}`}
+                    key={`${row._id}`}
                     sx={{
                       "&:last-child td, &:last-child th": { border: 0 },
                       cursor: "pointer",
                     }}
                   >
+                    <TableCell align="left">{row._id}</TableCell>
                     <TableCell component="th" scope="row">
                       {row.userType}
                     </TableCell>
@@ -233,9 +233,7 @@ function AccessManagementTable() {
               }
               onDelete={() => setDeleteDialogOpen(true)}
               disableDelete={
-                !useCurrentUserHaveAccess(
-                  PermissionKeys.ADMIN_ACCESS_MNG_VIEW
-                )
+                !useCurrentUserHaveAccess(PermissionKeys.ADMIN_ACCESS_MNG_VIEW)
               }
             />
             {selectedRole && (
@@ -251,7 +249,11 @@ function AccessManagementTable() {
           handleClose={() => setAddOrEditAccessRoleDialogOpen(false)}
           onSubmit={(data) => {
             if (selectedRole) {
-              updateAccessRoleMutation(data);
+              console.log("Role Data", data);
+              updateAccessRoleMutation({
+                role: data,
+                id: selectedRole._id,
+              });
             } else {
               createAccessRoleMutation(data);
             }

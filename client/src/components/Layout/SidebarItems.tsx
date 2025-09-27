@@ -23,6 +23,12 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import KeyIcon from "@mui/icons-material/Key";
 import { PermissionKeys } from "../../views/Administration/SectionList";
 import PaymentOutlinedIcon from '@mui/icons-material/PaymentOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
+import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
+import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined';
+import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 export interface SidebarItem {
   title?: string;
   headline?: string;
@@ -51,50 +57,62 @@ export interface SidebarItem {
 export const sidebarItems: Array<SidebarItem> = [
   {
     headline: "Home",
-    accessKey: PermissionKeys.HOME_TEXT,
+    accessKey: PermissionKeys.INSIGHT_VIEW,
   },
   {
     title: "Insight",
     href: "/home",
-    icon: <HomeIcon fontSize="small" />,
-    accessKey: PermissionKeys.HOME_VIEW,
+    icon: <HomeOutlinedIcon fontSize="small" />,
+    accessKey: PermissionKeys.INSIGHT_VIEW,
   },
   {
     title: "Payment",
     href: "/payment",
     icon: <PaymentOutlinedIcon fontSize="small" />,
-    accessKey: PermissionKeys.HOME_VIEW,
+    accessKey: PermissionKeys.PAYMENT_VIEW,
   },
   {
     headline: "Administration",
-    accessKey: PermissionKeys.ADMIN_TEXT,
+    accessKey: PermissionKeys.ADMIN_VIEW,
   },
   {
     title: "Users",
-    icon: <PeopleAltIcon fontSize="small" />,
+    icon: <PersonOutlinedIcon fontSize="small" />,
     href: "/admin/users",
     accessKey: PermissionKeys.ADMIN_USERS_VIEW,
   },
   {
     title: "Access Management",
-    icon: <KeyIcon fontSize="small" />,
+    icon: <VpnKeyOutlinedIcon fontSize="small" />,
     href: "/admin/access-management",
     accessKey: PermissionKeys.ADMIN_ACCESS_MNG_VIEW,
   },
   {
+    title: "Bin Management",
+    icon: <DeleteOutlinedIcon fontSize="small" />,
+    href: "/admin/bin-management",
+    accessKey: PermissionKeys.ADMIN_BIN_MNG_VIEW,
+  },
+  {
     headline: "Waste Management",
-    accessKey: PermissionKeys.WASTE_MNG_TEXT,
+    accessKey: PermissionKeys.WASTE_MNG_VIEW,
   },
   {
     title: "Dashboard",
-    icon: <DashboardIcon fontSize="small" />,
+    icon: <DashboardOutlinedIcon fontSize="small" />,
     href: "/waste-management/dashboard",
-    accessKey: PermissionKeys.WASTE_MNG_DASHBOARD,
+    accessKey: PermissionKeys.WASTE_MNG_DASHBOARD_VIEW,
   },
   {
-    title: "History",
-    icon: <LayersIcon fontSize="small" />,
+    title: "Bin Request",
+    icon: <DeleteOutlinedIcon fontSize="small" />,
+    href: "/waste-management/bin-request",
+    accessKey: PermissionKeys.BIN_REQUEST_VIEW,
+  },
+  {
+    title: "Waste History",
+    icon: <HistoryOutlinedIcon fontSize="small" />,
     href: "/waste-management/history",
-    accessKey: PermissionKeys.WASTE_MNG_HISTORY,
+    accessKey: PermissionKeys.WASTE_MNG_HISTORY_VIEW,
   },
 ];
