@@ -8,12 +8,16 @@ import PermissionDenied from "./components/PermissionDenied";
 import { useQuery } from "@tanstack/react-query";
 import { User, validateUser } from "./api/userApi";
 
+//Login & Registration
 const LoginPage = React.lazy(() => import("./views/LoginPage/LoginPage"));
 const RegistrationPage = React.lazy(
   () => import("./views/RegistrationPage/RegistrationPage")
 );
+
+//Insights
 const InsightsPage = React.lazy(() => import("./views/Insights/Insight"));
 const PaymentPage = React.lazy(() => import("./views/Insights/Payment"));
+
 //Administration
 const UserTable = React.lazy(() => import("./views/Administration/UserTable"));
 const AccessManagementTable = React.lazy(
@@ -25,6 +29,9 @@ const OrganizationTable = React.lazy(
       "./views/Administration/OrganizationSettings/OrganizationSettingsTable"
     )
 );
+
+//Waste Management
+const GarbageTable = React.lazy(() => import("./views/Garbage/GarbageTable"));
 
 function withLayout(Layout: any, Component: any, restrictAccess = false) {
   return (
@@ -92,7 +99,7 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             InsightsPage,
-            !userPermissionObject?.[PermissionKeys.HOME_VIEW]
+            !userPermissionObject?.[PermissionKeys.INSIGHT_VIEW]
           )}
         />
 
@@ -127,7 +134,15 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             PaymentPage,
-            !userPermissionObject?.[PermissionKeys.HOME_VIEW]
+            !userPermissionObject?.[PermissionKeys.PAYMENT_VIEW]
+          )}
+        />
+        <Route
+          path="/waste-management/history"
+          element={withLayout(
+            MainLayout,
+            GarbageTable,
+            !userPermissionObject?.[PermissionKeys.WASTE_MNG_HISTORY_VIEW]
           )}
         />
       </Route>

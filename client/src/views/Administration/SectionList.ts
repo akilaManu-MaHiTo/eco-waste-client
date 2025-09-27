@@ -14,11 +14,31 @@ export const PermissionSectionsMap: PermissionSection[] = [
           DELETE: false,
         },
       },
+      {
+        name: "Payment",
+        key: "PAYMENT",
+        permissionsExists: {
+          VIEW: true,
+          CREATE: false,
+          EDIT: false,
+          DELETE: false,
+        },
+      },
     ],
   },
   {
     mainSection: "Administration",
     subSections: [
+      {
+        name: "Administration Text",
+        key: "ADMIN",
+        permissionsExists: {
+          VIEW: true,
+          CREATE: false,
+          EDIT: false,
+          DELETE: false,
+        },
+      },
       {
         name: "Administration > Users",
         key: "ADMIN_USERS",
@@ -39,240 +59,9 @@ export const PermissionSectionsMap: PermissionSection[] = [
           DELETE: true,
         },
       },
-    ],
-  },
-  {
-    mainSection: "Sustainability Apps",
-    subSections: [
       {
-        break: true,
-        name: "Audit & Inspection",
-      },
-      {
-        name: "Dashboard",
-        key: "AUDIT_INSPECTION_DASHBOARD",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: false,
-          EDIT: false,
-          DELETE: false,
-        },
-      },
-      {
-        name: "Calendar",
-        key: "AUDIT_INSPECTION_CALENDAR",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Internal Audit > Audit Form Builder",
-        key: "AUDIT_INSPECTION_INTERNAL_AUDIT_FORM_BUILDER",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Internal Audit > Scheduled Audit",
-        key: "AUDIT_INSPECTION_INTERNAL_AUDIT_REGISTER",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      // {
-      //   name: "Internal Audit > Task",
-      //   key: "AUDIT_INSPECTION_INTERNAL_AUDIT_TASK",
-      //   permissionsExists: {
-      //     VIEW: true,
-      //     CREATE: true,
-      //     EDIT: true,
-      //     DELETE: true,
-      //   },
-      // },
-      // {
-      //   name: "Internal Audit > Queue",
-      //   key: "AUDIT_INSPECTION_INTERNAL_AUDIT_QUEUE",
-      //   permissionsExists: {
-      //     VIEW: true,
-      //     CREATE: true,
-      //     EDIT: true,
-      //     DELETE: true,
-      //   },
-      // },
-      // {
-      //   name: "Internal Audit > Corrective Action",
-      //   key: "AUDIT_INSPECTION_INTERNAL_AUDIT_CORRECTIVE_ACTION",
-      //   permissionsExists: {
-      //     VIEW: true,
-      //     CREATE: true,
-      //     EDIT: true,
-      //     DELETE: true,
-      //   },
-      // },
-      {
-        name: "External Audit > Register",
-        key: "AUDIT_INSPECTION_EXTERNAL_AUDIT_REGISTER",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "External Audit > Task",
-        key: "AUDIT_INSPECTION_EXTERNAL_AUDIT_TASK",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "External Audit > Queue",
-        key: "AUDIT_INSPECTION_EXTERNAL_AUDIT_QUEUE",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "External Audit > Corrective Action",
-        key: "AUDIT_INSPECTION_EXTERNAL_AUDIT_CORRECTIVE_ACTION",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        break: true,
-        name: "Sustainability",
-      },
-      {
-        name: "SDG Reporting",
-        key: "SUSTAINABILITY_SDG_REPORTING",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        break: true,
-        name: "Environment",
-      },
-      {
-        name: "Dashboard",
-        key: "ENVIRONMENT_DASHBOARD",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: false,
-          EDIT: false,
-          DELETE: false,
-        },
-      },
-      {
-        name: "History > Consumption",
-        key: "ENVIRONMENT_HISTORY_CONSUMPTION",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "History > Target Setting",
-        key: "ENVIRONMENT_HISTORY_TARGET_SETTING",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Assigned Tasks > Consumption",
-        key: "ENVIRONMENT_ASSIGNED_TASKS_CONSUMPTION",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Assigned Tasks > Target Setting",
-        key: "ENVIRONMENT_ASSIGNED_TASKS_TARGET_SETTING",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        break: true,
-        name: "Chemical MNG",
-      },
-      {
-        name: "Dashboard",
-        key: "CHEMICAL_MNG_DASHBOARD",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: false,
-          EDIT: false,
-          DELETE: false,
-        },
-      },
-      {
-        name: "Request Register",
-        key: "CHEMICAL_MNG_REQUEST_REGISTER",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Purchase & Inventory",
-        key: "CHEMICAL_MNG_PURCHASE_INVENTORY",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Transaction",
-        key: "CHEMICAL_MNG_TRANSACTION",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Assigned Tasks",
-        key: "CHEMICAL_MNG_ASSIGNED_TASKS",
+        name: "Administration > Bin Management",
+        key: "ADMIN_BIN_MNG",
         permissionsExists: {
           VIEW: true,
           CREATE: true,
@@ -283,45 +72,25 @@ export const PermissionSectionsMap: PermissionSection[] = [
     ],
   },
   {
-    mainSection: "Health & Safety Apps",
+    mainSection: "Waste Management",
     subSections: [
       {
-        name: "Hazard & Risk > Dashboard",
-        key: "HAZARD_RISK_DASHBOARD",
+        break: true,
+        name: "Waste Bin Request",
+      },
+      {
+        name: "Waste Management Text",
+        key: "WASTE_MNG",
         permissionsExists: {
           VIEW: true,
           CREATE: false,
           EDIT: false,
           DELETE: false,
         },
-      },
-      {
-        name: "Hazard & Risk > Register",
-        key: "HAZARD_RISK_REGISTER",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Hazard & Risk > Assigned Tasks",
-        key: "HAZARD_RISK_ASSIGNED_TASKS",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        break: true,
-        name: "Incident & Accident",
       },
       {
         name: "Dashboard",
-        key: "INCIDENT_ACCIDENT_DASHBOARD",
+        key: "WASTE_MNG_DASHBOARD",
         permissionsExists: {
           VIEW: true,
           CREATE: false,
@@ -330,8 +99,8 @@ export const PermissionSectionsMap: PermissionSection[] = [
         },
       },
       {
-        name: "Register > Accident",
-        key: "INCIDENT_ACCIDENT_REGISTER_ACCIDENT",
+        name: "Bin Request",
+        key: "BIN_REQUEST",
         permissionsExists: {
           VIEW: true,
           CREATE: true,
@@ -340,243 +109,8 @@ export const PermissionSectionsMap: PermissionSection[] = [
         },
       },
       {
-        name: "Register > Incident",
-        key: "INCIDENT_ACCIDENT_REGISTER_INCIDENT",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Assigned Tasks > Accident",
-        key: "INCIDENT_ACCIDENT_ASSIGNED_TASKS_ACCIDENT",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Assigned Tasks > Incident",
-        key: "INCIDENT_ACCIDENT_ASSIGNED_TASKS_INCIDENT",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        break: true,
-        name: "Document",
-      },
-      {
-        name: "Register",
-        key: "DOCUMENT_REGISTER",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        break: true,
-        name: "Occupational Health",
-      },
-      {
-        name: "Dashboard",
-        key: "OCCUPATIONAL_HEALTH_DASHBOARD",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: false,
-          EDIT: false,
-          DELETE: false,
-        },
-      },
-      {
-        name: "Clinical Suite > Patient Register",
-        key: "OCCUPATIONAL_HEALTH_CLINICAL_SUITE_PATIENT_REGISTER",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Clinical Suite > Consultation",
-        key: "OCCUPATIONAL_HEALTH_CLINICAL_SUITE_CONSULTATION",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Clinical Suite > Medicine Stock",
-        key: "OCCUPATIONAL_HEALTH_CLINICAL_SUITE_MEDICINE_STOCK",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Clinical Suite > Pharmacy Queue",
-        key: "OCCUPATIONAL_HEALTH_CLINICAL_SUITE_PHARMACY_QUEUE",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Medicine Inventory > Medicine Request",
-        key: "OCCUPATIONAL_HEALTH_MEDICINE_INVENTORY_MEDICINE_REQUEST",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Medicine Inventory > Purchase & Inventory",
-        key: "OCCUPATIONAL_HEALTH_MEDICINE_INVENTORY_PURCHASE_INVENTORY",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Medicine Inventory > Transaction",
-        key: "OCCUPATIONAL_HEALTH_MEDICINE_INVENTORY_TRANSACTION",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Medicine Inventory > Assigned Tasks",
-        key: "OCCUPATIONAL_HEALTH_MEDICINE_INVENTORY_ASSIGNED_TASKS",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Medical Records > Maternity Register",
-        key: "OCCUPATIONAL_HEALTH_MEDICAL_RECORDS_MATERNITY_REGISTER",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-    ],
-  },
-  {
-    mainSection: "Social Apps",
-    subSections: [
-      {
-        name: "Grievance > Dashboard",
-        key: "GRIEVANCE_DASHBOARD",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: false,
-          EDIT: false,
-          DELETE: false,
-        },
-      },
-      {
-        name: "Grievance > Register",
-        key: "GRIEVANCE_REGISTER",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Grievance > Assigned Tasks",
-        key: "GRIEVANCE_ASSIGNED_TASKS",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        break: true,
-        name: "RAG",
-      },
-      {
-        name: "Dashboard",
-        key: "RAG_DASHBOARD",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: false,
-          EDIT: false,
-          DELETE: false,
-        },
-      },
-      {
-        name: "Register",
-        key: "RAG_REGISTER",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        name: "Assigned Tasks",
-        key: "RAG_ASSIGNED_TASKS",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        break: true,
-        name: "Engagement",
-      },
-      {
-        name: "Register",
-        key: "ENGAGEMENT_REGISTER",
-        permissionsExists: {
-          VIEW: true,
-          CREATE: true,
-          EDIT: true,
-          DELETE: true,
-        },
-      },
-      {
-        break: true,
-        name: "Attrition",
-      },
-      {
-        name: "Register",
-        key: "ATTRITION_REGISTER",
+        name: "Garbage History",
+        key: "WASTE_MNG_HISTORY",
         permissionsExists: {
           VIEW: true,
           CREATE: true,
@@ -614,14 +148,38 @@ export interface PermissionsExists {
 }
 
 export enum PermissionKeys {
-  HOME_TEXT = "HOME_TEXT",
-  HOME_VIEW = "HOME_VIEW",
-  ADMIN_TEXT = "ADMIN_TEXT",
+  INSIGHT_VIEW = "INSIGHT_VIEW",
+  PAYMENT_VIEW = "PAYMENT_VIEW",
+
+  ADMIN_VIEW = "ADMIN_VIEW",
+
   ADMIN_USERS_VIEW = "ADMIN_USERS_VIEW",
+  ADMIN_USERS_CREATE = "ADMIN_USERS_CREATE",
+  ADMIN_USERS_EDIT = "ADMIN_USERS_EDIT",
+  ADMIN_USERS_DELETE = "ADMIN_USERS_DELETE",
+
   ADMIN_ACCESS_MNG_VIEW = "ADMIN_ACCESS_MNG_VIEW",
-  WASTE_MNG_TEXT = "WASTE_MNG_TEXT",
-  WASTE_MNG_DASHBOARD = "WASTE_MNG_DASHBOARD",
-  WASTE_MNG_HISTORY = "WASTE_MNG_HISTORY",
+  ADMIN_ACCESS_MNG_CREATE = "ADMIN_ACCESS_MNG_CREATE",
+  ADMIN_ACCESS_MNG_EDIT = "ADMIN_ACCESS_MNG_EDIT",
+  ADMIN_ACCESS_MNG_DELETE = "ADMIN_ACCESS_MNG_DELETE",
+
+  ADMIN_BIN_MNG_VIEW = "ADMIN_BIN_MNG_VIEW",
+  ADMIN_BIN_MNG_CREATE = "ADMIN_BIN_MNG_CREATE",
+  ADMIN_BIN_MNG_EDIT = "ADMIN_BIN_MNG_EDIT",
+  ADMIN_BIN_MNG_DELETE = "ADMIN_BIN_MNG_DELETE",
+
+  WASTE_MNG_VIEW = "WASTE_MNG_VIEW",
+  WASTE_MNG_DASHBOARD_VIEW = "WASTE_MNG_DASHBOARD_VIEW",
+
+  BIN_REQUEST_VIEW = "BIN_REQUEST_VIEW",
+  BIN_REQUEST_CREATE = "BIN_REQUEST_CREATE",
+  BIN_REQUEST_EDIT = "BIN_REQUEST_EDIT",
+  BIN_REQUEST_DELETE = "BIN_REQUEST_DELETE",
+
+  WASTE_MNG_HISTORY_VIEW = "WASTE_MNG_HISTORY_VIEW",
+  WASTE_MNG_HISTORY_CREATE = "WASTE_MNG_HISTORY_CREATE",
+  WASTE_MNG_HISTORY_EDIT = "WASTE_MNG_HISTORY_EDIT",
+  WASTE_MNG_HISTORY_DELETE = "WASTE_MNG_HISTORY_DELETE",
 }
 
 // Create the Zod schema using the enum values
@@ -644,12 +202,14 @@ export const defaultAdminPermissions = Object.values(PermissionKeys).reduce(
 );
 
 export const defaultViewerPermissions: PermissionKeysObject = {
-  HOME_TEXT: true,
-  HOME_VIEW: true,
-  ADMIN_TEXT: true,
+  INSIGHT_VIEW: true,
+  PAYMENT_VIEW: true,
+  ADMIN_VIEW: true,
   ADMIN_USERS_VIEW: true,
   ADMIN_ACCESS_MNG_VIEW: true,
-  WASTE_MNG_TEXT: true,
-  WASTE_MNG_DASHBOARD: true,
-  WASTE_MNG_HISTORY: true,
+  ADMIN_BIN_MNG_VIEW: true,
+  WASTE_MNG_VIEW: true,
+  BIN_REQUEST_VIEW: true,
+  WASTE_MNG_DASHBOARD_VIEW: true,
+  WASTE_MNG_HISTORY_VIEW: true,
 };

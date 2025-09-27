@@ -129,6 +129,7 @@ function AddOrEditAccessRoleDialog({
               flexDirection: "column",
             }}
           >
+            <Box>{defaultValues._id}</Box>
             <TextField
               required
               label="Role Name"
@@ -289,10 +290,10 @@ const SectionAccordion = ({
                             checked={Boolean(
                               rolePermissions[`${row.key}_VIEW`] ||
                                 `${row.key}_VIEW` ===
-                                  PermissionKeys.HOME_VIEW
+                                  PermissionKeys.INSIGHT_VIEW
                             )}
                             disabled={
-                              `${row.key}_VIEW` === PermissionKeys.HOME_VIEW
+                              `${row.key}_VIEW` === PermissionKeys.INSIGHT_VIEW
                             }
                             onChange={() => {
                               if (rolePermissions[`${row.key}_VIEW`]) {
