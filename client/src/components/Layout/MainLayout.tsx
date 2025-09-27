@@ -174,7 +174,7 @@ export default function MainLayout({ children }: Props) {
         position="fixed"
         open={open}
         sx={{
-          backgroundColor: "#fff",
+          backgroundColor: "var(--eco-waste-secondary-green)",
         }}
       >
         <Toolbar>
@@ -193,7 +193,7 @@ export default function MainLayout({ children }: Props) {
                 edge="start"
                 sx={[
                   {
-                    color: "#024271",
+                    color: "var(--eco-waste-blue)",
                     marginRight: 3,
                   },
                   open && !isMobile && { display: "none" },
@@ -330,7 +330,7 @@ export default function MainLayout({ children }: Props) {
           }}
           PaperProps={{
             sx: {
-              backgroundColor: "#010f24",
+              backgroundColor: "var(--eco-waste-secondary-green)",
               color: "#fff",
               elevation: 2,
             },
@@ -344,7 +344,7 @@ export default function MainLayout({ children }: Props) {
           open={open}
           PaperProps={{
             sx: {
-              backgroundColor: "#010f24",
+              backgroundColor: "var(--eco-waste-secondary-green)",
               color: "#fff",
               elevation: 2,
             },
@@ -384,13 +384,13 @@ const DrawerContent = ({
           {theme.direction === "rtl" ? (
             <ChevronRightIcon
               sx={{
-                color: "#fff",
+                color: "var(--eco-waste-blue)",
               }}
             />
           ) : (
             <ChevronLeftIcon
               sx={{
-                color: "#fff",
+                color: "var(--eco-waste-blue)",
               }}
             />
           )}
@@ -399,12 +399,14 @@ const DrawerContent = ({
           variant="subtitle1"
           noWrap
           component="div"
-          sx={{ color: "#7db0ff" }}
+          sx={{ color: "var(--eco-waste-blue)", fontWeight: 400 }}
         >
           Hello, Welcome!
         </Typography>
       </DrawerHeader>
-      <Divider sx={{ marginBottom: "1rem", backgroundColor: "#7db0ff" }} />
+      <Divider
+        sx={{ marginBottom: "1rem", backgroundColor: "var(--eco-waste-blue)" }}
+      />
       <Box
         sx={{
           height: "calc(100vh - 75px)",
@@ -427,7 +429,7 @@ const DrawerContent = ({
                 key={item.headline}
                 variant="body2"
                 sx={{
-                  color: "#7db0ff",
+                  color: "var(--eco-waste-blue)",
                   padding: "0.5rem 1rem",
                   fontWeight: 600,
                   textTransform: "uppercase",
@@ -478,7 +480,7 @@ const DrawerContent = ({
             textTransform: "capitalize",
             marginLeft: "1rem",
             marginY: "1rem",
-            color: "var(--pallet-orange)",
+            color: "var(--eco-waste-blue)",
             width: "90%",
             justifyContent: "flex-start",
             paddingLeft: "1rem",
@@ -571,7 +573,7 @@ const NestedItem = React.memo(
             style={{
               marginRight: "0.5rem",
               marginBottom: -4,
-              color: item.disabled ? "grey" : "#fff",
+              color: item.disabled ? "grey" : "var(--eco-waste-primary-green)",
             }}
           >
             {item.icon}
@@ -580,7 +582,7 @@ const NestedItem = React.memo(
             variant="body2"
             sx={{
               textTransform: "capitalize",
-              color: item.disabled ? "grey" : "#fff",
+              color: item.disabled ? "grey" : "var(--eco-waste-primary-green)",
             }}
           >
             {item.title}
@@ -657,8 +659,9 @@ export const LinkButton = React.memo(
           sx={{
             fontSize: "0.8rem",
             paddingY: "0.2rem",
-            alignItems: "center",
-            borderLeft: isMatch ? "4px solid var(--pallet-orange)" : "none",
+            borderLeft: isMatch ? "4px solid var(--eco-waste-primary-green)" : "none",
+            width: "100%",
+            justifyContent: "flex-start",
           }}
           disabled={disabled}
         >
@@ -669,8 +672,8 @@ export const LinkButton = React.memo(
               color: disabled
                 ? "grey"
                 : isMatch
-                ? "var(--pallet-orange)"
-                : "#fff",
+                ? "var(--eco-waste-primary-green)"
+                : "#56607c",
             }}
           >
             {icon}
@@ -682,8 +685,8 @@ export const LinkButton = React.memo(
               color: disabled
                 ? "grey"
                 : isMatch
-                ? "var(--pallet-orange)"
-                : "#fff",
+                ? "var(--eco-waste-primary-green)"
+                : "#56607c",
             }}
           >
             {title}

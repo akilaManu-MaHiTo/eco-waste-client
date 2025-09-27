@@ -69,6 +69,7 @@ const DeleteConfirmationModal = ({
             handleReject();
             handleClose();
           }}
+          sx={{ color: "var(--eco-waste-blue)" }}
         >
           Cancel
         </CustomButton>
