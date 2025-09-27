@@ -35,15 +35,14 @@ import { PermissionKeys } from "../Administration/SectionList";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import queryClient from "../../state/queryClient";
 import useCurrentUserHaveAccess from "../../hooks/useCurrentUserHaveAccess";
-import { Garbage, garbageData } from "../../api/garbage";
+import { deleteGarbage, fetchGarbage, Garbage } from "../../api/garbage";
 import CustomButton from "../../components/CustomButton";
 
-function HazardRiskTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
+function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
   const { enqueueSnackbar } = useSnackbar();
   const [openViewDrawer, setOpenViewDrawer] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Garbage>(null);
   const [openAddOrEditDialog, setOpenAddOrEditDialog] = useState(false);
-  // const [riskData, setRiskData] = useState<HazardAndRisk[]>(sampleHazardRiskData);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -72,10 +71,10 @@ function HazardRiskTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
     theme.breakpoints.down("md")
   );
 
-  //   const { data: riskData, isFetching: isRiskDataFetching } = useQuery({
-  //     queryKey: ["hazardRisks"],
-  //     queryFn: getHazardRiskList,
-  //   });
+  const { data: garbageData, isFetching: isGarbageDataFetching } = useQuery({
+    queryKey: ["garbage"],
+    queryFn: fetchGarbage,
+  });
 
   //   const paginatedRiskData = useMemo(() => {
   //     if (isAssignedTasks) {
@@ -99,81 +98,33 @@ function HazardRiskTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
   //     }
   //   }, [isAssignedTasks, assignedRiskData, page, rowsPerPage, riskData]);
 
-  //   const { mutate: createHazardRiskMutation } = useMutation({
-  //     mutationFn: createHazardRisk,
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries({ queryKey: ["hazardRisks"] });
-  //       queryClient.invalidateQueries({ queryKey: ["assigned-hazardRisks"] });
-  //       enqueueSnackbar("Hazard Risk Report Created Successfully!", {
-  //         variant: "success",
-  //       });
-  //       setSelectedRow(null);
-  //       setOpenViewDrawer(false);
-  //       setOpenAddOrEditDialog(false);
-  //     },
-  //     onError: () => {
-  //       enqueueSnackbar(`Hazard Risk Creation Failed`, {
-  //         variant: "error",
-  //       });
-  //     },
-  //   });
-
-  //   const { mutate: updateHazardRiskMutation } = useMutation({
-  //     mutationFn: updateHazardRisk,
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries({ queryKey: ["hazardRisks"] });
-  //       queryClient.invalidateQueries({ queryKey: ["assigned-hazardRisks"] });
-  //       enqueueSnackbar("Hazard Risk Report Update Successfully!", {
-  //         variant: "success",
-  //       });
-  //       setSelectedRow(null);
-  //       setOpenViewDrawer(false);
-  //       setOpenAddOrEditDialog(false);
-  //     },
-  //     onError: () => {
-  //       enqueueSnackbar(`Hazard Risk Update Failed`, {
-  //         variant: "error",
-  //       });
-  //     },
-  //   });
-
-  //   const { mutate: deleteHazardRiskMutation } = useMutation({
-  //     mutationFn: deleteHazardRisk,
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries({ queryKey: ["hazardRisks"] });
-  //       queryClient.invalidateQueries({ queryKey: ["assigned-hazardRisks"] });
-  //       enqueueSnackbar("Hazard Risk Report Deleted Successfully!", {
-  //         variant: "success",
-  //       });
-  //       setSelectedRow(null);
-  //       setOpenViewDrawer(false);
-  //       setOpenAddOrEditDialog(false);
-  //     },
-  //     onError: () => {
-  //       enqueueSnackbar(`Hazard Risk Delete Failed`, {
-  //         variant: "error",
-  //       });
-  //     },
-  //   });
+  const { mutate: deleteGarbageMutation, isPending: isDeleting } = useMutation({
+    mutationFn: deleteGarbage,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["hazardRisks"] });
+      enqueueSnackbar("Waste Deleted Successfully!", {
+        variant: "success",
+      });
+      setSelectedRow(null);
+      setDeleteDialogOpen(false);
+      setOpenViewDrawer(false);
+    },
+    onError: () => {
+      enqueueSnackbar(`Waste Delete Failed!`, {
+        variant: "error",
+      });
+    },
+  });
 
   const isWasteCreateDisabled = !useCurrentUserHaveAccess(
     PermissionKeys.WASTE_MNG_HISTORY_CREATE
   );
-  //   const isRiskEditDisabled = !useCurrentUserHaveAccess(
-  //     PermissionKeys.HAZARD_RISK_REGISTER_EDIT
-  //   );
-  //   const isRiskDeleteDisabled = !useCurrentUserHaveAccess(
-  //     PermissionKeys.HAZARD_RISK_REGISTER_DELETE
-  //   );
-  //   const isRiskAssignCreateDisabled = !useCurrentUserHaveAccess(
-  //     PermissionKeys.HAZARD_RISK_ASSIGNED_TASKS_CREATE
-  //   );
-  //   const isRiskAssignEditDisabled = !useCurrentUserHaveAccess(
-  //     PermissionKeys.HAZARD_RISK_ASSIGNED_TASKS_EDIT
-  //   );
-  //   const isRiskAssignDeleteDisabled = !useCurrentUserHaveAccess(
-  //     PermissionKeys.HAZARD_RISK_ASSIGNED_TASKS_DELETE
-  //   );
+  const isWasteEditDisabled = !useCurrentUserHaveAccess(
+    PermissionKeys.WASTE_MNG_HISTORY_EDIT
+  );
+  const isWasteDeleteDisabled = !useCurrentUserHaveAccess(
+    PermissionKeys.WASTE_MNG_HISTORY_DELETE
+  );
 
   return (
     <Stack>
@@ -208,7 +159,7 @@ function HazardRiskTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
             >
               <Button
                 variant="contained"
-                sx={{ backgroundColor: "var(--pallet-blue)" }}
+                sx={{ backgroundColor: "var(--eco-waste-blue)" }}
                 startIcon={<AddIcon />}
                 onClick={() => {
                   setSelectedRow(null);
@@ -220,16 +171,19 @@ function HazardRiskTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
               </Button>
             </Box>
           )}
-          {/* {(isRiskDataFetching || isAssignedRiskDataFetching) && (
-            <LinearProgress sx={{ width: "100%" }} />
-          )} */}
+          {isGarbageDataFetching ||
+            (isDeleting && <LinearProgress sx={{ width: "100%" }} />)}
           <Table aria-label="simple table">
-            <TableHead sx={{ backgroundColor: "var(--pallet-lighter-blue)" }}>
+            <TableHead
+              sx={{ backgroundColor: "var(--eco-waste-secondary-green)" }}
+            >
               <TableRow>
                 <TableCell align="left">Reference</TableCell>
-                <TableCell align="left">Category</TableCell>
-                <TableCell align="left">Division</TableCell>
-                <TableCell align="left">Division</TableCell>
+                <TableCell align="left">Date</TableCell>
+                <TableCell align="left">Waste Category</TableCell>
+                <TableCell align="left">Bin Number</TableCell>
+                <TableCell align="left">Weight</TableCell>
+                <TableCell align="left">Status</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -246,68 +200,44 @@ function HazardRiskTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
                       setOpenViewDrawer(true);
                     }}
                   >
-                    {/* <TableCell component="th" scope="row">
-                      {row.created_at
-                        ? format(new Date(row.created_at), "yyyy-MM-dd")
-                        : "N/A"}
-                    </TableCell> */}
                     <TableCell align="left">{row._id}</TableCell>
+                    <TableCell component="th" scope="row">
+                      {row?.createdAt
+                        ? format(new Date(row?.createdAt), "yyyy-MM-dd")
+                        : "N/A"}
+                    </TableCell>
                     <TableCell align="left">{row.garbageCategory}</TableCell>
-                    <TableCell align="left">{row.garbageId}</TableCell>
-                    <TableCell align="left">{row.wasteWeight}</TableCell>
-                    {/* <TableCell align="right">
-                      {format(new Date(row.dueDate), "yyyy-MM-dd")}
-                    </TableCell> */}
-                    {/* <TableCell align="center">
-                      {row.dueDate
-                        ? (() => {
-                            const daysRemaining = differenceInDays(
-                              new Date(),
-                              row.dueDate
-                            );
-                            if (daysRemaining > 0) {
-                              return "No Remains"; // No remaining days
-                            }
-                            return `${Math.abs(daysRemaining)}`; // Show remaining days if positive
-                          })()
-                        : null}{" "}
-                    </TableCell> */}
-
-                    {/* <TableCell align="center">
-                      {row.dueDate
-                        ? (() => {
-                            const daysDelay = differenceInDays(
-                              new Date(),
-                              row.dueDate
-                            );
-                            if (daysDelay <= 0) {
-                              return "No Delays"; // No delayed days
-                            }
-                            return `${Math.abs(daysDelay)}`; // Show delayed days if negative
-                          })()
-                        : null}{" "}
-                    </TableCell> */}
-                    {/* <TableCell align="right">{row.createdByUserName}</TableCell>
-                    <TableCell align="right">{row.assignee?.name}</TableCell> */}
-                    {/* <TableCell align="right">
-                      {row.status === HazardAndRiskStatus.APPROVED ? (
+                    <TableCell align="left">{row?.binId?.binId}</TableCell>
+                    <TableCell align="left">
+                      {row.wasteWeight + " " + "Kg"}
+                    </TableCell>
+                    <TableCell align="left">
+                      {row.status === "Pending" ? (
                         <Chip
-                          label={"Approved"}
+                          label="Pending"
                           sx={{
-                            color: "var(--pallet-green)",
-                            backgroundColor: colors.green[50],
+                            backgroundColor: "var(--eco-waste-blue)",
+                            color: "white",
+                          }}
+                        />
+                      ) : row.status === "Requested" ? (
+                        <Chip
+                          label="Requested"
+                          sx={{
+                            backgroundColor: "var(--pallet-light-blue)",
+                            color: "white",
                           }}
                         />
                       ) : (
                         <Chip
-                          label={"Draft"}
+                          label="Collected"
                           sx={{
-                            color: "var(--pallet-orange)",
-                            backgroundColor: colors.orange[50],
+                            backgroundColor: "var(--eco-waste-primary-green)",
+                            color: "white",
                           }}
                         />
                       )}
-                    </TableCell> */}
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
@@ -345,42 +275,24 @@ function HazardRiskTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
         drawerContent={
           <Stack spacing={1} sx={{ paddingX: theme.spacing(1) }}>
             <DrawerHeader
-              title="Hazard or Risk Details"
+              title="Waste Details"
               handleClose={() => setOpenViewDrawer(false)}
-              //   disableEdit={
-              //     isAssignedTasks
-              //       ? isRiskAssignEditDisabled ||
-              //         selectedRow?.status === HazardAndRiskStatus.APPROVED
-              //       : isRiskEditDisabled ||
-              //         selectedRow?.status === HazardAndRiskStatus.APPROVED
-              //   }
+              disableEdit={
+                isWasteEditDisabled || selectedRow?.status === "Collected"
+              }
               onEdit={() => {
                 setSelectedRow(selectedRow);
                 setOpenAddOrEditDialog(true);
               }}
               onDelete={() => setDeleteDialogOpen(true)}
-              //   disableDelete={
-              //     isAssignedTasks
-              //       ? isRiskAssignDeleteDisabled
-              //       : isRiskDeleteDisabled
-              //   }
+              disableDelete={
+                isWasteDeleteDisabled || selectedRow?.status === "Collected"
+              }
             />
 
             {selectedRow && (
               <Stack>
                 <ViewGarbageContent garbage={selectedRow} />
-                <CustomButton
-                  variant="contained"
-                  sx={{
-                    backgroundColor: "var(--pallet-blue)",
-                    marginTop: "1rem",
-                    marginX: "0.5rem",
-                  }}
-                  size="medium"
-                  //   onClick={() => setApproveDialogOpen(true)}
-                >
-                  Approve Medicine Request
-                </CustomButton>
               </Stack>
             )}
           </Stack>
@@ -400,10 +312,10 @@ function HazardRiskTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
       {deleteDialogOpen && (
         <DeleteConfirmationModal
           open={deleteDialogOpen}
-          title="Remove Hazard/Risk Confirmation"
+          title="Delete Waste Confirmation"
           content={
             <>
-              Are you sure you want to remove this hazard or risk?
+              Are you sure you want to remove this Waste?
               <Alert severity="warning" style={{ marginTop: "1rem" }}>
                 This action is not reversible.
               </Alert>
@@ -411,16 +323,12 @@ function HazardRiskTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
           }
           handleClose={() => setDeleteDialogOpen(false)}
           deleteFunc={async () => {
-            // setRiskData(riskData.filter((doc) => doc.id !== selectedRow.id));
-            // deleteHazardRiskMutation(selectedRow.id);
+            deleteGarbageMutation(selectedRow._id);
           }}
           onSuccess={() => {
             setOpenViewDrawer(false);
             setSelectedRow(null);
             setDeleteDialogOpen(false);
-            // enqueueSnackbar("Hazard Risk Record Deleted Successfully!", {
-            //   variant: "success",
-            // });
           }}
           handleReject={() => {
             setOpenViewDrawer(false);
@@ -433,4 +341,4 @@ function HazardRiskTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
   );
 }
 
-export default HazardRiskTable;
+export default GarbageTable;
