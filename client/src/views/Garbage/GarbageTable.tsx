@@ -71,7 +71,7 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
     theme.breakpoints.down("md")
   );
 
-  const { data: garbageData, isFetching: isGarbageDataFetching } = useQuery({
+  const { data: garbageData, isLoading: isGarbageDataFetching } = useQuery({
     queryKey: ["garbage"],
     queryFn: fetchGarbage,
   });
@@ -101,7 +101,7 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
   const { mutate: deleteGarbageMutation, isPending: isDeleting } = useMutation({
     mutationFn: deleteGarbage,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hazardRisks"] });
+      queryClient.invalidateQueries({ queryKey: ["garbage"] });
       enqueueSnackbar("Waste Deleted Successfully!", {
         variant: "success",
       });
@@ -171,8 +171,18 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
               </Button>
             </Box>
           )}
-          {isGarbageDataFetching ||
-            (isDeleting && <LinearProgress sx={{ width: "100%" }} />)}
+          {isDeleting ||
+            (isGarbageDataFetching && (
+              <LinearProgress
+                sx={{
+                  width: "100%",
+                  "& .MuiLinearProgress-bar": {
+                    backgroundColor: "var(--eco-waste-blue)",
+                  },
+                }}
+              />
+            ))}
+
           <Table aria-label="simple table">
             <TableHead
               sx={{ backgroundColor: "var(--eco-waste-secondary-green)" }}

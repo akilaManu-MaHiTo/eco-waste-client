@@ -6,6 +6,7 @@ import DialogActions from "@mui/material/DialogActions";
 import {
   Autocomplete,
   Box,
+  CircularProgress,
   Divider,
   IconButton,
   Stack,
@@ -99,7 +100,7 @@ export default function AddOrEditGarbageDialog({
   //     queryFn: fetchMedicineRequestAssignee,
   //   });
 
-  const { mutate: createGarbageMutation } = useMutation({
+  const { mutate: createGarbageMutation, isPending: isCreating } = useMutation({
     mutationFn: createGarbage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["garbage"] });
@@ -116,10 +117,10 @@ export default function AddOrEditGarbageDialog({
     },
   });
 
-  const { mutate: updateGarbageMutation } = useMutation({
+  const { mutate: updateGarbageMutation, isPending: isUpdating } = useMutation({
     mutationFn: updateGarbage,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hazardRisks"] });
+      queryClient.invalidateQueries({ queryKey: ["garbage"] });
       enqueueSnackbar("Waste Updated Successfully!", {
         variant: "success",
       });
@@ -292,6 +293,12 @@ export default function AddOrEditGarbageDialog({
           onClick={handleSubmit((data) => {
             handleCreateDocument(data);
           })}
+          disabled={isCreating || isUpdating}
+          startIcon={
+            isCreating || isUpdating ? (
+              <CircularProgress color="inherit" size={"1rem"} />
+            ) : null
+          }
         >
           {defaultValues ? "Update Bin" : "Add to Bin"}
         </CustomButton>
