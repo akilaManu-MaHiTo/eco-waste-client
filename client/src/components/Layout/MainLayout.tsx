@@ -135,7 +135,7 @@ interface Props {
 export default function MainLayout({ children }: Props) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const [open, setOpen] = React.useState(isMobile ? false : true);
+  const [open, setOpen] = React.useState(isMobile ? false : false);
   const { user } = useCurrentUser();
   const [openViewProfileDrawer, setOpenViewProfileDrawer] = useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
