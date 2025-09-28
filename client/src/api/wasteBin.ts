@@ -3,6 +3,7 @@ import { create } from "domain";
 import { z } from "zod";
 
 export const wasteBinSchema = z.object({
+    _id: z.string(),
   binId: z.string(),
   location: z.string(),
   currentWasteLevel: z.number(),
@@ -29,7 +30,7 @@ export async function createWasteBin(data: WasteBin) {
 }
 
 export async function updateWasteBin(data: WasteBin) {
-  const res = await axios.put(`/api/waste/${data.binId}`, data);
+  const res = await axios.put(`/api/waste/${data._id}`, data);
   return res.data;
 }
 

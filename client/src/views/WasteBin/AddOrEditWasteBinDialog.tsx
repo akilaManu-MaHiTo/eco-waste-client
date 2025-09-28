@@ -30,6 +30,7 @@ import {
 import queryClient from "../../state/queryClient";
 import { enqueueSnackbar } from "notistack";
 import UserAutoComplete from "../../components/UserAutoComplete";
+import SwitchButton from "../../components/SwitchButton";
 
 type DialogProps = {
   open: boolean;
@@ -233,38 +234,21 @@ export default function AddOrEditWasteBinDialog({
               )}
             /> */}
 
-            {/* <Box sx={{ flex: 1 }}>
+            <Box sx={{ flex: 1 }}>
               <Controller
-                name="binId"
+                name="availability"
                 control={control}
-                defaultValue={defaultValues?.binId}
-                rules={{ required: true }}
+                defaultValue={defaultValues?.availability}
                 render={({ field }) => (
-                  <Autocomplete
-                    {...field}
-                    onChange={(_, data) => field.onChange(data)}
-                    getOptionLabel={(option) => option?.binId || ""}
-                    size="small"
-                    options={wasteBinData || []}
-                    sx={{ flex: 1, margin: "0.5rem" }}
-                    renderOption={(props, option) => (
-                      <li {...props} key={option._id}>
-                        {option.binId}
-                      </li>
-                    )}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        required
-                        error={!!errors.binId}
-                        label="Bin Id"
-                        name="binId"
-                      />
-                    )}
+                  <SwitchButton
+                    label="Availability"
+                    value={watch("availability") || false}
+                    onChange={(value) => field.onChange(value)}
+                    disabled={false}
                   />
                 )}
               />
-            </Box> */}
+            </Box>
           </Stack>
         </Stack>
       </DialogContent>

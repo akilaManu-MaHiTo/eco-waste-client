@@ -250,9 +250,9 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
               disableEdit={isWasteEditDisabled || !selectedRow?.availability}
               onEdit={() => {
                 setSelectedRow(selectedRow);
-                setOpenAddOrEditDialog(false);
+                setOpenAddOrEditDialog(true);
               }}
-              onDelete={() => setDeleteDialogOpen(false)}
+              onDelete={() => setDeleteDialogOpen(true)}
               disableDelete={
                 isWasteDeleteDisabled || !selectedRow?.availability
               }
@@ -291,7 +291,7 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
           }
           handleClose={() => setDeleteDialogOpen(false)}
           deleteFunc={async () => {
-            deleteWasteBinMutation(selectedRow.binId);
+            deleteWasteBinMutation(selectedRow._id);
           }}
           onSuccess={() => {
             setOpenViewDrawer(false);
