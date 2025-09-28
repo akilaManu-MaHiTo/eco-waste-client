@@ -162,22 +162,22 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #b5bcce;
+  background: #67C090;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #7db0ff;
+  background: #67C090;
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #b5bcce;
+  background: #67C090;
 }
 
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #7db0ff transparent;
+  scrollbar-color: #67C090 transparent;
 }
 
 /* Fallback for IE */
