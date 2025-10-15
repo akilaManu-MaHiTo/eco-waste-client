@@ -1,30 +1,63 @@
 import React from "react";
-import { Box, Chip, Paper, Skeleton, Stack, Typography } from "@mui/material";
+import { Box, Chip, LinearProgress, Paper, Skeleton, Stack, Typography } from "@mui/material";
 import { CircularProgressWithLabel } from "../../../components/CircularProgressWithLabel";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import HistoryIcon from "@mui/icons-material/History";
+import ScheduleIcon from "@mui/icons-material/Schedule";
+import CategoryIcon from "@mui/icons-material/Category";
 
 export const CurrentLevelCard = ({ loading, error, overallPercentFilled }: any) => {
-  const renderLoader = (active = true) => (active ? <Skeleton variant="rectangular" height={72} /> : null);
+  const getStatusColor = (percent: number) => {
+    if (percent >= 80) return "#f44336";
+    if (percent >= 60) return "#ff9800";
+    return "#4caf50";
+  };
 
   return (
-    <Paper elevation={2} sx={{ padding: 3, height: "100%" }}>
-      <Typography variant="subtitle2" color="text.secondary">
-        Current Garbage Level
-      </Typography>
-      {loading && renderLoader(true)}
+    <Paper 
+      elevation={3} 
+      sx={{ 
+        padding: 3, 
+        height: "100%",
+        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        color: "white",
+        position: "relative",
+        overflow: "hidden",
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          top: -50,
+          right: -50,
+          width: 150,
+          height: 150,
+          background: "rgba(255,255,255,0.1)",
+          borderRadius: "50%",
+        }
+      }}
+    >
+      <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+        <DeleteOutlineIcon sx={{ fontSize: 24 }} />
+        <Typography variant="subtitle2" fontWeight={600} sx={{ textTransform: "uppercase", letterSpacing: 0.5 }}>
+          Current Garbage Level
+        </Typography>
+      </Stack>
+      {loading && <Skeleton variant="rectangular" height={120} sx={{ bgcolor: "rgba(255,255,255,0.1)" }} />}
       {error && (
-        <Typography variant="body2" color="error" sx={{ mt: 2 }}>
+        <Typography variant="body2" sx={{ mt: 2, color: "rgba(255,255,255,0.9)" }}>
           Unable to load current garbage level.
         </Typography>
       )}
       {!loading && !error && (
-        <Stack spacing={2} sx={{ mt: 2 }}>
-          <CircularProgressWithLabel value={overallPercentFilled} />
-          <Stack spacing={0.5}>
-            <Typography variant="h5" sx={{ fontWeight: 600 }}>
+        <Stack spacing={2} sx={{ mt: 2, position: "relative", zIndex: 1 }}>
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <CircularProgressWithLabel value={overallPercentFilled} />
+          </Box>
+          <Stack spacing={0.5} alignItems="center">
+            <Typography variant="h3" sx={{ fontWeight: 700 }}>
               {overallPercentFilled.toFixed(0)}%
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Container is {overallPercentFilled.toFixed(0)}% full.
+            <Typography variant="body2" sx={{ opacity: 0.9 }}>
+              Container is {overallPercentFilled.toFixed(0)}% full
             </Typography>
           </Stack>
         </Stack>
