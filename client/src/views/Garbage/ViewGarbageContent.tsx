@@ -38,6 +38,7 @@ function ViewGarbageContent({
     reset,
     setValue,
   } = useForm<GarbageRequest>({});
+  const selectedDate = watch("collectionDate");
   useEffect(() => {
     const script = document.createElement("script");
     const PAYHERE_URL = import.meta.env.VITE_PAYHERE_URL;
@@ -198,6 +199,7 @@ function ViewGarbageContent({
                     <TimePickerComponent
                       onChange={(e) => field.onChange(e)}
                       value={field.value ? new Date(field.value) : null}
+                      date={selectedDate ? new Date(selectedDate) : undefined}
                       label="Collection Time"
                       error={errors?.collectionTime ? "Required" : ""}
                     />
@@ -240,7 +242,7 @@ function ViewGarbageContent({
       {approveDialogOpen && (
         <ApproveConfirmationModal
           open={approveDialogOpen}
-          title="Request Garabage Collection"
+          title="Request Garbage Collection"
           content={
             <>
               Are you sure you want to Request this garbage collection? LKR{" "}
