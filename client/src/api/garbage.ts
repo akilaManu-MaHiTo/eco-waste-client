@@ -1,91 +1,27 @@
 import axios from "axios";
 import { z } from "zod";
+import { wasteBinSchema } from "./wasteBin";
 
-const binReferenceSchema = z.object({
-  _id: z.string().optional(),
-  binId: z.string().optional(),
-  name: z.string().optional(),
-  capacity: z.coerce.number().optional(),
-});
-
-export type WasteBinReference = z.output<typeof binReferenceSchema>;
-
-const garbageSchema = z.object({
+export const binSchema = z.object({
   _id: z.string(),
-  wasteWeight: z.coerce.number(),
-  garbageId: z.string().optional(),
+  binId: z.string(),
+});
+export type WasteBin = z.infer<typeof binSchema>;
+
+export const garbageSchema = z.object({
+  _id: z.string(),
+  wasteWeight: z.number(),
+  garbageId: z.string(),
   garbageCategory: z.string(),
-  createdAt: z.union([z.string(), z.date()]),
-  status: z.string().optional(),
-  binId: z.union([binReferenceSchema, z.string(), z.null()]).optional(),
+  createdAt: z.date(),
+  status: z.string(),
+  binId: wasteBinSchema,
 });
+export type Garbage = z.infer<typeof garbageSchema>;
 
-type GarbageSchemaOutput = z.output<typeof garbageSchema>;
-
-export type Garbage = Omit<GarbageSchemaOutput, "binId"> & {
-  binId?: WasteBinReference | string | null;
-};
-
-const garbageSummaryEntrySchema = z.object({
-  user: z
-    .object({
-      _id: z.string().optional(),
-      name: z.string().nullable().optional(),
-      email: z.string().nullable().optional(),
-    })
-    .nullable()
-    .optional(),
-  category: z.string(),
-  totalWeight: z.coerce.number(),
-  count: z.coerce.number(),
-});
-
-export type GarbageSummaryItem = z.infer<typeof garbageSummaryEntrySchema>;
-
-const garbageTrendCategorySchema = z.object({
-  category: z.string(),
-  bin: z.any().optional(),
-  totalWeight: z.coerce.number().default(0),
-  count: z.coerce.number().default(0),
-});
-
-const garbageTrendDaySchema = z.object({
-  date: z.string(),
-  categories: z.array(garbageTrendCategorySchema),
-});
-
-const garbageTrendResponseSchema = z.object({
-  startDate: z.string().nullable(),
-  endDate: z.string().nullable(),
-  trend: z.array(garbageTrendDaySchema),
-});
-
-export type GarbageTrendResponse = z.infer<typeof garbageTrendResponseSchema>;
-
-const garbageLevelBinSchema = z.object({
-  binId: z.union([z.string(), binReferenceSchema]).optional(),
-  binName: z.string().nullable().optional(),
-  totalWeight: z.coerce.number().default(0),
-  capacity: z.coerce.number().default(0),
-  percentFilled: z.coerce.number().default(0),
-  deposits: z.coerce.number().default(0),
-});
-
-const garbageLevelResponseSchema = z.object({
-  overall: z.object({
-    totalWeight: z.coerce.number().default(0),
-    totalCapacity: z.coerce.number().default(0),
-    percentFilled: z.coerce.number().default(0),
-  }),
-  bins: z.array(garbageLevelBinSchema),
-});
-
-export type GarbageLevelResponse = z.infer<typeof garbageLevelResponseSchema>;
-
-export async function fetchGarbage(): Promise<Garbage[]> {
+export async function fetchGarbage() {
   const res = await axios.get("/api/garbage");
-  const parsed = z.array(garbageSchema).parse(res.data);
-  return parsed as Garbage[];
+  return res.data;
 }
 
 export async function createGarbage(data: Garbage) {
@@ -102,7 +38,6 @@ export async function deleteGarbage(id: string) {
   const res = await axios.delete(`/api/garbage/${id}`);
   return res.data;
 }
-
 export const garbageData = [
   {
     _id: "1A",
@@ -157,55 +92,32 @@ export const garbageBinId = [
   { _id: "e", label: "PL 005" },
 ];
 
+export const wasteCollectionRequest = [
+  {
+    _id: "WR001",
+    userId: {
+      _id: "U001",
+      name: "John Doe",
+      email: "jj@gmail.com",
+      mobile: "0771234567",
+    },
+    garbageId: {
+      _id: "sdsld",
+      binId: "G001",
+      location: "Location 1",
+      currentWasteLevel: 50,
+      thresholdLevel: 80,
+      availability: true,
+      binType: "Plastic",
+      createdAt: new Date("2023-10-01T10:00:00Z"),
+      latitude: 6.9271,
+      longitude: 79.8612,
+    },
+    createdAt: new Date("2023-10-05T14:30:00Z"),
+  },
+];
+
 export async function fetchGarbageBins() {
   const res = await axios.get("/api/waste");
   return res.data;
-}
-
-type GarbageSummaryParams = {
-  mine?: boolean;
-};
-
-export async function fetchGarbageSummary(
-  params?: GarbageSummaryParams
-): Promise<GarbageSummaryItem[]> {
-  const res = await axios.get("/api/garbage/summary", {
-    params: params?.mine ? { mine: "true" } : undefined,
-  });
-  return z.array(garbageSummaryEntrySchema).parse(res.data);
-}
-
-type GarbageTrendParams = {
-  userIds?: string[];
-  role?: string;
-};
-
-export async function fetchGarbageTrend(
-  params?: GarbageTrendParams
-): Promise<GarbageTrendResponse> {
-  const res = await axios.get("/api/garbage/trend", {
-    params: {
-      ...(params?.role ? { role: params.role } : {}),
-      ...(params?.userIds && params.userIds.length
-        ? { userIds: params.userIds.join(",") }
-        : {}),
-    },
-  });
-
-  return garbageTrendResponseSchema.parse(res.data);
-}
-
-type GarbageLevelParams = {
-  userId?: string;
-  category?: string;
-};
-
-export async function fetchGarbageLevel(
-  params?: GarbageLevelParams
-): Promise<GarbageLevelResponse> {
-  const res = await axios.get("/api/garbage/level", {
-    params,
-  });
-
-  return garbageLevelResponseSchema.parse(res.data);
 }
