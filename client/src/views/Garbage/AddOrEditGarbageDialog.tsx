@@ -103,7 +103,6 @@ export default function AddOrEditGarbageDialog({
     mutationFn: createGarbage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["garbage"] });
-      queryClient.invalidateQueries({ queryKey: ["today-garbage"] });
       enqueueSnackbar("Waste Added To Bin Successfully!", {
         variant: "success",
       });
@@ -120,8 +119,7 @@ export default function AddOrEditGarbageDialog({
   const { mutate: updateGarbageMutation } = useMutation({
     mutationFn: updateGarbage,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["garbage"] });
-      queryClient.invalidateQueries({ queryKey: ["today-garbage"] });
+      queryClient.invalidateQueries({ queryKey: ["hazardRisks"] });
       enqueueSnackbar("Waste Updated Successfully!", {
         variant: "success",
       });
@@ -249,17 +247,13 @@ export default function AddOrEditGarbageDialog({
                   <Autocomplete
                     {...field}
                     onChange={(_, data) => field.onChange(data)}
-                    getOptionLabel={(option) =>
-                      typeof option === "string"
-                        ? option
-                        : option?.binId || option?.name || ""
-                    }
+                    getOptionLabel={(option) => option?.binId || ""}
                     size="small"
                     options={garbageBinData || []}
                     sx={{ flex: 1, margin: "0.5rem" }}
                     renderOption={(props, option) => (
-                      <li {...props} key={typeof option === "string" ? option : option._id}>
-                        {typeof option === "string" ? option : option.binId}
+                      <li {...props} key={option._id}>
+                        {option.binId}
                       </li>
                     )}
                     renderInput={(params) => (
