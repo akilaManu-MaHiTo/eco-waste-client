@@ -33,7 +33,7 @@ const OrganizationTable = React.lazy(
 //Waste Management
 const GarbageTable = React.lazy(() => import("./views/Garbage/GarbageTable"));
 const WasteBinTable = React.lazy(() => import("./views/WasteBin/WasteBinTable"));
-
+const WasteBinDashboard = React.lazy(() => import("./views/WasteBin/WasteBinDashboard"));
 function withLayout(Layout: any, Component: any, restrictAccess = false) {
   return (
     <Layout>
@@ -144,6 +144,14 @@ const AppRoutes = () => {
             MainLayout,
             GarbageTable,
             !userPermissionObject?.[PermissionKeys.WASTE_MNG_HISTORY_VIEW]
+          )}
+        />
+        <Route
+          path="/waste-management/dashboard"
+          element={withLayout(
+            MainLayout,
+            WasteBinDashboard,
+            !userPermissionObject?.[PermissionKeys.WASTE_MNG_DASHBOARD_VIEW]
           )}
         />
         <Route
