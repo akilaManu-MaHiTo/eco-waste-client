@@ -193,37 +193,79 @@ export const NextCollectionCard = ({ loading, error, nextCollection, formatDate,
 };
 
 export const WasteCategoriesCard = ({ loading, error, categoryBreakdown }: any) => {
+  const categoryColors: Record<string, string> = {
+    Plastic: "#2196f3",
+    Paper: "#ff9800",
+    Glass: "#4caf50",
+    Metal: "#9c27b0",
+    Organic: "#8bc34a",
+  };
+
   return (
-    <Paper elevation={2} sx={{ padding: 3, height: "100%" }}>
-      <Typography variant="subtitle2" color="text.secondary">
-        Waste Categories
-      </Typography>
-      {loading && <Skeleton variant="rectangular" height={120} />}
+    <Paper 
+      elevation={3} 
+      sx={{ 
+        padding: 3, 
+        height: "100%",
+        background: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+        color: "white",
+        position: "relative",
+        overflow: "hidden",
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          bottom: -50,
+          right: -50,
+          width: 160,
+          height: 160,
+          background: "rgba(255,255,255,0.1)",
+          borderRadius: "50%",
+        }
+      }}
+    >
+      <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+        <CategoryIcon sx={{ fontSize: 24 }} />
+        <Typography variant="subtitle2" fontWeight={600} sx={{ textTransform: "uppercase", letterSpacing: 0.5 }}>
+          Waste Categories
+        </Typography>
+      </Stack>
+      {loading && <Skeleton variant="rectangular" height={120} sx={{ bgcolor: "rgba(255,255,255,0.1)" }} />}
       {error && (
-        <Typography variant="body2" color="error" sx={{ mt: 2 }}>
+        <Typography variant="body2" sx={{ mt: 2, color: "rgba(255,255,255,0.9)" }}>
           Unable to load category summary.
         </Typography>
       )}
       {!loading && !error && categoryBreakdown?.length === 0 && (
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+        <Typography variant="body2" sx={{ mt: 2, opacity: 0.8 }}>
           No waste categories logged yet.
         </Typography>
       )}
       {!loading && !error && categoryBreakdown?.length > 0 && (
-        <Stack spacing={1.5} sx={{ mt: 2 }}>
-          {categoryBreakdown.slice(0, 4).map((item: any) => (
-            <Box key={item.category}>
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>{item.category}</Typography>
-                <Typography variant="body2" color="text.secondary">{item.percent?.toFixed(0)}%</Typography>
-              </Stack>
-              <Box sx={{ mt: 0.5 }}>
-                <div style={{ height: 6, background: '#f1f1f1', borderRadius: 9999 }}>
-                  <div style={{ width: `${Math.min(100, item.percent)}%`, height: 6, background: '#4caf50', borderRadius: 9999 }} />
-                </div>
+        <Stack spacing={2} sx={{ mt: 2, position: "relative", zIndex: 1 }}>
+          {categoryBreakdown.slice(0, 3).map((item: any) => {
+            const color = categoryColors[item.category] || "#ffffff";
+            return (
+              <Box key={item.category}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" mb={0.5}>
+                  <Typography variant="body1" sx={{ fontWeight: 600 }}>{item.category}</Typography>
+                  <Typography variant="h6" sx={{ fontWeight: 700 }}>{item.percent?.toFixed(0)}%</Typography>
+                </Stack>
+                <LinearProgress 
+                  variant="determinate" 
+                  value={Math.min(100, item.percent)} 
+                  sx={{ 
+                    height: 8, 
+                    borderRadius: 9999,
+                    bgcolor: "rgba(255,255,255,0.3)",
+                    "& .MuiLinearProgress-bar": {
+                      bgcolor: "white",
+                      borderRadius: 9999
+                    }
+                  }} 
+                />
               </Box>
-            </Box>
-          ))}
+            );
+          })}
         </Stack>
       )}
     </Paper>
