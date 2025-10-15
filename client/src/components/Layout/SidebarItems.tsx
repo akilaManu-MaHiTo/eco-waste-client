@@ -113,7 +113,7 @@ export const sidebarItems: Array<SidebarItem> = [
   {
     title: "Daily Waste",
     icon: <TodayOutlinedIcon fontSize="small" />,
-    href: "/waste-management/history/today",
+    href: "/waste-management/today-history",
     accessKey: PermissionKeys.WASTE_MNG_HISTORY_VIEW,
   },
   {
