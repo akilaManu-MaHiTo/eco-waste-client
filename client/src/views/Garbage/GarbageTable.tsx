@@ -35,7 +35,7 @@ import { PermissionKeys } from "../Administration/SectionList";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import queryClient from "../../state/queryClient";
 import useCurrentUserHaveAccess from "../../hooks/useCurrentUserHaveAccess";
-import { deleteGarbage, fetchGarbage, Garbage } from "../../api/garbage";
+import { deleteGarbage, fetchGarbage, fetchTodayGarbage, Garbage } from "../../api/garbage";
 import CustomButton from "../../components/CustomButton";
 
 function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {

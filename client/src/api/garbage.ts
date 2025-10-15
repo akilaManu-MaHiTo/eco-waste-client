@@ -23,6 +23,11 @@ export async function fetchGarbage() {
   return res.data;
 }
 
+export async function fetchTodayGarbage() {
+  const res = await axios.get("/api/garbage/today");
+  return res.data;
+}
+
 export async function createGarbage(data: Garbage) {
   const res = await axios.post("/api/garbage", data);
   return res.data;
