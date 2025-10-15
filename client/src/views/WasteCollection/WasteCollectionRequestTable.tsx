@@ -134,7 +134,7 @@ function WasteCollectionRequestTable() {
                       cursor: "pointer",
                     }}
                     onClick={() => {
-                      setSelectedRow(row);
+                      // setSelectedRow(row);
                       setOpenViewDrawer(true);
                     }}
                   >
@@ -228,11 +228,11 @@ function WasteCollectionRequestTable() {
               //   }
             />
 
-            {selectedRow && (
+            {/* {selectedRow && (
               <Stack>
                 <ViewGarbageContent garbage={selectedRow} />
               </Stack>
-            )}
+            )} */}
           </Stack>
         }
       />
