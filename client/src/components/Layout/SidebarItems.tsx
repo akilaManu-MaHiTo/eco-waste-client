@@ -22,13 +22,13 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import KeyIcon from "@mui/icons-material/Key";
 import { PermissionKeys } from "../../views/Administration/SectionList";
-import PaymentOutlinedIcon from '@mui/icons-material/PaymentOutlined';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
-import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
-import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined';
-import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import PaymentOutlinedIcon from "@mui/icons-material/PaymentOutlined";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
+import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
+import VpnKeyOutlinedIcon from "@mui/icons-material/VpnKeyOutlined";
+import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 export interface SidebarItem {
   title?: string;
   headline?: string;
@@ -114,5 +114,15 @@ export const sidebarItems: Array<SidebarItem> = [
     icon: <HistoryOutlinedIcon fontSize="small" />,
     href: "/waste-management/history",
     accessKey: PermissionKeys.WASTE_MNG_HISTORY_VIEW,
+  },
+  {
+    headline: "Waste Collection",
+    accessKey: PermissionKeys.INSIGHT_VIEW,
+  },
+  {
+    title: "Collection History",
+    icon: <HistoryOutlinedIcon fontSize="small" />,
+    href: "/waste-management/history",
+    accessKey: PermissionKeys.INSIGHT_VIEW,
   },
 ];
