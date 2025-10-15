@@ -20,15 +20,13 @@ import { format, isValid, parseISO } from "date-fns";
 import React, { useMemo } from "react";
 import PageTitle from "../../components/PageTitle";
 import Breadcrumb from "../../components/BreadCrumb";
+import useCurrentUser from "../../hooks/useCurrentUser";
 import {
-	fetchGarbage,
-	fetchGarbageLevel,
-	fetchGarbageSummary,
-	fetchGarbageTrend,
 	Garbage,
-	GarbageLevelResponse,
-	GarbageSummaryItem,
-	GarbageTrendResponse,
+	fetchGarbage,
+	fetchgetCurrentGarbageLevel,
+	fetchCurrentSummary,
+	fetchgetGarbageTrend,
 } from "../../api/garbage";
 import { useQuery } from "@tanstack/react-query";
 import CustomPieChart from "../../components/CustomPieChart";
@@ -46,6 +44,50 @@ type CategoryBreakdown = {
 	count: number;
 };
 
+// API response shapes (based on samples provided)
+type GarbageTrendCategory = {
+	category: string;
+	bin?: string;
+	totalWeight: number;
+	count: number;
+};
+
+type GarbageTrendDay = {
+	date: string; // YYYY-MM-DD
+	categories: GarbageTrendCategory[];
+};
+
+type GarbageTrendResponse = {
+	startDate?: string;
+	endDate?: string;
+	trend: GarbageTrendDay[];
+};
+
+type GarbageLevelBin = {
+	binId: string;
+	binName?: string | null;
+	totalWeight: number;
+	capacity: number;
+	percentFilled: number;
+	deposits?: number;
+};
+
+type GarbageLevelResponse = {
+	overall: {
+		totalWeight: number;
+		totalCapacity: number;
+		percentFilled: number;
+	};
+	bins: GarbageLevelBin[];
+};
+
+type GarbageSummaryItem = {
+	totalWeight: number;
+	count: number;
+	user?: { _id: string; email?: string };
+	category: string;
+};
+
 const breadcrumbItems = [
 	{ title: "Home", href: "/home" },
 	{ title: "Waste Management" },
@@ -55,13 +97,15 @@ const breadcrumbItems = [
 const WasteBinDashboard: React.FC = () => {
 	const theme = useTheme();
 
+	const { user, status: userStatus } = useCurrentUser();
+
 	const {
 		data: levelData,
 		isLoading: isLevelLoading,
 		isError: isLevelError,
 	} = useQuery<GarbageLevelResponse>({
 		queryKey: ["garbage-level"],
-		queryFn: () => fetchGarbageLevel(),
+		queryFn: () => fetchgetCurrentGarbageLevel(),
 		staleTime: 60_000,
 	});
 
@@ -71,7 +115,7 @@ const WasteBinDashboard: React.FC = () => {
 		isError: isSummaryError,
 	} = useQuery<GarbageSummaryItem[]>({
 		queryKey: ["garbage-summary"],
-		queryFn: () => fetchGarbageSummary(),
+		queryFn: () => fetchCurrentSummary(),
 		staleTime: 60_000,
 	});
 
@@ -81,7 +125,7 @@ const WasteBinDashboard: React.FC = () => {
 		isError: isTrendError,
 	} = useQuery<GarbageTrendResponse>({
 		queryKey: ["garbage-trend"],
-		queryFn: () => fetchGarbageTrend(),
+		queryFn: () => fetchgetGarbageTrend(),
 		staleTime: 60_000,
 	});
 
@@ -91,7 +135,7 @@ const WasteBinDashboard: React.FC = () => {
 		isError: isHistoryError,
 	} = useQuery<Garbage[]>({
 		queryKey: ["garbage-history"],
-		queryFn: fetchGarbage,
+		queryFn: () => fetchGarbage(),
 		staleTime: 30_000,
 	});
 
@@ -200,6 +244,23 @@ const WasteBinDashboard: React.FC = () => {
 	const renderLoader = (active = true) =>
 		active ? <LinearProgress color="primary" sx={{ mt: 1 }} /> : null;
 
+	// Safe helper to determine a human-friendly label for a bin.
+	// Some API responses may return binId as a string or as a nested object.
+	const getBinLabel = (b: GarbageLevelBin | any) => {
+		if (!b) return "Bin";
+		// Prefer explicit binName when available
+		if (b.binName) return String(b.binName);
+		// If binId is already a string, use it
+		if (typeof b.binId === "string") return b.binId;
+		// If binId is an object containing an id, try common shapes
+		if (b.binId && typeof b.binId === "object") {
+			// common nested shapes: { binId: "..." } or { _id: '...' }
+			if (typeof b.binId.binId === "string") return b.binId.binId;
+			if (typeof b.binId._id === "string") return b.binId._id;
+		}
+		return "Bin";
+	};
+
 	return (
 		<Stack spacing={3} sx={{ padding: theme.spacing(2) }}>
 			<Box
@@ -210,8 +271,24 @@ const WasteBinDashboard: React.FC = () => {
 					backgroundColor: "#fff",
 				}}
 			>
-				<PageTitle title="Waste Management Dashboard" />
-				<Breadcrumb breadcrumbs={breadcrumbItems} />
+				<Stack direction="row" justifyContent="space-between" alignItems="center">
+					<Stack>
+						<PageTitle title="Waste Management Dashboard" />
+						<Breadcrumb breadcrumbs={breadcrumbItems} />
+					</Stack>
+					{/* Current user info */}
+					{userStatus === "loading" ? (
+						<Skeleton variant="text" width={160} />
+					) : user ? (
+						<Typography variant="body2" color="text.secondary">
+							Signed in as {user.email ?? user._id}
+						</Typography>
+					) : (
+						<Typography variant="body2" color="text.secondary">
+							Not signed in
+						</Typography>
+					)}
+				</Stack>
 			</Box>
 
 			<Grid container spacing={3}>
@@ -491,7 +568,7 @@ const WasteBinDashboard: React.FC = () => {
 				{!isLevelLoading && !isLevelError && (levelData?.bins?.length ?? 0) > 0 && (
 					<Stack spacing={2} sx={{ mt: 2 }}>
 						{levelData?.bins.map((bin) => {
-							const binLabel = typeof bin.binId === "string" ? bin.binId : bin.binName ?? bin.binId?.binId ?? "Bin";
+							const binLabel = getBinLabel(bin);
 							return (
 								<Box key={binLabel}>
 									<Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.5 }}>

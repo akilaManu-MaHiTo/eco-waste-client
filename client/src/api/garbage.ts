@@ -127,3 +127,18 @@ export async function fetchGarbageBins() {
   const res = await axios.get("/api/waste");
   return res.data;
 }
+
+export async function fetchCurrentSummary() {
+  const res = await axios.get("/api/garbage/summary"); //  matches backend route
+  return res.data;
+}
+
+export async function fetchgetCurrentGarbageLevel() {
+  const res = await axios.get("/api/garbage/level"); //  matches backend route
+  return res.data;
+}
+
+export async function fetchgetGarbageTrend() {
+  const res = await axios.get("/api/garbage/trend"); //  matches backend route
+  return res.data;
+}
