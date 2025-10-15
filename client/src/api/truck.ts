@@ -1,7 +1,7 @@
 import axios from "axios";
 import { z } from "zod";
 import { userSchema } from "./userApi";
-import { garbageSchema } from "./garbage";
+import { garbageRequestSchema } from "./garbageRequestApi";
 
 export const truckSchema = z.object({
   _id: z.string(),
@@ -9,8 +9,10 @@ export const truckSchema = z.object({
   capacity: z.number(),
   status: z.string(),
   driver: userSchema.nullable(),
-  currentLocation: z.string().nullable(),  
-  assignRoute: garbageSchema.array().nullable(),
+  currentLocation: z.string().nullable(),
+  latitude: z.number().nullable(),
+  longitude: z.number().nullable(),  
+  assignRoute: garbageRequestSchema.nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
@@ -35,3 +37,9 @@ export async function deleteTruck(id: string) {
   const res = await axios.delete(`/api/truck/${id}`);
   return res.data;
 }
+
+export const truckStatusData = [
+  { _id: "active", label: "Available" },
+  { _id: "inservice", label: "In Service" },
+  { _id: "maintenance", label: "Under Maintenance" },
+];

@@ -37,12 +37,12 @@ import queryClient from "../../state/queryClient";
 import useCurrentUserHaveAccess from "../../hooks/useCurrentUserHaveAccess";
 import CustomButton from "../../components/CustomButton";
 import { deleteWasteBin, fetchWasteBins, WasteBin } from "../../api/wasteBin";
-import { fetchTrucks } from "../../api/truck.ts";
+import { deleteTruck, fetchTrucks, Truck } from "../../api/truck.ts";
 
 function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
   const { enqueueSnackbar } = useSnackbar();
   const [openViewDrawer, setOpenViewDrawer] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<WasteBin>(null);
+  const [selectedRow, setSelectedRow] = useState<Truck>(null);
   const [openAddOrEditDialog, setOpenAddOrEditDialog] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [page, setPage] = useState(0);
@@ -101,12 +101,12 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
   //     }
   //   }, [isAssignedTasks, assignedRiskData, page, rowsPerPage, riskData]);
 
-  const { mutate: deleteWasteBinMutation, isPending: isDeleting } = useMutation(
+  const { mutate: deleteTruckMutation, isPending: isDeleting } = useMutation(
     {
-      mutationFn: deleteWasteBin,
+      mutationFn: deleteTruck,
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["wastebin"] });
-        enqueueSnackbar("Waste Bin Deleted Successfully!", {
+        queryClient.invalidateQueries({ queryKey: ["truck-data"] });
+        enqueueSnackbar("Truck Deleted Successfully!", {
           variant: "success",
         });
         setSelectedRow(null);
@@ -114,20 +114,20 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
         setOpenViewDrawer(false);
       },
       onError: () => {
-        enqueueSnackbar(`Waste BIn Delete Failed!`, {
+        enqueueSnackbar(`Truck Delete Failed!`, {
           variant: "error",
         });
       },
     }
   );
 
-  const isWasteCreateDisabled = !useCurrentUserHaveAccess(
+  const isTruckCreateDisabled = !useCurrentUserHaveAccess(
     PermissionKeys.WASTE_MNG_HISTORY_CREATE
   );
-  const isWasteEditDisabled = !useCurrentUserHaveAccess(
+  const isTruckEditDisabled = !useCurrentUserHaveAccess(
     PermissionKeys.WASTE_MNG_HISTORY_EDIT
   );
-  const isWasteDeleteDisabled = !useCurrentUserHaveAccess(
+  const isTruckDeleteDisabled = !useCurrentUserHaveAccess(
     PermissionKeys.WASTE_MNG_HISTORY_DELETE
   );
 
@@ -170,9 +170,9 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
                   setSelectedRow(null);
                   setOpenAddOrEditDialog(true);
                 }}
-                disabled={isWasteCreateDisabled}
+                disabled={isTruckCreateDisabled}
               >
-                Add Bin
+                Add Truck
               </Button>
             </Box>
           )}
@@ -208,7 +208,40 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
                       {row.capacity} kg
                     </TableCell>
                     <TableCell align="left">{row.driver.username}</TableCell>
-                    <TableCell align="left">{row.status}</TableCell>
+                    <TableCell align="left">
+                      <Chip
+                        label={row.status}
+                        size="small"
+                        sx={{
+                          backgroundColor:
+                            row.status === "Available"
+                              ? colors.green[100]
+                              : row.status === "In Service"
+                              ? colors.blue[100]
+                              : row.status === "Under Maintenance"
+                              ? colors.orange[100]
+                              : colors.grey[100],
+                          color:
+                            row.status === "Available"
+                              ? colors.green[800]
+                              : row.status === "In Service"
+                              ? colors.blue[800]
+                              : row.status === "Under Maintenance"
+                              ? colors.orange[800]
+                              : colors.grey[800],
+                          fontWeight: 600,
+                          border: `1px solid ${
+                            row.status === "Available"
+                              ? colors.green[300]
+                              : row.status === "In Service"
+                              ? colors.blue[300]
+                              : row.status === "Under Maintenance"
+                              ? colors.orange[300]
+                              : colors.grey[300]
+                          }`,
+                        }}
+                      />
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
@@ -248,22 +281,22 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
         drawerContent={
           <Stack spacing={1} sx={{ paddingX: theme.spacing(1) }}>
             <DrawerHeader
-              title="Waste Details"
+              title="Truck Details"
               handleClose={() => setOpenViewDrawer(true)}
-              disableEdit={isWasteEditDisabled || !selectedRow?.availability}
+              disableEdit={isTruckEditDisabled}
               onEdit={() => {
                 setSelectedRow(selectedRow);
                 setOpenAddOrEditDialog(true);
               }}
               onDelete={() => setDeleteDialogOpen(true)}
               disableDelete={
-                isWasteDeleteDisabled || !selectedRow?.availability
+                isTruckDeleteDisabled
               }
             />
 
             {selectedRow && (
               <Stack>
-                <ViewTruckContent wasteBin={selectedRow} />
+                <ViewTruckContent truck={selectedRow} />
               </Stack>
             )}
           </Stack>
@@ -283,10 +316,10 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
       {deleteDialogOpen && (
         <DeleteConfirmationModal
           open={deleteDialogOpen}
-          title="Delete Waste Bin Confirmation"
+          title="Delete Truck Confirmation"
           content={
             <>
-              Are you sure you want to remove this Waste Bin?
+              Are you sure you want to remove this Truck?
               <Alert severity="warning" style={{ marginTop: "1rem" }}>
                 This action is not reversible.
               </Alert>
@@ -294,7 +327,7 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
           }
           handleClose={() => setDeleteDialogOpen(false)}
           deleteFunc={async () => {
-            deleteWasteBinMutation(selectedRow._id);
+            deleteTruckMutation(selectedRow._id);
           }}
           onSuccess={() => {
             setOpenViewDrawer(false);

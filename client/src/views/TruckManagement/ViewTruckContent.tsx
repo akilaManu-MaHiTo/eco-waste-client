@@ -3,8 +3,9 @@ import { format } from "date-fns";
 import useIsMobile from "../../customHooks/useIsMobile";
 import { DrawerContentItem } from "../../components/ViewDataDrawer";
 import { WasteBin } from "../../api/wasteBin";
+import { Truck } from "../../api/truck";
 
-function ViewGarbageContent({ wasteBin }: { wasteBin: WasteBin }) {
+function ViewGarbageContent({ truck }: { truck: Truck }) {
   const { isTablet } = useIsMobile();
   return (
     <Stack
@@ -22,7 +23,7 @@ function ViewGarbageContent({ wasteBin }: { wasteBin: WasteBin }) {
       >
         <DrawerContentItem
           label="Reference Number"
-          value={wasteBin?.binId}
+          value={truck?._id}
           sx={{ flex: 1 }}
         />
         {/* <DrawerContentItem
@@ -35,18 +36,18 @@ function ViewGarbageContent({ wasteBin }: { wasteBin: WasteBin }) {
           sx={{ flex: 1 }}
         /> */}
         <DrawerContentItem
-          label="Waste Bin ID"
-          value={wasteBin?.binId}
+          label="Truck ID"
+          value={truck?.truckId}
           sx={{ flex: 1 }}
         />
         <DrawerContentItem
-          label="Waste Type"
-          value={wasteBin?.binType}
+          label="Capacity (Kg)"
+          value={truck?.capacity + "Kg"}
           sx={{ flex: 1 }}
         />
         <DrawerContentItem
-          label="Threshold Level (L)"
-          value={wasteBin?.thresholdLevel + "L"}
+          label="Status"
+          value={truck?.status}
           sx={{ flex: 1 }}
         />
       </Box>
