@@ -32,11 +32,18 @@ const OrganizationTable = React.lazy(
 
 //Waste Management
 const GarbageTable = React.lazy(() => import("./views/Garbage/GarbageTable"));
-const WasteBinTable = React.lazy(() => import("./views/WasteBin/WasteBinTable"));
+const WasteBinTable = React.lazy(
+  () => import("./views/WasteBin/WasteBinTable")
+);
 
 //Waste Collection Management
 const WasteCollectionTable = React.lazy(
   () => import("./views/Wastecollection/WasteCollectionTable.tsx")
+);
+
+// Truck Management
+const TruckTable = React.lazy(
+  () => import("./views/TruckManagement/TruckTable.tsx")
 );
 
 function withLayout(Layout: any, Component: any, restrictAccess = false) {
@@ -118,7 +125,14 @@ const AppRoutes = () => {
             !userPermissionObject?.[PermissionKeys.ADMIN_USERS_VIEW]
           )}
         />
-
+        <Route
+          path="/admin/truck-management"
+          element={withLayout(
+            MainLayout,
+            TruckTable,
+            !userPermissionObject?.[PermissionKeys.ADMIN_USERS_VIEW]
+          )}
+        />
         <Route
           path="/admin/users"
           element={withLayout(

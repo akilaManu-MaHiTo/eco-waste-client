@@ -37,6 +37,7 @@ export async function deleteGarbage(id: string) {
   const res = await axios.delete(`/api/garbage/${id}`);
   return res.data;
 }
+
 export const garbageData = [
   { _id:"1A",wasteWeight: 2, garbageId: "G001", garbageCategory: "Plastic",status: "Pending" },
   { _id:"2A",wasteWeight: 3, garbageId: "G002", garbageCategory: "Paper",status: "Requested" },

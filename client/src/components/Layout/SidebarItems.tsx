@@ -24,6 +24,7 @@ import KeyIcon from "@mui/icons-material/Key";
 import { PermissionKeys } from "../../views/Administration/SectionList";
 import PaymentOutlinedIcon from "@mui/icons-material/PaymentOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import VpnKeyOutlinedIcon from "@mui/icons-material/VpnKeyOutlined";
@@ -92,6 +93,12 @@ export const sidebarItems: Array<SidebarItem> = [
     icon: <DeleteOutlinedIcon fontSize="small" />,
     href: "/admin/bin-management",
     accessKey: PermissionKeys.ADMIN_BIN_MNG_VIEW,
+  },
+  {
+    title: "Truck Management",
+    icon: <LocalShippingIcon fontSize="small" />,
+    href: "/admin/truck-management",
+    accessKey: PermissionKeys.ADMIN_USERS_VIEW,
   },
   {
     headline: "Waste Management",
