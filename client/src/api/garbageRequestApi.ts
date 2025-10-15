@@ -26,3 +26,9 @@ export async function createGarbageCollectionRoute(data: any) {
   const res = await axios.post(`/api/collection-route`, data);
   return res.data;
 }
+
+// get route by truck id
+export async function fetchRouteByTruckId(truckId: string) {
+  const res = await axios.get(`/api/collection-route/${truckId}`);
+  return res.data;
+}
