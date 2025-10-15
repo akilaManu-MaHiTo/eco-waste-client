@@ -5,6 +5,9 @@ import {
   DialogContent,
   IconButton,
   Stack,
+  CircularProgress,
+  Autocomplete,
+  TextField,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import {
@@ -13,12 +16,17 @@ import {
   DirectionsRenderer,
   useJsApiLoader,
 } from "@react-google-maps/api";
+import CustomButton from "../../components/CustomButton";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createGarbageCollectionRoute } from "../../api/garbageRequestApi";
+import queryClient from "../../state/queryClient";
+import { enqueueSnackbar } from "notistack";
+import { fetchTrucks } from "../../api/truck";
 
 interface CollectionRouteModalProps {
   open: boolean;
   handleClose: () => void;
   selectedRowsData: any[];
-  startLocation?: { lat: number; lng: number };
 }
 
 const MemoizedDirectionsRenderer = React.memo(DirectionsRenderer);
@@ -30,24 +38,31 @@ const CollectionRouteModal: React.FC<CollectionRouteModalProps> = ({
   open,
   handleClose,
   selectedRowsData,
-  startLocation = DEFAULT_START_LOCATION,
 }) => {
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
   });
 
-  const startLat = startLocation.lat;
-  const startLng = startLocation.lng;
+  const { data: truckData = [], isFetching: isTruckDataFetching } = useQuery({
+    queryKey: ["trucks"],
+    queryFn: fetchTrucks,
+  });
 
-  const waypoints = useMemo(() => {
-    return selectedRowsData.map((row) => ({
-      location: {
-        lat: row.garbageId.binId.latitude,
-        lng: row.garbageId.binId.longitude,
-      },
-      stopover: true,
-    }));
-  }, [selectedRowsData]);
+  const [selectedTruck, setSelectedTruck] = useState<any | null>(null);
+  const startLat = selectedTruck?.latitude ?? DEFAULT_START_LOCATION.lat;
+  const startLng = selectedTruck?.longitude ?? DEFAULT_START_LOCATION.lng;
+
+  const waypoints = useMemo(
+    () =>
+      selectedRowsData.map((row) => ({
+        location: {
+          lat: row.garbageId.binId.latitude,
+          lng: row.garbageId.binId.longitude,
+        },
+        stopover: true,
+      })),
+    [selectedRowsData]
+  );
 
   const waypointsKey = useMemo(
     () => waypoints.map((w) => `${w.location.lat},${w.location.lng}`).join(";"),
@@ -103,7 +118,36 @@ const CollectionRouteModal: React.FC<CollectionRouteModalProps> = ({
     []
   );
 
-  if (!isLoaded) return <div>Loading Map...</div>;
+  const { mutate: createRoute, isPending } = useMutation({
+    mutationFn: createGarbageCollectionRoute,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["garbageRoutes"] });
+      enqueueSnackbar("Collection route created successfully!", {
+        variant: "success",
+      });
+      handleClose();
+    },
+    onError: () => {
+      enqueueSnackbar("Failed to create collection route!", {
+        variant: "error",
+      });
+    },
+  });
+
+  const handleCreateRoute = () => {
+    if (!selectedTruck) {
+      enqueueSnackbar("Please select a truck!", { variant: "warning" });
+      return;
+    }
+
+    const garbageRequestIds = selectedRowsData.map((row) => row._id);
+    createRoute({
+      garbage: garbageRequestIds,
+      truck: selectedTruck._id,
+    });
+  };
+
+  if (!isLoaded) return <CircularProgress />;
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
@@ -118,6 +162,24 @@ const CollectionRouteModal: React.FC<CollectionRouteModalProps> = ({
       </DialogTitle>
       <DialogContent>
         <Stack sx={{ height: "500px", width: "100%" }}>
+          <Autocomplete
+            size="small"
+            loading={isTruckDataFetching}
+            value={selectedTruck}
+            onChange={(_, newValue) => setSelectedTruck(newValue)}
+            options={truckData}
+            getOptionLabel={(option) => option.truckId}
+            sx={{ flex: 1, margin: "0.5rem" }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                required
+                label="Select Truck"
+                name="truck"
+              />
+            )}
+          />
+
           <GoogleMap
             mapContainerStyle={{ width: "100%", height: "100%" }}
             center={mapCenter}
@@ -126,7 +188,7 @@ const CollectionRouteModal: React.FC<CollectionRouteModalProps> = ({
           >
             <MemoizedMarkerF
               position={{ lat: startLat, lng: startLng }}
-              label="Start"
+              label="Truck"
             />
             {selectedRowsData.map((row, idx) => (
               <MemoizedMarkerF
@@ -138,7 +200,6 @@ const CollectionRouteModal: React.FC<CollectionRouteModalProps> = ({
                 label={`${idx + 1}`}
               />
             ))}
-
             {directions && (
               <MemoizedDirectionsRenderer
                 directions={directions}
@@ -148,6 +209,14 @@ const CollectionRouteModal: React.FC<CollectionRouteModalProps> = ({
               />
             )}
           </GoogleMap>
+
+          <CustomButton
+            onClick={handleCreateRoute}
+            disabled={isPending || !selectedTruck}
+            sx={{ mt: 2 }}
+          >
+            {isPending ? "Creating..." : "Create Route"}
+          </CustomButton>
         </Stack>
       </DialogContent>
     </Dialog>
