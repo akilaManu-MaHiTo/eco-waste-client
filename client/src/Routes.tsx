@@ -37,7 +37,7 @@ const WasteBinDashboard = React.lazy(() => import("./views/WasteBin/WasteBinDash
 
 //Waste Collection Requests
 const WasteCollectionRequestTable = React.lazy(
-  () => import("./views/WasteCollection/WasteCollectionRequestTable")
+  () => import("./views/WasteCollectionRequest/WasteCollectionRequestTable")
 );
 function withLayout(Layout: any, Component: any, restrictAccess = false) {
   return (
