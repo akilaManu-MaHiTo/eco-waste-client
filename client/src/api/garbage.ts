@@ -11,9 +11,10 @@ export type WasteBin = z.infer<typeof binSchema>;
 export const garbageSchema = z.object({
   _id: z.string(),
   wasteWeight: z.number(),
-  garbageId: z.string(),
+  garbageId: z.string().optional(),
   garbageCategory: z.string(),
-  createdAt: z.date(),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
   status: z.string(),
   binId: wasteBinSchema,
 });
@@ -22,6 +23,11 @@ export type Garbage = z.infer<typeof garbageSchema>;
 export async function fetchGarbage() {
   const res = await axios.get("/api/garbage");
   return res.data;
+}
+
+export async function fetchTodayGarbage() {
+  const res = await axios.get("/api/garbage/today");
+  return res.data.garbage;
 }
 
 export async function createGarbage(data: Garbage) {

@@ -147,8 +147,24 @@ const AppRoutes = () => {
           path="/waste-management/history"
           element={withLayout(
             MainLayout,
-            GarbageTable,
-            !userPermissionObject?.[PermissionKeys.WASTE_MNG_HISTORY_VIEW]
+            () => {
+              return <GarbageTable isTodayGarbage={false} isGarbage={true}/>;
+            },
+            !userPermissionObject?.[
+              PermissionKeys.WASTE_MNG_HISTORY_VIEW
+            ]
+          )}
+        />
+        <Route
+          path="/waste-management/today-history"
+          element={withLayout(
+            MainLayout,
+            () => {
+              return <GarbageTable isTodayGarbage={true} isGarbage={false}/>;
+            },
+            !userPermissionObject?.[
+              PermissionKeys.WASTE_MNG_HISTORY_VIEW
+            ]
           )}
         />
         <Route
