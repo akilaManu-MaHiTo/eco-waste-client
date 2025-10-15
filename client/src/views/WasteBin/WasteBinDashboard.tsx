@@ -23,8 +23,6 @@ import TrendChartCard from "./components/TrendChartCard";
 import PieChartCard from "./components/PieChartCard";
 import CollectionHistory from "./components/CollectionHistory";
 import BinUtilization from "./components/BinUtilization";
-import UserCategoryList from "./components/UserCategoryList";
-
 type TrendChartPoint = {
 	date: string;
 	totalWeight: number;
@@ -331,11 +329,9 @@ const WasteBinDashboard: React.FC = () => {
 				formatTime={formatTime}
 			/>
 
-			{/* Bottom widgets row (2 equal columns on md+, stacked on xs) */}
+			{/* Bottom widgets row  */}
 			<Stack spacing={3} direction={{ xs: "column", md: "row" }}>
-				<Box sx={{ flex: { md: 1 }, width: { xs: "100%" } }}>
-					<UserCategoryList items={summaryData} />
-				</Box>
+				
 
 				<Box sx={{ flex: { md: 1 }, width: { xs: "100%" } }}>
 					<BinUtilization
