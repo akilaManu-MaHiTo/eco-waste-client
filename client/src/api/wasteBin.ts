@@ -3,7 +3,7 @@ import { create } from "domain";
 import { z } from "zod";
 
 export const wasteBinSchema = z.object({
-    _id: z.string(),
+  _id: z.string(),
   binId: z.string(),
   location: z.string(),
   currentWasteLevel: z.number(),
@@ -11,6 +11,8 @@ export const wasteBinSchema = z.object({
   availability: z.boolean(),
   binType: z.string(),
   createdAt: z.date(),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
 });
 export type WasteBin = z.infer<typeof wasteBinSchema>;
 

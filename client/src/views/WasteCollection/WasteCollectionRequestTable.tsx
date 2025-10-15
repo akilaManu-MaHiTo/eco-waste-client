@@ -1,47 +1,41 @@
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import React, { useState } from "react";
 import {
   Alert,
   Box,
   Button,
-  Chip,
-  colors,
+  Container,
   LinearProgress,
+  Paper,
   Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
   TableFooter,
+  TableHead,
   TablePagination,
+  TableRow,
   Theme,
   Typography,
   useMediaQuery,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
+import { GarbageRequest } from "../../api/garbageRequestApi";
 import theme from "../../theme";
 import PageTitle from "../../components/PageTitle";
 import Breadcrumb from "../../components/BreadCrumb";
-import { useMemo, useState } from "react";
-import ViewDataDrawer, { DrawerHeader } from "../../components/ViewDataDrawer";
 import AddIcon from "@mui/icons-material/Add";
-import AddOrEditGarbageDialog from "./AddOrEditGarbageDialog";
-import { differenceInDays, format } from "date-fns";
+import { wasteCollectionRequest } from "../../api/garbage";
+import ViewDataDrawer, { DrawerHeader } from "../../components/ViewDataDrawer";
+import ViewGarbageContent from "../Garbage/ViewGarbageContent";
+import AddOrEditGarbageDialog from "../Garbage/AddOrEditGarbageDialog";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
-import { useSnackbar } from "notistack";
+import { format } from "date-fns";
 
-import ViewGarbageContent from "./ViewGarbageContent";
-import { PermissionKeys } from "../Administration/SectionList";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import queryClient from "../../state/queryClient";
-import useCurrentUserHaveAccess from "../../hooks/useCurrentUserHaveAccess";
-import { deleteGarbage, fetchGarbage, Garbage } from "../../api/garbage";
-import CustomButton from "../../components/CustomButton";
-
-function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
+function WasteCollectionRequestTable() {
   const { enqueueSnackbar } = useSnackbar();
   const [openViewDrawer, setOpenViewDrawer] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<Garbage>(null);
+  const [selectedRow, setSelectedRow] = useState<GarbageRequest>(null);
   const [openAddOrEditDialog, setOpenAddOrEditDialog] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [page, setPage] = useState(0);
@@ -71,62 +65,6 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
     theme.breakpoints.down("md")
   );
 
-  const { data: garbageData, isFetching: isGarbageDataFetching } = useQuery({
-    queryKey: ["garbage"],
-    queryFn: fetchGarbage,
-  });
-  console.log("garbageData", garbageData);
-
-  //   const paginatedRiskData = useMemo(() => {
-  //     if (isAssignedTasks) {
-  //       if (!assignedRiskData) return [];
-  //       if (rowsPerPage === -1) {
-  //         return assignedRiskData;
-  //       }
-  //       return assignedRiskData.slice(
-  //         page * rowsPerPage,
-  //         page * rowsPerPage + rowsPerPage
-  //       );
-  //     } else {
-  //       if (!riskData) return [];
-  //       if (rowsPerPage === -1) {
-  //         return riskData;
-  //       }
-  //       return riskData.slice(
-  //         page * rowsPerPage,
-  //         page * rowsPerPage + rowsPerPage
-  //       );
-  //     }
-  //   }, [isAssignedTasks, assignedRiskData, page, rowsPerPage, riskData]);
-
-  const { mutate: deleteGarbageMutation, isPending: isDeleting } = useMutation({
-    mutationFn: deleteGarbage,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hazardRisks"] });
-      enqueueSnackbar("Waste Deleted Successfully!", {
-        variant: "success",
-      });
-      setSelectedRow(null);
-      setDeleteDialogOpen(false);
-      setOpenViewDrawer(false);
-    },
-    onError: () => {
-      enqueueSnackbar(`Waste Delete Failed!`, {
-        variant: "error",
-      });
-    },
-  });
-
-  const isWasteCreateDisabled = !useCurrentUserHaveAccess(
-    PermissionKeys.WASTE_MNG_HISTORY_CREATE
-  );
-  const isWasteEditDisabled = !useCurrentUserHaveAccess(
-    PermissionKeys.WASTE_MNG_HISTORY_EDIT
-  );
-  const isWasteDeleteDisabled = !useCurrentUserHaveAccess(
-    PermissionKeys.WASTE_MNG_HISTORY_DELETE
-  );
-
   return (
     <Stack>
       <Box
@@ -150,7 +88,7 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
             maxWidth: isMobile ? "88vw" : "100%",
           }}
         >
-          {!isAssignedTasks && (
+          {
             <Box
               sx={{
                 padding: theme.spacing(2),
@@ -166,14 +104,13 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
                   setSelectedRow(null);
                   setOpenAddOrEditDialog(true);
                 }}
-                disabled={isWasteCreateDisabled}
+                // disabled={isWasteCreateDisabled}
               >
                 Add Waste
               </Button>
             </Box>
-          )}
-          {isGarbageDataFetching ||
-            (isDeleting && <LinearProgress sx={{ width: "100%" }} />)}
+          }
+          {/* {(<LinearProgress sx={{ width: "100%" }} />)} */}
           <Table aria-label="simple table">
             <TableHead
               sx={{ backgroundColor: "var(--eco-waste-secondary-green)" }}
@@ -188,8 +125,8 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {garbageData?.length > 0 ? (
-                garbageData?.map((row) => (
+              {wasteCollectionRequest?.length > 0 ? (
+                wasteCollectionRequest?.map((row) => (
                   <TableRow
                     key={`${row._id}`}
                     sx={{
@@ -207,12 +144,12 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
                         ? format(new Date(row?.createdAt), "yyyy-MM-dd")
                         : "N/A"}
                     </TableCell>
-                    <TableCell align="left">{row.garbageCategory}</TableCell>
-                    <TableCell align="left">{row?.binId?.binId}</TableCell>
+                    <TableCell align="left">{row.userId.name}</TableCell>
+                    <TableCell align="left">{row?.userId.mobile}</TableCell>
                     <TableCell align="left">
-                      {row.wasteWeight + " " + "Kg"}
+                      {row.garbageId.thresholdLevel + " " + "Kg"}
                     </TableCell>
-                    <TableCell align="left">
+                    {/* <TableCell align="left">
                       {row.status === "Pending" ? (
                         <Chip
                           label="Pending"
@@ -238,7 +175,7 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
                           }}
                         />
                       )}
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))
               ) : (
@@ -255,7 +192,7 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
                   rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
                   colSpan={100}
                   count={
-                    isAssignedTasks ? garbageData?.length : garbageData?.length
+                    wasteCollectionRequest ? wasteCollectionRequest.length : 0
                   }
                   rowsPerPage={rowsPerPage}
                   page={page}
@@ -278,26 +215,22 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
             <DrawerHeader
               title="Waste Details"
               handleClose={() => setOpenViewDrawer(false)}
-              disableEdit={
-                isWasteEditDisabled || selectedRow?.status === "Requested"
-              }
+              //   disableEdit={
+              //     isWasteEditDisabled || selectedRow?.status === "Collected"
+              //   }
               onEdit={() => {
                 setSelectedRow(selectedRow);
                 setOpenAddOrEditDialog(true);
               }}
               onDelete={() => setDeleteDialogOpen(true)}
-              disableDelete={
-                isWasteDeleteDisabled || selectedRow?.status === "Requested"
-              }
+              //   disableDelete={
+              //     isWasteDeleteDisabled || selectedRow?.status === "Collected"
+              //   }
             />
 
             {selectedRow && (
               <Stack>
-                <ViewGarbageContent
-                  garbage={selectedRow}
-                  isGarbageDataFetching={isGarbageDataFetching}
-                  onClose={() => setOpenViewDrawer(false)}
-                />
+                <ViewGarbageContent garbage={selectedRow} />
               </Stack>
             )}
           </Stack>
@@ -328,7 +261,7 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
           }
           handleClose={() => setDeleteDialogOpen(false)}
           deleteFunc={async () => {
-            deleteGarbageMutation(selectedRow._id);
+            // deleteGarbageMutation(selectedRow._id);
           }}
           onSuccess={() => {
             setOpenViewDrawer(false);
@@ -346,4 +279,4 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
   );
 }
 
-export default GarbageTable;
+export default WasteCollectionRequestTable;

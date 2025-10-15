@@ -31,6 +31,7 @@ function TimePickerComponent({
         <MobileTimePicker
           value={value}
           onChange={onChange}
+          disablePast={true}
           defaultValue={defaultValue}
           sx={{
             border: error ? "1px solid var(--pallet-red)" : "",
@@ -41,6 +42,7 @@ function TimePickerComponent({
           value={value}
           onChange={onChange}
           defaultValue={defaultValue}
+          disablePast={true}
           className="date-picker"
           timeSteps={{ minutes: 1 }}
           sx={{

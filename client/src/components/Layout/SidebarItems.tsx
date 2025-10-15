@@ -94,6 +94,12 @@ export const sidebarItems: Array<SidebarItem> = [
     accessKey: PermissionKeys.ADMIN_BIN_MNG_VIEW,
   },
   {
+    title: "Waste Collection Requests",
+    icon: <DeleteOutlinedIcon fontSize="small" />,
+    href: "/admin/waste-collection-requests",
+    accessKey: PermissionKeys.ADMIN_BIN_MNG_VIEW,
+  },
+  {
     headline: "Waste Management",
     accessKey: PermissionKeys.WASTE_MNG_VIEW,
   },
