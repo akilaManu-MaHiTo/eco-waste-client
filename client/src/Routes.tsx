@@ -38,6 +38,10 @@ const GarbageTable = React.lazy(() => import("./views/Garbage/GarbageTable"));
 const WasteCollectionTable = React.lazy(
   () => import("./views/WasteCollection/WasteCollectionTable.tsx")
 );
+//Waste Collection Management
+const BinRequestTable = React.lazy(
+  () => import("./views/BinRequest/BinRequestTable.tsx")
+);
 
 // Truck Management
 const TruckTable = React.lazy(
@@ -207,6 +211,14 @@ const AppRoutes = () => {
             MainLayout,
             WasteCollectionTable,
             !userPermissionObject?.[PermissionKeys.INSIGHT_VIEW]
+          )}
+        />
+        <Route
+          path="/waste-management/bin-request"
+          element={withLayout(
+            MainLayout,
+            BinRequestTable,
+            !userPermissionObject?.[PermissionKeys.BIN_REQUEST_VIEW]
           )}
         />
         <Route
