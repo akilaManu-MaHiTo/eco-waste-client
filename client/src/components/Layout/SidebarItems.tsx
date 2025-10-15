@@ -113,7 +113,7 @@ export const sidebarItems: Array<SidebarItem> = [
   {
     title: "Bin Request",
     icon: <DeleteOutlinedIcon fontSize="small" />,
-    href: "/waste-management/bin-request",
+    href: "/waste-management/bin-reques",
     accessKey: PermissionKeys.BIN_REQUEST_VIEW,
   },
   {
