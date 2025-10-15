@@ -103,6 +103,7 @@ export default function AddOrEditGarbageDialog({
     mutationFn: createGarbage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["garbage"] });
+      queryClient.invalidateQueries({ queryKey: ["today-garbage"] });
       enqueueSnackbar("Waste Added To Bin Successfully!", {
         variant: "success",
       });
@@ -119,7 +120,8 @@ export default function AddOrEditGarbageDialog({
   const { mutate: updateGarbageMutation } = useMutation({
     mutationFn: updateGarbage,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hazardRisks"] });
+      queryClient.invalidateQueries({ queryKey: ["garbage"] });
+      queryClient.invalidateQueries({ queryKey: ["today-garbage"] });
       enqueueSnackbar("Waste Updated Successfully!", {
         variant: "success",
       });
