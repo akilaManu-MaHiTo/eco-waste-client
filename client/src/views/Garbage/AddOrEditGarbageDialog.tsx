@@ -247,13 +247,17 @@ export default function AddOrEditGarbageDialog({
                   <Autocomplete
                     {...field}
                     onChange={(_, data) => field.onChange(data)}
-                    getOptionLabel={(option) => option?.binId || ""}
+                    getOptionLabel={(option) =>
+                      typeof option === "string"
+                        ? option
+                        : option?.binId || option?.name || ""
+                    }
                     size="small"
                     options={garbageBinData || []}
                     sx={{ flex: 1, margin: "0.5rem" }}
                     renderOption={(props, option) => (
-                      <li {...props} key={option._id}>
-                        {option.binId}
+                      <li {...props} key={typeof option === "string" ? option : option._id}>
+                        {typeof option === "string" ? option : option.binId}
                       </li>
                     )}
                     renderInput={(params) => (
