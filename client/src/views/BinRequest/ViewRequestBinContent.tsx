@@ -1,7 +1,7 @@
-import { Alert, Box, CircularProgress, Stack } from "@mui/material";
+import { Alert, Box, CircularProgress, Stack, Typography } from "@mui/material";
 import useIsMobile from "../../customHooks/useIsMobile";
 import { DrawerContentItem } from "../../components/ViewDataDrawer";
-import { WasteBin } from "../../api/wasteBin";
+import { WasteBin, updateWasteBin } from "../../api/wasteBin";
 import ApproveConfirmationModal from "../../components/ApproveConfirmationModal";
 import { useEffect, useState } from "react";
 import CustomButton from "../../components/CustomButton";
@@ -13,6 +13,10 @@ import { Controller, useForm } from "react-hook-form";
 import DatePickerComponent from "../../components/DatePickerComponent";
 import TimePickerComponent from "../../components/TimePickerComponent";
 import { format } from "date-fns";
+import { createBinCollectionRequest } from "../../api/binCollectionRequest";
+import { useSnackbar } from "notistack";
+import { useGeolocation } from "../../hooks/useGeolocation";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 interface BinRequestForm {
   collectionDate: Date;
@@ -21,9 +25,11 @@ interface BinRequestForm {
 
 function ViewRequestBinContent({
   wasteBin,
+  isWasteBinDataFetching,
   onClose,
 }: {
   wasteBin: WasteBin;
+  isWasteBinDataFetching: boolean;
   onClose: () => void;
 }) {
   const { isTablet } = useIsMobile();
@@ -31,7 +37,13 @@ function ViewRequestBinContent({
   const { user } = useCurrentUser();
   const [loadingPayment, setLoadingPayment] = useState(false);
   const BIN_REQUEST_PRICE = 150;
-
+  const { enqueueSnackbar } = useSnackbar();
+  const {
+    latitude,
+    longitude,
+    error: locationError,
+    loading: locationLoading,
+  } = useGeolocation();
   const {
     register,
     handleSubmit,
@@ -41,7 +53,6 @@ function ViewRequestBinContent({
     reset,
     setValue,
   } = useForm<BinRequestForm>({});
-
   const selectedDate = watch("collectionDate");
 
   useEffect(() => {
@@ -74,12 +85,20 @@ function ViewRequestBinContent({
   ) => {
     try {
       setLoadingPayment(true);
+      if (!latitude || !longitude) {
+        enqueueSnackbar(
+          "Unable to get your location. Please enable location access.",
+          {
+            variant: "error",
+          }
+        );
+        setLoadingPayment(false);
+        return;
+      }
       const orderId = uuidv4();
       const BASE_URL = import.meta.env.VITE_API_BASE_URL;
       const MERCHANT_ID = import.meta.env.VITE_MERCHANT_ID;
-
       const token = localStorage.getItem("token");
-
       const response = await fetch(`${BASE_URL}/api/payhere/hash`, {
         method: "POST",
         headers: {
@@ -117,11 +136,41 @@ function ViewRequestBinContent({
       };
 
       window.payhere.startPayment(payment);
-      window.payhere.onCompleted = function onCompleted() {
-        queryClient.invalidateQueries({ queryKey: ["wasteBin"] });
-        console.log("Payment completed. OrderID:", payment.order_id);
-        setLoadingPayment(false);
-        onClose();
+      window.payhere.onCompleted = async function onCompleted() {
+        try {
+          const collectionDate = watch("collectionDate");
+          const collectionTime = watch("collectionTime");
+
+          await createBinCollectionRequest({
+            binId: wasteBin._id!,
+            userId: user?._id || "",
+            collectionDate: format(new Date(collectionDate), "yyyy-MM-dd"),
+            collectionTime: format(new Date(collectionTime), "HH:mm"),
+            latitude: latitude!,
+            longitude: longitude!,
+            orderId: orderId,
+            amount: pkg.price,
+            paymentStatus: "completed",
+          });
+
+          await updateWasteBin({
+            ...wasteBin,
+            availability: false,
+          });
+
+          enqueueSnackbar("Request submitted successfully!", {
+            variant: "success",
+          });
+          queryClient.invalidateQueries({ queryKey: ["wasteBin"] });
+          setLoadingPayment(false);
+          onClose();
+        } catch (error) {
+          console.error("Error saving request:", error);
+          enqueueSnackbar("Payment successful but failed to save request", {
+            variant: "warning",
+          });
+          setLoadingPayment(false);
+        }
       };
     } catch (err) {
       console.error("Error starting payment:", err);
@@ -217,6 +266,21 @@ function ViewRequestBinContent({
             </Box>
           </>
         )}
+        <Box sx={{ margin: "0.5rem", marginTop: "1rem" }}>
+          {locationLoading ? (
+            <Alert severity="info" icon={<CircularProgress size={20} />}>
+              Getting your location...
+            </Alert>
+          ) : locationError ? (
+            <Alert severity="error">{locationError}</Alert>
+          ) : latitude && longitude ? (
+            <Alert severity="success" icon={<LocationOnIcon />}>
+              <Typography variant="body2">
+                Location: {latitude.toFixed(6)}, {longitude.toFixed(6)}
+              </Typography>
+            </Alert>
+          ) : null}
+        </Box>
 
         {wasteBin?.availability ? (
           <Box>
@@ -228,7 +292,9 @@ function ViewRequestBinContent({
                 marginX: "0.5rem",
               }}
               size="medium"
-              disabled={loadingPayment}
+              disabled={
+                loadingPayment || !latitude || !longitude || locationLoading
+              }
               endIcon={
                 loadingPayment ? (
                   <CircularProgress size={20} color="inherit" />
@@ -238,6 +304,19 @@ function ViewRequestBinContent({
             >
               Request Bin Collection
             </CustomButton>
+            {(!latitude || !longitude) && !locationLoading && (
+              <Typography
+                variant="caption"
+                color="error"
+                sx={{
+                  marginX: "0.5rem",
+                  display: "block",
+                  marginTop: "0.5rem",
+                }}
+              >
+                Location access is required to request bin collection
+              </Typography>
+            )}
           </Box>
         ) : (
           <Alert severity="warning" style={{ marginTop: "1rem" }}>

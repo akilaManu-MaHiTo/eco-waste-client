@@ -153,18 +153,21 @@ function BinRequestTable() {
                       <Button
                         variant="contained"
                         size="small"
-                        sx={{ backgroundColor: "var(--eco-waste-blue)" }}
+                        sx={{
+                          backgroundColor: row.availability
+                            ? "var(--eco-waste-blue)"
+                            : "#9e9e9e",
+                        }}
+                        disabled={!row.availability}
                         onClick={(e) => {
                           e.stopPropagation();
-                          enqueueSnackbar(
-                            "Request functionality coming soon!",
-                            {
-                              variant: "info",
-                            }
-                          );
+                          if (row.availability) {
+                            setSelectedRow(row);
+                            setOpenViewDrawer(true);
+                          }
                         }}
                       >
-                        Request
+                        {row.availability ? "Request" : "Pending"}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -212,6 +215,7 @@ function BinRequestTable() {
               <Stack>
                 <ViewRequestBinContent
                   wasteBin={selectedRow}
+                  isWasteBinDataFetching={isWasteBinDataFetching}
                   onClose={() => {
                     setOpenViewDrawer(false);
                     setSelectedRow(null);
