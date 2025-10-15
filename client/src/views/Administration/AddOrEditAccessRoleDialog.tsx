@@ -129,7 +129,7 @@ function AddOrEditAccessRoleDialog({
               flexDirection: "column",
             }}
           >
-            <Box>{defaultValues._id}</Box>
+            <Box>{defaultValues?._id}</Box>
             <TextField
               required
               label="Role Name"
