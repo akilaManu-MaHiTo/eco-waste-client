@@ -32,13 +32,11 @@ const OrganizationTable = React.lazy(
 
 //Waste Management
 const GarbageTable = React.lazy(() => import("./views/Garbage/GarbageTable"));
-const WasteBinTable = React.lazy(
-  () => import("./views/WasteBin/WasteBinTable")
-);
+
 
 //Waste Collection Management
 const WasteCollectionTable = React.lazy(
-  () => import("./views/Wastecollection/WasteCollectionTable.tsx")
+  () => import("./views/WasteCollection/WasteCollectionTable.tsx")
 );
 
 // Truck Management
@@ -220,8 +218,6 @@ const AppRoutes = () => {
           )}
         />
       </Route>
-      <Route path="*" element={<Navigate to="/" replace />}></Route>
-      <Route path="/404" element={<div>404 Not Found</div>}></Route>
     </Routes>
   );
 };

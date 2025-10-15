@@ -30,6 +30,7 @@ import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import TodayOutlinedIcon from '@mui/icons-material/TodayOutlined';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 export interface SidebarItem {
   title?: string;
   headline?: string;
@@ -141,7 +142,7 @@ export const sidebarItems: Array<SidebarItem> = [
   {
     title: "Collection History",
     icon: <HistoryOutlinedIcon fontSize="small" />,
-    href: "/waste-management/history",
+    href: "/waste-collection/history",
     accessKey: PermissionKeys.INSIGHT_VIEW,
   },
 ];
