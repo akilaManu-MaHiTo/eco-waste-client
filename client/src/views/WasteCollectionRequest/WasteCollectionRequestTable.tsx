@@ -86,7 +86,7 @@ function WasteCollectionRequestTable() {
 
       <Stack alignItems="flex-end">
         {checkedRows.length > 0 && (
-          <Box sx={{ py:2, display: "flex", justifyContent: "flex-end" }}>
+          <Box sx={{ py: 2, display: "flex", justifyContent: "flex-end" }}>
             <Button
               variant="contained"
               sx={{ backgroundColor: "var(--eco-waste-blue)" }}
@@ -111,12 +111,12 @@ function WasteCollectionRequestTable() {
             >
               <TableRow>
                 <TableCell>Reference</TableCell>
-                <TableCell>Date</TableCell>
+                <TableCell>Date & Time</TableCell>
                 <TableCell>User</TableCell>
                 <TableCell>Mobile</TableCell>
                 <TableCell>Weight</TableCell>
                 <TableCell>Status</TableCell>
-                <TableCell>Check</TableCell>
+                <TableCell>Select</TableCell>
               </TableRow>
             </TableHead>
 
@@ -132,16 +132,13 @@ function WasteCollectionRequestTable() {
                     }}
                   >
                     <TableCell>{row._id}</TableCell>
-                    <TableCell>
-                      {row.createdAt
-                        ? format(new Date(row.createdAt), "yyyy-MM-dd")
-                        : "N/A"}
-                    </TableCell>
+                    <TableCell>{row.dateAndTime}</TableCell>
                     <TableCell>{row.garbageId?.createdBy?.username}</TableCell>
                     <TableCell>{row.garbageId?.createdBy?.mobile}</TableCell>
                     <TableCell>
                       {row.garbageId?.binId?.thresholdLevel} Kg
                     </TableCell>
+
                     <TableCell>
                       <Chip
                         label={row.status}
@@ -149,7 +146,7 @@ function WasteCollectionRequestTable() {
                           backgroundColor:
                             row.status === "Pending"
                               ? "var(--eco-waste-blue)"
-                              : row.status === "Requested"
+                              : row.status === "Approved"
                               ? "var(--pallet-light-blue)"
                               : "var(--eco-waste-primary-green)",
                           color: "white",
@@ -157,11 +154,19 @@ function WasteCollectionRequestTable() {
                       />
                     </TableCell>
                     <TableCell>
-                      <Checkbox
-                        checked={checkedRows.includes(row._id)}
-                        onClick={(e) => e.stopPropagation()}
-                        onChange={() => handleCheckboxChange(row)}
-                      />
+                      {row.status === "Pending" && (
+                        <Checkbox
+                          sx={{
+                            color: "var(--eco-waste-blue)",
+                            "&.Mui-checked": {
+                              color: "var(--eco-waste-blue)",
+                            },
+                          }}
+                          checked={checkedRows.includes(row._id)}
+                          onClick={(e) => e.stopPropagation()}
+                          onChange={() => handleCheckboxChange(row)}
+                        />
+                      )}
                     </TableCell>
                   </TableRow>
                 ))
@@ -210,7 +215,7 @@ function WasteCollectionRequestTable() {
                 onEdit={() => setOpenCollectionRouteModal(true)}
                 onDelete={() => setDeleteDialogOpen(true)}
               />
-              {!checkedRows.includes(selectedRow._id) && (
+              {selectedRow && (
                 <ViewGarbageCollectionContent garbageCollection={selectedRow} />
               )}
             </Stack>
