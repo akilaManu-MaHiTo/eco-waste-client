@@ -29,6 +29,7 @@ import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import TodayOutlinedIcon from '@mui/icons-material/TodayOutlined';
 export interface SidebarItem {
   title?: string;
   headline?: string;
@@ -108,6 +109,12 @@ export const sidebarItems: Array<SidebarItem> = [
     icon: <DeleteOutlinedIcon fontSize="small" />,
     href: "/waste-management/bin-request",
     accessKey: PermissionKeys.BIN_REQUEST_VIEW,
+  },
+  {
+    title: "Daily Waste",
+    icon: <TodayOutlinedIcon fontSize="small" />,
+    href: "/waste-management/history/today",
+    accessKey: PermissionKeys.WASTE_MNG_HISTORY_VIEW,
   },
   {
     title: "Waste History",
