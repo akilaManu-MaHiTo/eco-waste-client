@@ -45,7 +45,13 @@ const WasteCollectionTable = React.lazy(
 const TruckTable = React.lazy(
   () => import("./views/TruckManagement/TruckTable.tsx")
 );
+const WasteBinTable = React.lazy(() => import("./views/WasteBin/WasteBinTable"));
+const WasteBinDashboard = React.lazy(() => import("./views/WasteBin/WasteBinDashboard"));
 
+//Waste Collection Requests
+const WasteCollectionRequestTable = React.lazy(
+  () => import("./views/WasteCollection/WasteCollectionRequestTable")
+);
 function withLayout(Layout: any, Component: any, restrictAccess = false) {
   return (
     <Layout>
@@ -161,8 +167,32 @@ const AppRoutes = () => {
           path="/waste-management/history"
           element={withLayout(
             MainLayout,
-            GarbageTable,
-            !userPermissionObject?.[PermissionKeys.WASTE_MNG_HISTORY_VIEW]
+            () => {
+              return <GarbageTable isTodayGarbage={false} isGarbage={true}/>;
+            },
+            !userPermissionObject?.[
+              PermissionKeys.WASTE_MNG_HISTORY_VIEW
+            ]
+          )}
+        />
+        <Route
+          path="/waste-management/today-history"
+          element={withLayout(
+            MainLayout,
+            () => {
+              return <GarbageTable isTodayGarbage={true} isGarbage={false}/>;
+            },
+            !userPermissionObject?.[
+              PermissionKeys.WASTE_MNG_HISTORY_VIEW
+            ]
+          )}
+        />
+        <Route
+          path="/waste-management/dashboard"
+          element={withLayout(
+            MainLayout,
+            WasteBinDashboard,
+            !userPermissionObject?.[PermissionKeys.WASTE_MNG_DASHBOARD_VIEW]
           )}
         />
         <Route
@@ -181,7 +211,17 @@ const AppRoutes = () => {
             !userPermissionObject?.[PermissionKeys.INSIGHT_VIEW]
           )}
         />
+        <Route
+          path="/admin/waste-collection-requests"
+          element={withLayout(
+            MainLayout,
+            WasteCollectionRequestTable,
+            !userPermissionObject?.[PermissionKeys.ADMIN_BIN_MNG_VIEW]
+          )}
+        />
       </Route>
+      <Route path="*" element={<Navigate to="/" replace />}></Route>
+      <Route path="/404" element={<div>404 Not Found</div>}></Route>
     </Routes>
   );
 };

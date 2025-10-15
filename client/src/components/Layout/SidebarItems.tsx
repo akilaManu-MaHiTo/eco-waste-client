@@ -22,14 +22,14 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import KeyIcon from "@mui/icons-material/Key";
 import { PermissionKeys } from "../../views/Administration/SectionList";
-import PaymentOutlinedIcon from "@mui/icons-material/PaymentOutlined";
-import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
-import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
-import VpnKeyOutlinedIcon from "@mui/icons-material/VpnKeyOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import PaymentOutlinedIcon from '@mui/icons-material/PaymentOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
+import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
+import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined';
+import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import TodayOutlinedIcon from '@mui/icons-material/TodayOutlined';
 export interface SidebarItem {
   title?: string;
   headline?: string;
@@ -101,6 +101,12 @@ export const sidebarItems: Array<SidebarItem> = [
     accessKey: PermissionKeys.ADMIN_USERS_VIEW,
   },
   {
+    title: "Waste Collection Requests",
+    icon: <DeleteOutlinedIcon fontSize="small" />,
+    href: "/admin/waste-collection-requests",
+    accessKey: PermissionKeys.ADMIN_BIN_MNG_VIEW,
+  },
+  {
     headline: "Waste Management",
     accessKey: PermissionKeys.WASTE_MNG_VIEW,
   },
@@ -113,8 +119,14 @@ export const sidebarItems: Array<SidebarItem> = [
   {
     title: "Bin Request",
     icon: <DeleteOutlinedIcon fontSize="small" />,
-    href: "/waste-management/bin-request",
+    href: "/waste-management/bin-reques",
     accessKey: PermissionKeys.BIN_REQUEST_VIEW,
+  },
+  {
+    title: "Daily Waste",
+    icon: <TodayOutlinedIcon fontSize="small" />,
+    href: "/waste-management/today-history",
+    accessKey: PermissionKeys.WASTE_MNG_HISTORY_VIEW,
   },
   {
     title: "Waste History",

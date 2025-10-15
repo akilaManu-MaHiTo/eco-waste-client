@@ -35,10 +35,21 @@ import { PermissionKeys } from "../Administration/SectionList";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import queryClient from "../../state/queryClient";
 import useCurrentUserHaveAccess from "../../hooks/useCurrentUserHaveAccess";
-import { deleteGarbage, fetchGarbage, Garbage } from "../../api/garbage";
+import {
+  deleteGarbage,
+  fetchGarbage,
+  fetchTodayGarbage,
+  Garbage,
+} from "../../api/garbage";
 import CustomButton from "../../components/CustomButton";
 
-function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
+function GarbageTable({
+  isTodayGarbage = false,
+  isGarbage = true,
+}: {
+  isTodayGarbage?: boolean;
+  isGarbage?: boolean;
+}) {
   const { enqueueSnackbar } = useSnackbar();
   const [openViewDrawer, setOpenViewDrawer] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Garbage>(null);
@@ -64,7 +75,7 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
 
   const breadcrumbItems = [
     { title: "Home", href: "/home" },
-    { title: `Waste Management` },
+    { title: `${isTodayGarbage ? "Daily Waste" : "Waste Management"}` },
   ];
 
   const isMobile = useMediaQuery((theme: Theme) =>
@@ -74,34 +85,22 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
   const { data: garbageData, isFetching: isGarbageDataFetching } = useQuery({
     queryKey: ["garbage"],
     queryFn: fetchGarbage,
+    enabled: !isTodayGarbage,
   });
+  console.log("garbageData", garbageData);
 
-  //   const paginatedRiskData = useMemo(() => {
-  //     if (isAssignedTasks) {
-  //       if (!assignedRiskData) return [];
-  //       if (rowsPerPage === -1) {
-  //         return assignedRiskData;
-  //       }
-  //       return assignedRiskData.slice(
-  //         page * rowsPerPage,
-  //         page * rowsPerPage + rowsPerPage
-  //       );
-  //     } else {
-  //       if (!riskData) return [];
-  //       if (rowsPerPage === -1) {
-  //         return riskData;
-  //       }
-  //       return riskData.slice(
-  //         page * rowsPerPage,
-  //         page * rowsPerPage + rowsPerPage
-  //       );
-  //     }
-  //   }, [isAssignedTasks, assignedRiskData, page, rowsPerPage, riskData]);
+  const { data: todayGarbageData, isFetching: isTodayGarbageDataFetching } =
+    useQuery({
+      queryKey: ["today-garbage"],
+      queryFn: fetchTodayGarbage,
+      enabled: isTodayGarbage,
+    });
 
   const { mutate: deleteGarbageMutation, isPending: isDeleting } = useMutation({
     mutationFn: deleteGarbage,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hazardRisks"] });
+      queryClient.invalidateQueries({ queryKey: ["garbage"] });
+      queryClient.invalidateQueries({ queryKey: ["today-garbage"] });
       enqueueSnackbar("Waste Deleted Successfully!", {
         variant: "success",
       });
@@ -125,6 +124,27 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
   const isWasteDeleteDisabled = !useCurrentUserHaveAccess(
     PermissionKeys.WASTE_MNG_HISTORY_DELETE
   );
+  const paginatedGarbageData = useMemo(() => {
+    if (isTodayGarbage) {
+      if (!todayGarbageData) return [];
+      if (rowsPerPage === -1) {
+        return todayGarbageData;
+      }
+      return todayGarbageData.slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage
+      );
+    } else {
+      if (!garbageData) return [];
+      if (rowsPerPage === -1) {
+        return garbageData;
+      }
+      return garbageData.slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage
+      );
+    }
+  }, [garbageData, page, rowsPerPage, todayGarbageData, isTodayGarbage]);
 
   return (
     <Stack>
@@ -137,7 +157,9 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
           overflowX: "hidden",
         }}
       >
-        <PageTitle title={`Waste Management`} />
+        <PageTitle
+          title={`${isTodayGarbage ? "Daily Waste" : "Waste Management"}`}
+        />
         <Breadcrumb breadcrumbs={breadcrumbItems} />
       </Box>
       <Stack sx={{ alignItems: "center" }}>
@@ -149,7 +171,7 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
             maxWidth: isMobile ? "88vw" : "100%",
           }}
         >
-          {!isAssignedTasks && (
+          {isTodayGarbage && (
             <Box
               sx={{
                 padding: theme.spacing(2),
@@ -171,8 +193,9 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
               </Button>
             </Box>
           )}
-          {isGarbageDataFetching ||
-            (isDeleting && <LinearProgress sx={{ width: "100%" }} />)}
+          {(isGarbageDataFetching ||
+            isTodayGarbageDataFetching ||
+            isDeleting) && <LinearProgress sx={{ width: "100%" }} />}
           <Table aria-label="simple table">
             <TableHead
               sx={{ backgroundColor: "var(--eco-waste-secondary-green)" }}
@@ -187,8 +210,8 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {garbageData?.length > 0 ? (
-                garbageData?.map((row) => (
+              {paginatedGarbageData?.length > 0 ? (
+                paginatedGarbageData?.map((row) => (
                   <TableRow
                     key={`${row._id}`}
                     sx={{
@@ -254,7 +277,9 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
                   rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
                   colSpan={100}
                   count={
-                    isAssignedTasks ? garbageData?.length : garbageData?.length
+                    isTodayGarbage
+                      ? todayGarbageData?.length || 0
+                      : garbageData?.length || 0
                   }
                   rowsPerPage={rowsPerPage}
                   page={page}
@@ -278,7 +303,7 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
               title="Waste Details"
               handleClose={() => setOpenViewDrawer(false)}
               disableEdit={
-                isWasteEditDisabled || selectedRow?.status === "Collected"
+                isWasteEditDisabled || selectedRow?.status === "Requested"
               }
               onEdit={() => {
                 setSelectedRow(selectedRow);
@@ -286,13 +311,17 @@ function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
               }}
               onDelete={() => setDeleteDialogOpen(true)}
               disableDelete={
-                isWasteDeleteDisabled || selectedRow?.status === "Collected"
+                isWasteDeleteDisabled || selectedRow?.status === "Requested"
               }
             />
 
             {selectedRow && (
               <Stack>
-                <ViewGarbageContent garbage={selectedRow} />
+                <ViewGarbageContent
+                  garbage={selectedRow}
+                  isGarbageDataFetching={isGarbageDataFetching}
+                  onClose={() => setOpenViewDrawer(false)}
+                />
               </Stack>
             )}
           </Stack>

@@ -645,7 +645,9 @@ export const LinkButton = React.memo(
     const { pathname } = useLocation();
     const { isTablet } = useIsMobile();
 
-    const isMatch = to === "/" ? pathname === to : pathname.startsWith(to);
+    const isMatch = to === "/" ? pathname === to : to === "/waste-management/history"
+        ? pathname === to
+        : pathname.startsWith(to);
 
     return (
       <Link
