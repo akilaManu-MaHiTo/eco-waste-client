@@ -34,9 +34,6 @@ const OrganizationTable = React.lazy(
 const GarbageTable = React.lazy(() => import("./views/Garbage/GarbageTable"));
 const WasteBinTable = React.lazy(() => import("./views/WasteBin/WasteBinTable"));
 const WasteBinDashboard = React.lazy(() => import("./views/WasteBin/WasteBinDashboard"));
-const WasteBinTable = React.lazy(
-  () => import("./views/WasteBin/WasteBinTable")
-);
 
 //Waste Collection Requests
 const WasteCollectionRequestTable = React.lazy(
