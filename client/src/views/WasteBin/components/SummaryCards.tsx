@@ -67,29 +67,53 @@ export const CurrentLevelCard = ({ loading, error, overallPercentFilled }: any) 
 };
 
 export const LastCollectionCard = ({ loading, error, lastCollected, formatDate, formatTime }: any) => {
-  const renderLoader = (active = true) => (active ? <Skeleton variant="rectangular" height={72} /> : null);
-
   return (
-    <Paper elevation={2} sx={{ padding: 3, height: "100%" }}>
-      <Typography variant="subtitle2" color="text.secondary">
-        Last Collection
-      </Typography>
-      {loading && renderLoader(true)}
+    <Paper 
+      elevation={3} 
+      sx={{ 
+        padding: 3, 
+        height: "100%",
+        background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+        color: "white",
+        position: "relative",
+        overflow: "hidden",
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          bottom: -30,
+          left: -30,
+          width: 120,
+          height: 120,
+          background: "rgba(255,255,255,0.1)",
+          borderRadius: "50%",
+        }
+      }}
+    >
+      <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+        <HistoryIcon sx={{ fontSize: 24 }} />
+        <Typography variant="subtitle2" fontWeight={600} sx={{ textTransform: "uppercase", letterSpacing: 0.5 }}>
+          Last Collection
+        </Typography>
+      </Stack>
+      {loading && <Skeleton variant="rectangular" height={120} sx={{ bgcolor: "rgba(255,255,255,0.1)" }} />}
       {error && (
-        <Typography variant="body2" color="error" sx={{ mt: 2 }}>
+        <Typography variant="body2" sx={{ mt: 2, color: "rgba(255,255,255,0.9)" }}>
           Unable to load collection history.
         </Typography>
       )}
       {!loading && !error && (
-        <Stack spacing={1.5} sx={{ mt: 2 }}>
-          <Typography variant="h5" sx={{ fontWeight: 600 }}>
+        <Stack spacing={1.5} sx={{ mt: 2, position: "relative", zIndex: 1 }}>
+          <Typography variant="h4" sx={{ fontWeight: 700 }}>
             {formatDate(lastCollected?.createdAt as string)}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {formatTime(lastCollected?.createdAt as string)}
-          </Typography>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <ScheduleIcon sx={{ fontSize: 20 }} />
+            <Typography variant="h6" sx={{ opacity: 0.9 }}>
+              {formatTime(lastCollected?.createdAt as string)}
+            </Typography>
+          </Stack>
           {!lastCollected && (
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{ opacity: 0.8 }}>
               No collection events recorded yet.
             </Typography>
           )}
@@ -100,32 +124,65 @@ export const LastCollectionCard = ({ loading, error, lastCollected, formatDate, 
 };
 
 export const NextCollectionCard = ({ loading, error, nextCollection, formatDate, formatTime }: any) => {
-  const renderLoader = (active = true) => (active ? <Skeleton variant="rectangular" height={72} /> : null);
-
   return (
-    <Paper elevation={2} sx={{ padding: 3, height: "100%" }}>
-      <Typography variant="subtitle2" color="text.secondary">
-        Next Collection
-      </Typography>
-      {loading && renderLoader(true)}
+    <Paper 
+      elevation={3} 
+      sx={{ 
+        padding: 3, 
+        height: "100%",
+        background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+        color: "white",
+        position: "relative",
+        overflow: "hidden",
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          top: -40,
+          right: -40,
+          width: 140,
+          height: 140,
+          background: "rgba(255,255,255,0.1)",
+          borderRadius: "50%",
+        }
+      }}
+    >
+      <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+        <ScheduleIcon sx={{ fontSize: 24 }} />
+        <Typography variant="subtitle2" fontWeight={600} sx={{ textTransform: "uppercase", letterSpacing: 0.5 }}>
+          Next Collection
+        </Typography>
+      </Stack>
+      {loading && <Skeleton variant="rectangular" height={120} sx={{ bgcolor: "rgba(255,255,255,0.1)" }} />}
       {error && (
-        <Typography variant="body2" color="error" sx={{ mt: 2 }}>
+        <Typography variant="body2" sx={{ mt: 2, color: "rgba(255,255,255,0.9)" }}>
           Unable to load upcoming collections.
         </Typography>
       )}
       {!loading && !error && (
-        <Stack spacing={1.5} sx={{ mt: 2 }}>
-          <Typography variant="h5" sx={{ fontWeight: 600 }}>
+        <Stack spacing={1.5} sx={{ mt: 2, position: "relative", zIndex: 1 }}>
+          <Typography variant="h4" sx={{ fontWeight: 700 }}>
             {formatDate(nextCollection?.createdAt as string, "Not scheduled")}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {formatTime(nextCollection?.createdAt as string, "--")}
-          </Typography>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <ScheduleIcon sx={{ fontSize: 20 }} />
+            <Typography variant="h6" sx={{ opacity: 0.9 }}>
+              {formatTime(nextCollection?.createdAt as string, "--")}
+            </Typography>
+          </Stack>
           {nextCollection && nextCollection.status && (
-            <Chip size="small" label={nextCollection.status} sx={{ alignSelf: "flex-start" }} />
+            <Chip 
+              size="small" 
+              label={nextCollection.status} 
+              sx={{ 
+                alignSelf: "flex-start",
+                bgcolor: "rgba(255,255,255,0.3)",
+                color: "white",
+                fontWeight: 600
+              }} 
+            />
           )}
           {!nextCollection && (
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{ opacity: 0.8 }}>
               No upcoming collection requests.
             </Typography>
           )}
