@@ -25,18 +25,19 @@ import Breadcrumb from "../../components/BreadCrumb";
 import { useMemo, useState } from "react";
 import ViewDataDrawer, { DrawerHeader } from "../../components/ViewDataDrawer";
 import AddIcon from "@mui/icons-material/Add";
-import AddOrEditWasteBinDialog from "./AddOrEditWasteBinDialog";
+import AddOrEditTrucknDialog from "./AddOrEditTruckDialog.tsx";
 import { differenceInDays, format } from "date-fns";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import { useSnackbar } from "notistack";
 
-import ViewWasteBinContent from "./ViewWasteBinContent";
+import ViewTruckContent from "./ViewTruckContent";
 import { PermissionKeys } from "../Administration/SectionList";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import queryClient from "../../state/queryClient";
 import useCurrentUserHaveAccess from "../../hooks/useCurrentUserHaveAccess";
 import CustomButton from "../../components/CustomButton";
 import { deleteWasteBin, fetchWasteBins, WasteBin } from "../../api/wasteBin";
+import { fetchTrucks } from "../../api/truck.ts";
 
 function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
   const { enqueueSnackbar } = useSnackbar();
@@ -64,19 +65,19 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
 
   const breadcrumbItems = [
     { title: "Home", href: "/home" },
-    { title: `Waste Bin Management` },
+    { title: `Truck Management` },
   ];
 
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("md")
   );
 
-  const { data: wasteBinData, isFetching: isWasteBinDataFetching } = useQuery({
-    queryKey: ["wasteBin"],
-    queryFn: fetchWasteBins,
+  const { data: truckData, isFetching: istruckDataFetching } = useQuery({
+    queryKey: ["truck-data"],
+    queryFn: fetchTrucks,
   });
 
-  console.log("wasteBinData", wasteBinData);
+  console.log("truckData", truckData);
 
   //   const paginatedRiskData = useMemo(() => {
   //     if (isAssignedTasks) {
@@ -141,7 +142,7 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
           overflowX: "hidden",
         }}
       >
-        <PageTitle title={`Waste Bin Management`} />
+        <PageTitle title={`Truck Management`} />
         <Breadcrumb breadcrumbs={breadcrumbItems} />
       </Box>
       <Stack sx={{ alignItems: "center" }}>
@@ -175,22 +176,22 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
               </Button>
             </Box>
           )}
-          {isWasteBinDataFetching ||
+          {istruckDataFetching ||
             (isDeleting && <LinearProgress sx={{ width: "100%" }} />)}
           <Table aria-label="simple table">
             <TableHead
               sx={{ backgroundColor: "var(--eco-waste-secondary-green)" }}
             >
               <TableRow>
-                <TableCell align="left">Bin ID</TableCell>
-                <TableCell align="left">Current Waste Level</TableCell>
-                <TableCell align="left">Threshold Level</TableCell>
-                <TableCell align="left">Bin Type</TableCell>
+                <TableCell align="left">Truck ID</TableCell>
+                <TableCell align="left">Capacity</TableCell>
+                <TableCell align="left">Driver</TableCell>
+                <TableCell align="left">Status</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {wasteBinData?.length > 0 ? (
-                wasteBinData?.map((row) => (
+              {truckData?.length > 0 ? (
+                truckData?.map((row) => (
                   <TableRow
                     key={`${row._id}`}
                     sx={{
@@ -202,12 +203,12 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
                       setOpenViewDrawer(true);
                     }}
                   >
-                    <TableCell align="left">{row.binId}</TableCell>
+                    <TableCell align="left">{row.truckId}</TableCell>
                     <TableCell component="th" scope="row">
-                      {row.currentWasteLevel}
+                      {row.capacity} kg
                     </TableCell>
-                    <TableCell align="left">{row.thresholdLevel}</TableCell>
-                    <TableCell align="left">{row.binType}</TableCell>
+                    <TableCell align="left">{row.driver.username}</TableCell>
+                    <TableCell align="left">{row.status}</TableCell>
                   </TableRow>
                 ))
               ) : (
@@ -225,8 +226,8 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
                   colSpan={100}
                   count={
                     isAssignedTasks
-                      ? wasteBinData?.length
-                      : wasteBinData?.length
+                      ? truckData?.length
+                      : truckData?.length
                   }
                   rowsPerPage={rowsPerPage}
                   page={page}
@@ -262,14 +263,14 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
 
             {selectedRow && (
               <Stack>
-                <ViewWasteBinContent wasteBin={selectedRow} />
+                <ViewTruckContent wasteBin={selectedRow} />
               </Stack>
             )}
           </Stack>
         }
       />
       {openAddOrEditDialog && (
-        <AddOrEditWasteBinDialog
+        <AddOrEditTrucknDialog
           open={openAddOrEditDialog}
           handleClose={() => {
             setSelectedRow(null);

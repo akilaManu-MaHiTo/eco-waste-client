@@ -25,23 +25,23 @@ import Breadcrumb from "../../components/BreadCrumb";
 import { useMemo, useState } from "react";
 import ViewDataDrawer, { DrawerHeader } from "../../components/ViewDataDrawer";
 import AddIcon from "@mui/icons-material/Add";
-import AddOrEditWasteBinDialog from "./AddOrEditWasteBinDialog";
+import AddOrEditWasteCollectionDialog from "./AddOrEditWasteCollectionDialog.tsx";
 import { differenceInDays, format } from "date-fns";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import { useSnackbar } from "notistack";
 
-import ViewWasteBinContent from "./ViewWasteBinContent";
+import ViewWasteCollectionContent from "./ViewWasteCollectionContent";
 import { PermissionKeys } from "../Administration/SectionList";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import queryClient from "../../state/queryClient";
 import useCurrentUserHaveAccess from "../../hooks/useCurrentUserHaveAccess";
+import { deleteGarbage, fetchGarbage, Garbage } from "../../api/garbage";
 import CustomButton from "../../components/CustomButton";
-import { deleteWasteBin, fetchWasteBins, WasteBin } from "../../api/wasteBin";
 
-function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
+function GarbageTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
   const { enqueueSnackbar } = useSnackbar();
   const [openViewDrawer, setOpenViewDrawer] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<WasteBin>(null);
+  const [selectedRow, setSelectedRow] = useState<Garbage>(null);
   const [openAddOrEditDialog, setOpenAddOrEditDialog] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [page, setPage] = useState(0);
@@ -64,19 +64,17 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
 
   const breadcrumbItems = [
     { title: "Home", href: "/home" },
-    { title: `Waste Bin Management` },
+    { title: `Waste Management` },
   ];
 
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("md")
   );
 
-  const { data: wasteBinData, isFetching: isWasteBinDataFetching } = useQuery({
-    queryKey: ["wasteBin"],
-    queryFn: fetchWasteBins,
+  const { data: garbageData, isFetching: isGarbageDataFetching } = useQuery({
+    queryKey: ["garbage"],
+    queryFn: fetchGarbage,
   });
-
-  console.log("wasteBinData", wasteBinData);
 
   //   const paginatedRiskData = useMemo(() => {
   //     if (isAssignedTasks) {
@@ -100,25 +98,23 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
   //     }
   //   }, [isAssignedTasks, assignedRiskData, page, rowsPerPage, riskData]);
 
-  const { mutate: deleteWasteBinMutation, isPending: isDeleting } = useMutation(
-    {
-      mutationFn: deleteWasteBin,
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["wastebin"] });
-        enqueueSnackbar("Waste Bin Deleted Successfully!", {
-          variant: "success",
-        });
-        setSelectedRow(null);
-        setDeleteDialogOpen(false);
-        setOpenViewDrawer(false);
-      },
-      onError: () => {
-        enqueueSnackbar(`Waste BIn Delete Failed!`, {
-          variant: "error",
-        });
-      },
-    }
-  );
+  const { mutate: deleteGarbageMutation, isPending: isDeleting } = useMutation({
+    mutationFn: deleteGarbage,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["hazardRisks"] });
+      enqueueSnackbar("Waste Deleted Successfully!", {
+        variant: "success",
+      });
+      setSelectedRow(null);
+      setDeleteDialogOpen(false);
+      setOpenViewDrawer(false);
+    },
+    onError: () => {
+      enqueueSnackbar(`Waste Delete Failed!`, {
+        variant: "error",
+      });
+    },
+  });
 
   const isWasteCreateDisabled = !useCurrentUserHaveAccess(
     PermissionKeys.WASTE_MNG_HISTORY_CREATE
@@ -141,7 +137,7 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
           overflowX: "hidden",
         }}
       >
-        <PageTitle title={`Waste Bin Management`} />
+        <PageTitle title={`Waste Management`} />
         <Breadcrumb breadcrumbs={breadcrumbItems} />
       </Box>
       <Stack sx={{ alignItems: "center" }}>
@@ -171,26 +167,28 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
                 }}
                 disabled={isWasteCreateDisabled}
               >
-                Add Bin
+                Add Waste
               </Button>
             </Box>
           )}
-          {isWasteBinDataFetching ||
+          {isGarbageDataFetching ||
             (isDeleting && <LinearProgress sx={{ width: "100%" }} />)}
           <Table aria-label="simple table">
             <TableHead
               sx={{ backgroundColor: "var(--eco-waste-secondary-green)" }}
             >
               <TableRow>
-                <TableCell align="left">Bin ID</TableCell>
-                <TableCell align="left">Current Waste Level</TableCell>
-                <TableCell align="left">Threshold Level</TableCell>
-                <TableCell align="left">Bin Type</TableCell>
+                <TableCell align="left">Reference</TableCell>
+                <TableCell align="left">Date</TableCell>
+                <TableCell align="left">Waste Category</TableCell>
+                <TableCell align="left">Bin Number</TableCell>
+                <TableCell align="left">Weight</TableCell>
+                <TableCell align="left">Status</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {wasteBinData?.length > 0 ? (
-                wasteBinData?.map((row) => (
+              {garbageData?.length > 0 ? (
+                garbageData?.map((row) => (
                   <TableRow
                     key={`${row._id}`}
                     sx={{
@@ -202,12 +200,44 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
                       setOpenViewDrawer(true);
                     }}
                   >
-                    <TableCell align="left">{row.binId}</TableCell>
+                    <TableCell align="left">{row._id}</TableCell>
                     <TableCell component="th" scope="row">
-                      {row.currentWasteLevel}
+                      {row?.createdAt
+                        ? format(new Date(row?.createdAt), "yyyy-MM-dd")
+                        : "N/A"}
                     </TableCell>
-                    <TableCell align="left">{row.thresholdLevel}</TableCell>
-                    <TableCell align="left">{row.binType}</TableCell>
+                    <TableCell align="left">{row.garbageCategory}</TableCell>
+                    <TableCell align="left">{row?.binId?.binId}</TableCell>
+                    <TableCell align="left">
+                      {row.wasteWeight + " " + "Kg"}
+                    </TableCell>
+                    <TableCell align="left">
+                      {row.status === "Pending" ? (
+                        <Chip
+                          label="Pending"
+                          sx={{
+                            backgroundColor: "var(--eco-waste-blue)",
+                            color: "white",
+                          }}
+                        />
+                      ) : row.status === "Requested" ? (
+                        <Chip
+                          label="Requested"
+                          sx={{
+                            backgroundColor: "var(--pallet-light-blue)",
+                            color: "white",
+                          }}
+                        />
+                      ) : (
+                        <Chip
+                          label="Collected"
+                          sx={{
+                            backgroundColor: "var(--eco-waste-primary-green)",
+                            color: "white",
+                          }}
+                        />
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
@@ -224,9 +254,7 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
                   rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
                   colSpan={100}
                   count={
-                    isAssignedTasks
-                      ? wasteBinData?.length
-                      : wasteBinData?.length
+                    isAssignedTasks ? garbageData?.length : garbageData?.length
                   }
                   rowsPerPage={rowsPerPage}
                   page={page}
@@ -248,28 +276,30 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
           <Stack spacing={1} sx={{ paddingX: theme.spacing(1) }}>
             <DrawerHeader
               title="Waste Details"
-              handleClose={() => setOpenViewDrawer(true)}
-              disableEdit={isWasteEditDisabled || !selectedRow?.availability}
+              handleClose={() => setOpenViewDrawer(false)}
+              disableEdit={
+                isWasteEditDisabled || selectedRow?.status === "Collected"
+              }
               onEdit={() => {
                 setSelectedRow(selectedRow);
                 setOpenAddOrEditDialog(true);
               }}
               onDelete={() => setDeleteDialogOpen(true)}
               disableDelete={
-                isWasteDeleteDisabled || !selectedRow?.availability
+                isWasteDeleteDisabled || selectedRow?.status === "Collected"
               }
             />
 
             {selectedRow && (
               <Stack>
-                <ViewWasteBinContent wasteBin={selectedRow} />
+                <ViewWasteCollectionContent garbage={selectedRow} />
               </Stack>
             )}
           </Stack>
         }
       />
       {openAddOrEditDialog && (
-        <AddOrEditWasteBinDialog
+        <AddOrEditWasteCollectionDialog
           open={openAddOrEditDialog}
           handleClose={() => {
             setSelectedRow(null);
@@ -282,10 +312,10 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
       {deleteDialogOpen && (
         <DeleteConfirmationModal
           open={deleteDialogOpen}
-          title="Delete Waste Bin Confirmation"
+          title="Delete Waste Confirmation"
           content={
             <>
-              Are you sure you want to remove this Waste Bin?
+              Are you sure you want to remove this Waste?
               <Alert severity="warning" style={{ marginTop: "1rem" }}>
                 This action is not reversible.
               </Alert>
@@ -293,7 +323,7 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
           }
           handleClose={() => setDeleteDialogOpen(false)}
           deleteFunc={async () => {
-            deleteWasteBinMutation(selectedRow._id);
+            deleteGarbageMutation(selectedRow._id);
           }}
           onSuccess={() => {
             setOpenViewDrawer(false);
@@ -311,4 +341,4 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
   );
 }
 
-export default WasteBinTable;
+export default GarbageTable;

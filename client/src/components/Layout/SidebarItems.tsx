@@ -95,6 +95,12 @@ export const sidebarItems: Array<SidebarItem> = [
     accessKey: PermissionKeys.ADMIN_BIN_MNG_VIEW,
   },
   {
+    title: "Truck Management",
+    icon: <LocalShippingIcon fontSize="small" />,
+    href: "/admin/truck-management",
+    accessKey: PermissionKeys.ADMIN_USERS_VIEW,
+  },
+  {
     title: "Waste Collection Requests",
     icon: <DeleteOutlinedIcon fontSize="small" />,
     href: "/admin/waste-collection-requests",
@@ -127,5 +133,15 @@ export const sidebarItems: Array<SidebarItem> = [
     icon: <HistoryOutlinedIcon fontSize="small" />,
     href: "/waste-management/history",
     accessKey: PermissionKeys.WASTE_MNG_HISTORY_VIEW,
+  },
+  {
+    headline: "Waste Collection",
+    accessKey: PermissionKeys.INSIGHT_VIEW,
+  },
+  {
+    title: "Collection History",
+    icon: <HistoryOutlinedIcon fontSize="small" />,
+    href: "/waste-management/history",
+    accessKey: PermissionKeys.INSIGHT_VIEW,
   },
 ];
