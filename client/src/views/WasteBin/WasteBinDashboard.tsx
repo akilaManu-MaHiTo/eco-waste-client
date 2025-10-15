@@ -1,5 +1,6 @@
 import {
 	Box,
+	Grid,
 	Skeleton,
 	Stack,
 	Typography,
@@ -258,94 +259,49 @@ const WasteBinDashboard: React.FC = () => {
 				</Stack>
 			</Box>
 
-			{/* Summary cards row (4 equal columns on md+, stacked on xs) */}
-			<Stack
-				spacing={3}
-				direction={{ xs: "column", md: "row" }}
-				sx={{ width: "100%" }}
-			>
-				<Box sx={{ flex: { md: 1 }, width: { xs: "100%" } }}>
-					<CurrentLevelCard
-						loading={isLevelLoading}
-						error={isLevelError}
-						overallPercentFilled={overallPercentFilled}
-					/>
-				</Box>
+			<Grid container spacing={3}>
+				<Grid item xs={12} md={3}>
+					<CurrentLevelCard loading={isLevelLoading} error={isLevelError} overallPercentFilled={overallPercentFilled} />
+				</Grid>
 
-				<Box sx={{ flex: { md: 1 }, width: { xs: "100%" } }}>
-					<LastCollectionCard
-						loading={isHistoryLoading}
-						error={isHistoryError}
-						lastCollected={lastCollected}
-						formatDate={formatDate}
-						formatTime={formatTime}
-					/>
-				</Box>
+				<Grid item xs={12} md={3}>
+					<LastCollectionCard loading={isHistoryLoading} error={isHistoryError} lastCollected={lastCollected} formatDate={formatDate} formatTime={formatTime} />
+				</Grid>
 
-				<Box sx={{ flex: { md: 1 }, width: { xs: "100%" } }}>
-					<NextCollectionCard
-						loading={isHistoryLoading}
-						error={isHistoryError}
-						nextCollection={nextCollection}
-						formatDate={formatDate}
-						formatTime={formatTime}
-					/>
-				</Box>
+				<Grid item xs={12} md={3}>
+					<NextCollectionCard loading={isHistoryLoading} error={isHistoryError} nextCollection={nextCollection} formatDate={formatDate} formatTime={formatTime} />
+				</Grid>
 
-				<Box sx={{ flex: { md: 1 }, width: { xs: "100%" } }}>
-					<WasteCategoriesCard
-						loading={isSummaryLoading}
-						error={isSummaryError}
-						categoryBreakdown={categoryBreakdown}
-					/>
-				</Box>
-			</Stack>
+				<Grid item xs={12} md={3}>
+					<WasteCategoriesCard loading={isSummaryLoading} error={isSummaryError} categoryBreakdown={categoryBreakdown} />
+				</Grid>
+			</Grid>
 
-			{/* Trend and pie charts row (7:5 on md+, stacked on xs) */}
-			<Stack spacing={3} direction={{ xs: "column", md: "row" }}>
-				<Box sx={{ flex: { md: 7 }, width: { xs: "100%" } }}>
-					<TrendChartCard
-						loading={isTrendLoading}
-						error={isTrendError}
-						trendChartData={trendChartData}
-						startDate={trendData?.startDate}
-						endDate={trendData?.endDate}
-						theme={theme}
-					/>
-				</Box>
+			<Grid container spacing={3}>
+				<Grid item xs={12} md={7}>
+					<TrendChartCard loading={isTrendLoading} error={isTrendError} trendChartData={trendChartData} startDate={trendData?.startDate} endDate={trendData?.endDate} theme={theme} />
+				</Grid>
 
-				<Box sx={{ flex: { md: 5 }, width: { xs: "100%" } }}>
-					<PieChartCard
-						loading={isSummaryLoading}
-						error={isSummaryError}
-						pieChartData={pieChartData}
-					/>
-				</Box>
-			</Stack>
+				<Grid item xs={12} md={5}>
+					<PieChartCard loading={isSummaryLoading} error={isSummaryError} pieChartData={pieChartData} />
+				</Grid>
+			</Grid>
 
-			<CollectionHistory
-				loading={isHistoryLoading}
-				error={isHistoryError}
-				historyPreview={historyPreview}
-				formatDate={formatDate}
-				formatTime={formatTime}
-			/>
+			<CollectionHistory loading={isHistoryLoading} error={isHistoryError} historyPreview={historyPreview} formatDate={formatDate} formatTime={formatTime} />
+			
+			<Grid container spacing={3}>
 
-			{/* Bottom widgets row (2 equal columns on md+, stacked on xs) */}
-			<Stack spacing={3} direction={{ xs: "column", md: "row" }}>
-				<Box sx={{ flex: { md: 1 }, width: { xs: "100%" } }}>
+				<Grid item xs={12} md={3}>
 					<UserCategoryList items={summaryData} />
-				</Box>
+				</Grid>
 
-				<Box sx={{ flex: { md: 1 }, width: { xs: "100%" } }}>
-					<BinUtilization
-						loading={isLevelLoading}
-						error={isLevelError}
-						levelData={levelData}
-					/>
-				</Box>
-			</Stack>
+				<Grid item xs={12} md={3}>
+					<BinUtilization loading={isLevelLoading} error={isLevelError} levelData={levelData} />
 
+			
+				</Grid>
+			</Grid>
+			
 		</Stack>
 	);
 };
