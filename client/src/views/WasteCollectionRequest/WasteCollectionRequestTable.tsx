@@ -111,11 +111,15 @@ function WasteCollectionRequestTable({
   return (
     <Stack spacing={2}>
       <Box sx={{ p: 2, boxShadow: 2, borderRadius: 1, overflowX: "hidden" }}>
-        <PageTitle title="Waste Management" />
+        <PageTitle title="Waste Collection Requests" />
         <Breadcrumb
           breadcrumbs={[
             { title: "Home", href: "/home" },
-            { title: "Waste Management" },
+            {
+              title: isApprovedData
+                ? "Waste Collection Requests > Approved"
+                : "Waste Collection Requests > Pending",
+            },
           ]}
         />
       </Box>
@@ -153,7 +157,7 @@ function WasteCollectionRequestTable({
                 <TableCell>Mobile</TableCell>
                 <TableCell>Weight</TableCell>
                 <TableCell>Status</TableCell>
-                {isApprovedData && <TableCell>Select</TableCell>}
+                {!isApprovedData && <TableCell>Select</TableCell>}
               </TableRow>
             </TableHead>
 
@@ -190,21 +194,23 @@ function WasteCollectionRequestTable({
                         }}
                       />
                     </TableCell>
-                    <TableCell>
-                      {row.status === "Pending" && (
-                        <Checkbox
-                          sx={{
-                            color: "var(--eco-waste-blue)",
-                            "&.Mui-checked": {
+                    {!isApprovedData && (
+                      <TableCell>
+                        {row.status === "Pending" && (
+                          <Checkbox
+                            sx={{
                               color: "var(--eco-waste-blue)",
-                            },
-                          }}
-                          checked={checkedRows.includes(row._id)}
-                          onClick={(e) => e.stopPropagation()}
-                          onChange={() => handleCheckboxChange(row)}
-                        />
-                      )}
-                    </TableCell>
+                              "&.Mui-checked": {
+                                color: "var(--eco-waste-blue)",
+                              },
+                            }}
+                            checked={checkedRows.includes(row._id)}
+                            onClick={(e) => e.stopPropagation()}
+                            onChange={() => handleCheckboxChange(row)}
+                          />
+                        )}
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))
               ) : (
@@ -249,8 +255,6 @@ function WasteCollectionRequestTable({
               <DrawerHeader
                 title="Waste Details"
                 handleClose={() => setOpenViewDrawer(false)}
-                onEdit={() => setOpenCollectionRouteModal(true)}
-                onDelete={() => setDeleteDialogOpen(true)}
               />
               {selectedRow && (
                 <ViewGarbageCollectionContent garbageCollection={selectedRow} />
