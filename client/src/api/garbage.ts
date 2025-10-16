@@ -86,9 +86,7 @@ export const garbageData = [
 export const garbageCategory = [
   { _id: "a", label: "Plastic" },
   { _id: "b", label: "Paper" },
-  { _id: "c", label: "Metal" },
-  { _id: "d", label: "Glass" },
-  { _id: "e", label: "Organic" },
+  { _id: "c", label: "Food" },
 ];
 
 export const garbageBinId = [
