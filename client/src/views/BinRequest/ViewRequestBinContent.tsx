@@ -36,7 +36,7 @@ function ViewRequestBinContent({
   const [approveDialogOpen, setApproveDialogOpen] = useState(false);
   const { user } = useCurrentUser();
   const [loadingPayment, setLoadingPayment] = useState(false);
-  const BIN_REQUEST_PRICE = 150;
+  const BIN_REQUEST_PRICE = wasteBin.thresholdLevel * 50;
   const { enqueueSnackbar } = useSnackbar();
   const {
     latitude,
@@ -79,7 +79,6 @@ function ViewRequestBinContent({
       name: string;
       price: number;
       currency: string;
-      custom_1?: string;
     },
     data: Payment
   ) => {
@@ -118,7 +117,7 @@ function ViewRequestBinContent({
         merchant_id: MERCHANT_ID,
         return_url: "http://localhost:3000/payment/success",
         cancel_url: "http://localhost:3000/payment/cancel",
-        notify_url: `https://eco-waste-server.vercel.app/api/checkout/payhere-notify`,
+        notify_url: `https://eco-waste-server.vercel.app/api/checkout/payhere-notify-bin`,
         order_id: orderId,
         items: `${pkg.name} Package`,
         amount: pkg.price.toFixed(2),
@@ -131,46 +130,16 @@ function ViewRequestBinContent({
         address: data.address,
         city: data.city,
         country: "Sri Lanka",
-        custom_1: pkg.custom_1,
-        custom_2: wasteBin._id,
+        custom_1: `${latitude}-${longitude}`,
+        custom_2: `${wasteBin._id}-${user._id}`,
       };
 
       window.payhere.startPayment(payment);
       window.payhere.onCompleted = async function onCompleted() {
-        try {
-          const collectionDate = watch("collectionDate");
-          const collectionTime = watch("collectionTime");
-
-          await createBinCollectionRequest({
-            binId: wasteBin._id!,
-            userId: user?._id || "",
-            collectionDate: format(new Date(collectionDate), "yyyy-MM-dd"),
-            collectionTime: format(new Date(collectionTime), "HH:mm"),
-            latitude: latitude!,
-            longitude: longitude!,
-            orderId: orderId,
-            amount: pkg.price,
-            paymentStatus: "completed",
-          });
-
-          await updateWasteBin({
-            ...wasteBin,
-            availability: false,
-          });
-
-          enqueueSnackbar("Request submitted successfully!", {
-            variant: "success",
-          });
-          queryClient.invalidateQueries({ queryKey: ["wasteBin"] });
-          setLoadingPayment(false);
-          onClose();
-        } catch (error) {
-          console.error("Error saving request:", error);
-          enqueueSnackbar("Payment successful but failed to save request", {
-            variant: "warning",
-          });
-          setLoadingPayment(false);
-        }
+        queryClient.invalidateQueries({ queryKey: ["wasteBin"] });
+        console.log("Payment completed. OrderID:", payment.order_id);
+        setLoadingPayment(false);
+        onClose();
       };
     } catch (err) {
       console.error("Error starting payment:", err);
@@ -226,46 +195,6 @@ function ViewRequestBinContent({
           sx={{ flex: 1 }}
         />
 
-        {wasteBin?.availability && (
-          <>
-            <Box sx={{ margin: "0.5rem" }}>
-              <Controller
-                control={control}
-                {...register("collectionDate", { required: true })}
-                name={"collectionDate"}
-                render={({ field }) => {
-                  return (
-                    <DatePickerComponent
-                      onChange={(e) => field.onChange(e)}
-                      value={field.value ? new Date(field.value) : undefined}
-                      label="Collection Date"
-                      error={errors?.collectionDate ? "Required" : ""}
-                      disablePast={true}
-                    />
-                  );
-                }}
-              />
-            </Box>
-            <Box sx={{ margin: "0.5rem" }}>
-              <Controller
-                control={control}
-                {...register("collectionTime", { required: true })}
-                name={"collectionTime"}
-                render={({ field }) => {
-                  return (
-                    <TimePickerComponent
-                      onChange={(e) => field.onChange(e)}
-                      value={field.value ? new Date(field.value) : null}
-                      date={selectedDate ? new Date(selectedDate) : undefined}
-                      label="Collection Time"
-                      error={errors?.collectionTime ? "Required" : ""}
-                    />
-                  );
-                }}
-              />
-            </Box>
-          </>
-        )}
         <Box sx={{ margin: "0.5rem", marginTop: "1rem" }}>
           {locationLoading ? (
             <Alert severity="info" icon={<CircularProgress size={20} />}>
@@ -302,7 +231,7 @@ function ViewRequestBinContent({
               }
               onClick={() => setApproveDialogOpen(true)}
             >
-              Request Bin 
+              Request Bin
             </CustomButton>
             {(!latitude || !longitude) && !locationLoading && (
               <Typography
@@ -340,22 +269,11 @@ function ViewRequestBinContent({
           }
           handleClose={() => setApproveDialogOpen(false)}
           approveFunc={async () => {
-            const collectionDate = watch("collectionDate");
-            const collectionTime = watch("collectionTime");
-
-            const formattedDate = collectionDate
-              ? format(new Date(collectionDate), "yyyy-MM-dd")
-              : "";
-            const formattedTime = collectionTime
-              ? format(new Date(collectionTime), "HH:mm")
-              : "";
-            const combinedDateTime = `${formattedDate} ${formattedTime}`;
             startPayment(
               {
                 name: "Bin Collection",
                 price: BIN_REQUEST_PRICE,
                 currency: "LKR",
-                custom_1: combinedDateTime,
               },
               {
                 firstName: user?.username || "FirstName",
