@@ -1,26 +1,5 @@
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import HomeIcon from "@mui/icons-material/Home";
-import LayersIcon from "@mui/icons-material/Layers";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import QueryStatsIcon from "@mui/icons-material/QueryStats";
-import TravelExploreIcon from "@mui/icons-material/TravelExplore";
-import SpaIcon from "@mui/icons-material/Spa";
-import ForestIcon from "@mui/icons-material/Forest";
-import ScienceIcon from "@mui/icons-material/Science";
-import EmergencyIcon from "@mui/icons-material/Emergency";
-import ChangeHistoryIcon from "@mui/icons-material/ChangeHistory";
 import FolderIcon from "@mui/icons-material/Folder";
-import ConstructionIcon from "@mui/icons-material/Construction";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import PollOutlinedIcon from "@mui/icons-material/PollOutlined";
-import PersonRemoveOutlinedIcon from "@mui/icons-material/PersonRemoveOutlined";
-import DatasetLinkedOutlinedIcon from "@mui/icons-material/DatasetLinkedOutlined";
-import SentimentSatisfiedAltOutlinedIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
-import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
-import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRight";
-import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import KeyIcon from "@mui/icons-material/Key";
 import { PermissionKeys } from "../../views/Administration/SectionList";
 import PaymentOutlinedIcon from "@mui/icons-material/PaymentOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
@@ -68,12 +47,6 @@ export const sidebarItems: Array<SidebarItem> = [
     accessKey: PermissionKeys.INSIGHT_VIEW,
   },
   {
-    title: "Payment",
-    href: "/payment",
-    icon: <PaymentOutlinedIcon fontSize="small" />,
-    accessKey: PermissionKeys.PAYMENT_VIEW,
-  },
-  {
     headline: "Administration",
     accessKey: PermissionKeys.ADMIN_VIEW,
   },
@@ -99,7 +72,7 @@ export const sidebarItems: Array<SidebarItem> = [
     title: "Truck Management",
     icon: <LocalShippingIcon fontSize="small" />,
     href: "/admin/truck-management",
-    accessKey: PermissionKeys.ADMIN_USERS_VIEW,
+    accessKey: PermissionKeys.ADMIN_TRUCK_MNG_VIEW,
   },
   {
     title: "Collection Requests",
@@ -109,16 +82,22 @@ export const sidebarItems: Array<SidebarItem> = [
     disabled: false,
     nestedItems: [
       {
+        title: "Dashboard",
+        icon: <DashboardOutlinedIcon fontSize="small" />,
+        href: "/admin/collection-dashboard",
+        accessKey: PermissionKeys.ADMIN_COLLECTION_MNG_DASHBOARD_VIEW,
+      },
+      {
         title: "Pending Requests",
         href: "/admin/waste-collection-requests",
         icon: <FolderIcon fontSize="small" />,
-        accessKey: PermissionKeys.ADMIN_BIN_MNG_VIEW,
+        accessKey: PermissionKeys.ADMIN_COLLECTION_MNG_PENDING_VIEW,
       },
       {
         title: "Approved Requests",
         href: "/admin/waste-collection-approved",
         icon: <FolderIcon fontSize="small" />,
-        accessKey: PermissionKeys.ADMIN_BIN_MNG_VIEW,
+        accessKey: PermissionKeys.ADMIN_COLLECTION_MNG_APPROVED_VIEW,
       },
     ],
   },
@@ -142,7 +121,7 @@ export const sidebarItems: Array<SidebarItem> = [
     title: "Daily Waste",
     icon: <TodayOutlinedIcon fontSize="small" />,
     href: "/waste-management/today-history",
-    accessKey: PermissionKeys.WASTE_MNG_HISTORY_VIEW,
+    accessKey: PermissionKeys.WASTE_MNG_HISTORY_DAILY_VIEW,
   },
   {
     title: "Waste History",
@@ -150,9 +129,10 @@ export const sidebarItems: Array<SidebarItem> = [
     href: "/waste-management/history",
     accessKey: PermissionKeys.WASTE_MNG_HISTORY_VIEW,
   },
+
   {
     headline: "Waste Collection",
-    accessKey: PermissionKeys.INSIGHT_VIEW,
+    accessKey: PermissionKeys.WASTE_COLLECTION_DAILY_VIEW,
   },
   {
     title: "Collector Dashboard",
@@ -164,6 +144,6 @@ export const sidebarItems: Array<SidebarItem> = [
     title: "Daily Collection",
     icon: <CalendarMonthIcon fontSize="small" />,
     href: "/waste-collection/daily-collection",
-    accessKey: PermissionKeys.INSIGHT_VIEW,
+    accessKey: PermissionKeys.WASTE_COLLECTION_DAILY_VIEW,
   },
 ];

@@ -21,7 +21,10 @@ export async function fetchGarbageCollectionData() {
   const res = await axios.get(`/api/garbage-request`);
   return res.data;
 }
-
+export async function fetchGarbageCollectionDataApproved() {
+  const res = await axios.get(`/api/garbage-request/approved`);
+  return res.data;
+}
 export async function createGarbageCollectionRoute(data: any) {
   const res = await axios.post(`/api/collection-route`, data);
   return res.data;
@@ -63,3 +66,38 @@ export async function updateDeliveryStatusCompleted(truckId: string, collectionR
   return res.data;
 }
 
+// Dashboard API s
+export async function fetchGarbageByCategory() {
+  const res = await axios.get(`/api/garbage-request/garbage-by-category`);
+  return res.data;
+}
+
+export async function fetchRequestsByStatus() {
+  const res = await axios.get(`/api/garbage-request/requests-by-status`);
+  return res.data;
+}
+
+export async function fetchWasteByBinType() {
+  const res = await axios.get(`/api/garbage-request/waste-by-bin-type`);
+  return res.data;
+}
+
+export async function fetchDailyCollections() {
+  const res = await axios.get(`/api/garbage-request/daily-collections`);
+  return res.data;
+}
+
+export async function fetchRevenueByCategory() {
+  const res = await axios.get(`/api/garbage-request/revenue-by-category`);
+  return res.data;
+}
+
+export async function fetchMonthlyRequests() {
+  const res = await axios.get(`/api/garbage-request/monthly-requests`);
+  return res.data;
+}
+
+export async function fetchDailyRequestsByDateAndTime() {
+  const res = await axios.get(`/api/garbage-request/daily-requests`);
+  return res.data;
+}
