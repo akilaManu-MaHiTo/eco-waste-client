@@ -22,7 +22,6 @@ import { CurrentLevelCard, LastCollectionCard, NextCollectionCard, WasteCategori
 import TrendChartCard from "./components/TrendChartCard";
 import PieChartCard from "./components/PieChartCard";
 import CollectionHistory from "./components/CollectionHistory";
-import BinUtilization from "./components/BinUtilization";
 type TrendChartPoint = {
 	date: string;
 	totalWeight: number;
@@ -72,11 +71,35 @@ type GarbageLevelResponse = {
 	bins: GarbageLevelBin[];
 };
 
-type GarbageSummaryItem = {
+type GarbageSummaryUser = {
+	_id: string;
+	name?: string;
+	email?: string;
+};
+
+type GarbageSummaryRange = {
+	start?: string;
+	end?: string;
+};
+
+type GarbageSummaryTotals = {
+	totalWeight?: number;
+	count?: number;
+	lastDepositAt?: string;
+};
+
+type GarbageSummaryCategory = {
+	category: string;
 	totalWeight: number;
 	count: number;
-	user?: { _id: string; email?: string };
-	category: string;
+	lastDepositAt?: string;
+};
+
+type GarbageSummaryResponse = {
+	user?: GarbageSummaryUser;
+	range?: GarbageSummaryRange;
+	totals?: GarbageSummaryTotals;
+	summary?: GarbageSummaryCategory[];
 };
 
 const breadcrumbItems = [
@@ -104,7 +127,7 @@ const WasteBinDashboard: React.FC = () => {
 		data: summaryData,
 		isLoading: isSummaryLoading,
 		isError: isSummaryError,
-	} = useQuery<GarbageSummaryItem[]>({
+	} = useQuery<GarbageSummaryResponse>({
 		queryKey: ["garbage-summary"],
 		queryFn: () => fetchCurrentSummary(),
 		staleTime: 60_000,
@@ -131,9 +154,10 @@ const WasteBinDashboard: React.FC = () => {
 	});
 
 	const categoryBreakdown = useMemo<CategoryBreakdown[]>(() => {
-		if (!summaryData || summaryData.length === 0) return [];
+		const categories = summaryData?.summary ?? [];
+		if (categories.length === 0) return [];
 
-		const categoryTotals = summaryData.reduce<Record<string, { weight: number; count: number }>>(
+		const categoryTotals = categories.reduce<Record<string, { weight: number; count: number }>>(
 			(acc, entry) => {
 				const category = entry.category || "Uncategorized";
 				const previous = acc[category] ?? { weight: 0, count: 0 };
@@ -148,10 +172,9 @@ const WasteBinDashboard: React.FC = () => {
 			{}
 		);
 
-		const grandTotal = Object.values(categoryTotals).reduce(
-			(sum, value) => sum + value.weight,
-			0
-		);
+		const grandTotal =
+			summaryData?.totals?.totalWeight ??
+			Object.values(categoryTotals).reduce((sum, value) => sum + value.weight, 0);
 
 		if (grandTotal === 0) return [];
 
@@ -329,18 +352,7 @@ const WasteBinDashboard: React.FC = () => {
 				formatTime={formatTime}
 			/>
 
-			{/* Bottom widgets row  */}
-			<Stack spacing={3} direction={{ xs: "column", md: "row" }}>
-				
-
-				<Box sx={{ flex: { md: 1 }, width: { xs: "100%" } }}>
-					<BinUtilization
-						loading={isLevelLoading}
-						error={isLevelError}
-						levelData={levelData}
-					/>
-				</Box>
-			</Stack>
+			
 
 		</Stack>
 	);
