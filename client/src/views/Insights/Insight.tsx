@@ -15,6 +15,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import insightImage from "../../assets/insight-bg.png";
 import dashboardImg from "../../assets/garbage-img-02.png";
+import { Link } from "react-router";
 
 // Glass morphism effect
 const glassStyle = {
@@ -78,9 +79,7 @@ function Insight() {
         }}
       >
         {/* Animated Background Elements */}
-        <motion.div
-          style={{ y: backgroundY }}
-        />
+        <motion.div style={{ y: backgroundY }} />
 
         <Container maxWidth="lg" sx={{ position: "relative", zIndex: 2 }}>
           <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center">
@@ -135,27 +134,32 @@ function Insight() {
                   justifyContent={{ xs: "center", md: "flex-start" }}
                   alignItems="center"
                 >
-                  <Button
-                    component={motion.button}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    variant="contained"
-                    size={isMobile ? "medium" : "large"}
-                    sx={{
-                      bgcolor: "white",
-                      color: "#0f4a5b",
-                      fontWeight: "bold",
-                      px: { xs: 3, md: 4 },
-                      py: { xs: 1, md: 1.5 },
-                      borderRadius: 2,
-                      fontSize: { xs: "1rem", md: "1.1rem" },
-                      boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
-                      width: { xs: "100%", sm: "auto" },
-                      maxWidth: { xs: "280px", sm: "none" },
-                    }}
+                  <Link
+                    to="/waste-management/today-history"
+                    style={{ textDecoration: "none" }}
                   >
-                    Get Started Free
-                  </Button>
+                    <Button
+                      component={motion.button}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      variant="contained"
+                      size={isMobile ? "medium" : "large"}
+                      sx={{
+                        bgcolor: "white",
+                        color: "#0f4a5b",
+                        fontWeight: "bold",
+                        px: { xs: 3, md: 4 },
+                        py: { xs: 1, md: 1.5 },
+                        borderRadius: 2,
+                        fontSize: { xs: "1rem", md: "1.1rem" },
+                        boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
+                        width: { xs: "100%", sm: "auto" },
+                        maxWidth: { xs: "280px", sm: "none" },
+                      }}
+                    >
+                      Get Started Free
+                    </Button>
+                  </Link>
                   <Button
                     component={motion.button}
                     whileHover={{ scale: 1.05 }}
@@ -413,125 +417,421 @@ function Insight() {
         </Container>
       </Box>
 
-      {/* CTA Section */}
-      <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: "#67c090", color: "white" }}>
+      {/* CTA Section - Clean White Design */}
+      <Box
+        sx={{
+          py: { xs: 10, md: 15 },
+          bgcolor: "white",
+          position: "relative",
+        }}
+      >
         <Container maxWidth="md">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <Typography
-              variant={isMobile ? "h3" : "h2"}
-              fontWeight="800"
-              textAlign="center"
+            <Box
               sx={{
-                mb: 3,
-                fontSize: {
-                  xs: "2rem",
-                  sm: "2.5rem",
-                  md: "3rem",
-                },
+                textAlign: "center",
+                p: { xs: 4, md: 6 },
+                borderRadius: 4,
+                border: `2px solid ${alpha("#67c090", 0.15)}`,
+                bgcolor: alpha("#f8fdfa", 0.5),
               }}
             >
-              Ready to Transform Your Waste Management?
-            </Typography>
-            <Typography
-              variant={isMobile ? "body1" : "h6"}
-              textAlign="center"
-              sx={{
-                mb: 4,
-                opacity: 0.9,
-                fontSize: {
-                  xs: "1rem",
-                  md: "1.25rem",
-                },
-              }}
-            >
-              Join thousands of organizations already saving time and money with
-              EcoWaste
-            </Typography>
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={2}
-              justifyContent="center"
-              alignItems="center"
-            >
-              <Button
-                variant="contained"
-                size={isMobile ? "medium" : "large"}
+              <Typography
+                variant={isMobile ? "h3" : "h2"}
+                fontWeight="800"
                 sx={{
-                  bgcolor: "white",
-                  color: "#0f4a5b",
-                  fontWeight: "bold",
-                  px: { xs: 4, md: 6 },
-                  py: { xs: 1, md: 1.5 },
-                  borderRadius: 2,
-                  fontSize: { xs: "1rem", md: "1.1rem" },
-                  "&:hover": {
-                    bgcolor: "#f5f5f5",
+                  mb: 2,
+                  fontSize: {
+                    xs: "2rem",
+                    sm: "2.5rem",
+                    md: "3rem",
                   },
-                  width: { xs: "100%", sm: "auto" },
-                  maxWidth: { xs: "280px", sm: "none" },
+                  background: "linear-gradient(135deg, #0f4a5b, #67c090)",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  color: "transparent",
                 }}
               >
-                Get Started Today
-              </Button>
-              <Button
-                variant="outlined"
-                size={isMobile ? "medium" : "large"}
+                Ready to Get Started?
+              </Typography>
+              <Typography
+                variant={isMobile ? "body1" : "h6"}
                 sx={{
-                  borderColor: "white",
-                  color: "white",
-                  fontWeight: "bold",
-                  px: { xs: 4, md: 6 },
-                  py: { xs: 1, md: 1.5 },
-                  borderRadius: 2,
-                  fontSize: { xs: "1rem", md: "1.1rem" },
-                  "&:hover": {
-                    bgcolor: alpha("#fff", 0.1),
+                  color: "text.secondary",
+                  mb: 4,
+                  fontSize: {
+                    xs: "1rem",
+                    md: "1.2rem",
                   },
-                  width: { xs: "100%", sm: "auto" },
-                  maxWidth: { xs: "280px", sm: "none" },
+                  lineHeight: 1.8,
+                  maxWidth: "600px",
+                  mx: "auto",
                 }}
               >
-                Contact Sales
-              </Button>
-            </Stack>
+                Join thousands of organizations making smarter, more sustainable
+                decisions with real-time waste insights.
+              </Typography>
+
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={2}
+                justifyContent="center"
+                alignItems="center"
+                sx={{ mb: 4 }}
+              >
+                <Link
+                  to="/waste-management/today-history"
+                  style={{ textDecoration: "none" }}
+                >
+                  <Button
+                    component={motion.button}
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    variant="contained"
+                    size="large"
+                    sx={{
+                      bgcolor: "#0f4a5b",
+                      color: "white",
+                      fontWeight: "600",
+                      px: { xs: 5, md: 6 },
+                      py: { xs: 1.5, md: 2 },
+                      borderRadius: 2,
+                      fontSize: { xs: "1rem", md: "1.1rem" },
+                      boxShadow: "0 4px 20px rgba(15, 74, 91, 0.25)",
+                      "&:hover": {
+                        bgcolor: "#0a3a4a",
+                        boxShadow: "0 6px 30px rgba(15, 74, 91, 0.35)",
+                      },
+                      textTransform: "none",
+                      minWidth: { xs: "280px", sm: "auto" },
+                    }}
+                  >
+                    Get Started Today
+                  </Button>
+                </Link>
+                <Button
+                  component={motion.button}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  variant="outlined"
+                  size="large"
+                  sx={{
+                    borderColor: "#0f4a5b",
+                    color: "#0f4a5b",
+                    fontWeight: "600",
+                    px: { xs: 5, md: 6 },
+                    py: { xs: 1.5, md: 2 },
+                    borderRadius: 2,
+                    fontSize: { xs: "1rem", md: "1.1rem" },
+                    borderWidth: 2,
+                    "&:hover": {
+                      borderWidth: 2,
+                      borderColor: "#0f4a5b",
+                      bgcolor: alpha("#0f4a5b", 0.05),
+                    },
+                    textTransform: "none",
+                    minWidth: { xs: "280px", sm: "auto" },
+                  }}
+                >
+                  Contact Sales
+                </Button>
+              </Stack>
+
+              {/* Trust Badges */}
+              <Grid
+                container
+                spacing={2}
+                justifyContent="center"
+                sx={{
+                  pt: 3,
+                  borderTop: `1px solid ${alpha("#67c090", 0.15)}`,
+                }}
+              >
+                {[
+                  { icon: "✓", text: "Free 14-Day Trial" },
+                  { icon: "✓", text: "No Credit Card" },
+                  { icon: "✓", text: "Cancel Anytime" },
+                ].map((item, idx) => (
+                  <Grid item key={idx}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          bgcolor: "#67c090",
+                          color: "white",
+                          borderRadius: "50%",
+                          width: 20,
+                          height: 20,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "0.7rem",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {item.icon}
+                      </Box>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: "text.secondary",
+                          fontWeight: 500,
+                          fontSize: { xs: "0.85rem", md: "0.95rem" },
+                        }}
+                      >
+                        {item.text}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
           </motion.div>
         </Container>
       </Box>
 
-      {/* Footer */}
-      <Box sx={{ py: { xs: 4, md: 6 }, bgcolor: "#0a3a4a", color: "white" }}>
+      {/* Footer - Clean White Design */}
+      <Box
+        sx={{
+          bgcolor: alpha("#f8fdfa", 0.5),
+          py: { xs: 6, md: 8 },
+          borderTop: `1px solid ${alpha("#67c090", 0.1)}`,
+        }}
+      >
         <Container maxWidth="lg">
-          <Grid container spacing={4} alignItems="center">
-            <Grid item xs={12} md={6}>
-              <Typography variant="h6" fontWeight="bold" mb={2}>
+          <Grid container spacing={{ xs: 4, md: 6 }}>
+            {/* Brand Section */}
+            <Grid item xs={12} md={4}>
+              <Typography
+                variant="h5"
+                fontWeight="bold"
+                sx={{
+                  mb: 2,
+                  background: "linear-gradient(135deg, #0f4a5b, #67c090)",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  color: "transparent",
+                }}
+              >
                 EcoWaste
               </Typography>
               <Typography
                 variant="body2"
-                sx={{ opacity: 0.8, maxWidth: "400px" }}
+                sx={{
+                  color: "text.secondary",
+                  lineHeight: 1.8,
+                  mb: 3,
+                  maxWidth: "320px",
+                }}
               >
                 Revolutionizing waste management through innovative technology
                 and sustainable practices for a cleaner planet.
               </Typography>
+              <Stack direction="row" spacing={1.5}>
+                {[
+                  { icon: "🌐", label: "Website" },
+                  { icon: "📧", label: "Email" },
+                  { icon: "📱", label: "Social" },
+                ].map((item, idx) => (
+                  <Box
+                    key={idx}
+                    component={motion.div}
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 2,
+                      bgcolor: "white",
+                      border: `1px solid ${alpha("#67c090", 0.2)}`,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        borderColor: "#67c090",
+                        boxShadow: `0 4px 12px ${alpha("#67c090", 0.2)}`,
+                      },
+                    }}
+                  >
+                    <Typography sx={{ fontSize: "1.2rem" }}>
+                      {item.icon}
+                    </Typography>
+                  </Box>
+                ))}
+              </Stack>
             </Grid>
-            <Grid item xs={12} md={6}>
+
+            {/* Quick Links */}
+            <Grid item xs={6} md={2}>
+              <Typography
+                variant="subtitle2"
+                fontWeight="bold"
+                sx={{ mb: 2, color: "#0f4a5b" }}
+              >
+                Product
+              </Typography>
+              <Stack spacing={1.5}>
+                {["Features", "Pricing", "Demo", "Updates"].map((link) => (
+                  <Typography
+                    key={link}
+                    variant="body2"
+                    sx={{
+                      color: "text.secondary",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        color: "#67c090",
+                        transform: "translateX(4px)",
+                      },
+                    }}
+                  >
+                    {link}
+                  </Typography>
+                ))}
+              </Stack>
+            </Grid>
+
+            <Grid item xs={6} md={2}>
+              <Typography
+                variant="subtitle2"
+                fontWeight="bold"
+                sx={{ mb: 2, color: "#0f4a5b" }}
+              >
+                Company
+              </Typography>
+              <Stack spacing={1.5}>
+                {["About", "Careers", "Blog", "Contact"].map((link) => (
+                  <Typography
+                    key={link}
+                    variant="body2"
+                    sx={{
+                      color: "text.secondary",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        color: "#67c090",
+                        transform: "translateX(4px)",
+                      },
+                    }}
+                  >
+                    {link}
+                  </Typography>
+                ))}
+              </Stack>
+            </Grid>
+
+            <Grid item xs={12} md={4}>
+              <Typography
+                variant="subtitle2"
+                fontWeight="bold"
+                sx={{ mb: 2, color: "#0f4a5b" }}
+              >
+                Stay Updated
+              </Typography>
               <Typography
                 variant="body2"
-                textAlign={{ xs: "left", md: "right" }}
-                sx={{
-                  opacity: 0.6,
-                  mt: { xs: 2, md: 0 },
-                }}
+                sx={{ color: "text.secondary", mb: 2, lineHeight: 1.6 }}
               >
-                © {new Date().getFullYear()} EcoWaste Technologies. All rights
-                reserved.
+                Get the latest updates on waste management solutions.
               </Typography>
+              <Stack direction="row" spacing={1}>
+                <Box
+                  sx={{
+                    flex: 1,
+                    bgcolor: "white",
+                    borderRadius: 2,
+                    border: `1px solid ${alpha("#67c090", 0.2)}`,
+                    px: 2,
+                    py: 1.5,
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "text.disabled", fontSize: "0.9rem" }}
+                  >
+                    Enter your email
+                  </Typography>
+                </Box>
+                <Button
+                  variant="contained"
+                  sx={{
+                    bgcolor: "#67c090",
+                    minWidth: "auto",
+                    px: 3,
+                    borderRadius: 2,
+                    boxShadow: "none",
+                    "&:hover": {
+                      bgcolor: "#4a9c7c",
+                      boxShadow: "none",
+                    },
+                  }}
+                >
+                  →
+                </Button>
+              </Stack>
             </Grid>
           </Grid>
+
+          {/* Bottom Bar */}
+          <Box
+            sx={{
+              mt: { xs: 6, md: 8 },
+              pt: 4,
+              borderTop: `1px solid ${alpha("#67c090", 0.1)}`,
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{
+                color: "text.secondary",
+                textAlign: { xs: "center", md: "left" },
+              }}
+            >
+              © {new Date().getFullYear()} EcoWaste Technologies. All rights
+              reserved.
+            </Typography>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={{ xs: 1, sm: 3 }}
+              sx={{ textAlign: { xs: "center", sm: "left" } }}
+            >
+              {["Privacy Policy", "Terms of Service", "Cookie Policy"].map(
+                (link) => (
+                  <Typography
+                    key={link}
+                    variant="body2"
+                    sx={{
+                      color: "text.secondary",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        color: "#67c090",
+                      },
+                    }}
+                  >
+                    {link}
+                  </Typography>
+                )
+              )}
+            </Stack>
+          </Box>
         </Container>
       </Box>
     </Box>

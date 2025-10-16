@@ -25,10 +25,15 @@ import Breadcrumb from "../../components/BreadCrumb";
 import { useMemo, useState } from "react";
 import ViewDataDrawer, { DrawerHeader } from "../../components/ViewDataDrawer";
 import AddIcon from "@mui/icons-material/Add";
+import DownloadIcon from "@mui/icons-material/Download";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import TableChartIcon from "@mui/icons-material/TableChart";
 import AddOrEditGarbageDialog from "./AddOrEditGarbageDialog";
 import { differenceInDays, format } from "date-fns";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import { useSnackbar } from "notistack";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 import ViewGarbageContent from "./ViewGarbageContent";
 import { PermissionKeys } from "../Administration/SectionList";
@@ -146,6 +151,168 @@ function GarbageTable({
     }
   }, [garbageData, page, rowsPerPage, todayGarbageData, isTodayGarbage]);
 
+  // Calculate statistics
+  const calculateStats = () => {
+    const dataSource = isTodayGarbage ? todayGarbageData : garbageData;
+    if (!dataSource || dataSource.length === 0) {
+      return {
+        totalWeight: 0,
+        totalRecords: 0,
+        pendingCount: 0,
+        requestedCount: 0,
+        collectedCount: 0,
+      };
+    }
+
+    const totalWeight = dataSource.reduce(
+      (sum, item) => sum + (item.wasteWeight || 0),
+      0
+    );
+    const totalRecords = dataSource.length;
+    const pendingCount = dataSource.filter((item) => item.status === "Pending").length;
+    const requestedCount = dataSource.filter((item) => item.status === "Requested").length;
+    const collectedCount = dataSource.filter((item) => item.status === "Collected").length;
+
+    return {
+      totalWeight: totalWeight.toFixed(2),
+      totalRecords,
+      pendingCount,
+      requestedCount,
+      collectedCount,
+    };
+  };
+
+  // Generate PDF Report
+  const generatePDFReport = () => {
+    try {
+      const doc = new jsPDF();
+      const currentDate = format(new Date(), "yyyy-MM-dd");
+      const dataSource = isTodayGarbage ? todayGarbageData : garbageData;
+
+      if (!dataSource || dataSource.length === 0) {
+        enqueueSnackbar("No data available to generate report", { variant: "warning" });
+        return;
+      }
+
+      // Add title
+      doc.setFontSize(20);
+      doc.setFont("helvetica", "bold");
+      doc.text(
+        isTodayGarbage ? "DAILY WASTE REPORT" : "WASTE MANAGEMENT REPORT",
+        105,
+        15,
+        { align: "center" }
+      );
+
+      // Add date
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Generated on: ${currentDate}`, 105, 22, { align: "center" });
+
+      // Add statistics
+      const stats = calculateStats();
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.text("Summary Statistics", 14, 35);
+
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Total Records: ${stats.totalRecords}`, 14, 42);
+      doc.text(`Total Weight: ${stats.totalWeight} Kg`, 14, 49);
+      doc.text(`Pending: ${stats.pendingCount}`, 14, 56);
+      doc.text(`Requested: ${stats.requestedCount}`, 70, 56);
+      doc.text(`Collected: ${stats.collectedCount}`, 126, 56);
+
+      // Prepare table data
+      const tableData = dataSource.map((row) => [
+        row._id,
+        row?.createdAt ? format(new Date(row.createdAt), "yyyy-MM-dd") : "N/A",
+        row.garbageCategory,
+        row?.binId?.binId || "N/A",
+        `${row.wasteWeight} Kg`,
+        row.status,
+      ]);
+
+      // Add table
+      autoTable(doc, {
+        head: [["Reference", "Date", "Category", "Bin Number", "Weight", "Status"]],
+        body: tableData,
+        startY: 65,
+        styles: { fontSize: 8 },
+        headStyles: {
+          fillColor: [76, 175, 80], // Green color matching theme
+          textColor: [255, 255, 255],
+        },
+        columnStyles: {
+          0: { cellWidth: 35 },
+          1: { cellWidth: 25 },
+          2: { cellWidth: 30 },
+          3: { cellWidth: 25 },
+          4: { cellWidth: 25 },
+          5: { cellWidth: 25 },
+        },
+      });
+
+      // Save the PDF
+      const fileName = isTodayGarbage
+        ? `daily-waste-report-${currentDate}.pdf`
+        : `waste-management-report-${currentDate}.pdf`;
+      doc.save(fileName);
+
+      enqueueSnackbar("PDF report generated successfully!", { variant: "success" });
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      enqueueSnackbar("Failed to generate PDF report", { variant: "error" });
+    }
+  };
+
+  // Generate CSV Report
+  const generateCSVReport = () => {
+    try {
+      const dataSource = isTodayGarbage ? todayGarbageData : garbageData;
+
+      if (!dataSource || dataSource.length === 0) {
+        enqueueSnackbar("No data available to generate report", { variant: "warning" });
+        return;
+      }
+
+      let csvContent = "Reference,Date,Waste Category,Bin Number,Weight (Kg),Status\n";
+
+      dataSource.forEach((row) => {
+        const date = row?.createdAt
+          ? format(new Date(row.createdAt), "yyyy-MM-dd")
+          : "N/A";
+        const binId = row?.binId?.binId || "N/A";
+        
+        csvContent += `${row._id},`;
+        csvContent += `${date},`;
+        csvContent += `${row.garbageCategory},`;
+        csvContent += `${binId},`;
+        csvContent += `${row.wasteWeight},`;
+        csvContent += `${row.status}\n`;
+      });
+
+      // Create a blob and download
+      const blob = new Blob([csvContent], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const fileName = isTodayGarbage
+        ? `daily-waste-report-${format(new Date(), "yyyy-MM-dd")}.csv`
+        : `waste-management-report-${format(new Date(), "yyyy-MM-dd")}.csv`;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+
+      enqueueSnackbar("CSV report generated successfully!", { variant: "success" });
+    } catch (error) {
+      console.error("Error generating CSV:", error);
+      enqueueSnackbar("Failed to generate CSV report", { variant: "error" });
+    }
+  };
+
   return (
     <Stack>
       <Box
@@ -163,6 +330,49 @@ function GarbageTable({
         <Breadcrumb breadcrumbs={breadcrumbItems} />
       </Box>
       <Stack sx={{ alignItems: "center" }}>
+        {/* Export Buttons */}
+        <Box
+          sx={{
+            width: "100%",
+            mb: 2,
+            display: "flex",
+            gap: 2,
+            justifyContent: "flex-end",
+            px: 2,
+          }}
+        >
+          <Button
+            variant="contained"
+            startIcon={<PictureAsPdfIcon />}
+            onClick={generatePDFReport}
+            sx={{
+              bgcolor: "#d32f2f",
+              "&:hover": { bgcolor: "#b71c1c" },
+            }}
+            disabled={
+              (isTodayGarbage && (!todayGarbageData || todayGarbageData.length === 0)) ||
+              (!isTodayGarbage && (!garbageData || garbageData.length === 0))
+            }
+          >
+            Export PDF
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<TableChartIcon />}
+            onClick={generateCSVReport}
+            sx={{
+              bgcolor: "#2e7d32",
+              "&:hover": { bgcolor: "#1b5e20" },
+            }}
+            disabled={
+              (isTodayGarbage && (!todayGarbageData || todayGarbageData.length === 0)) ||
+              (!isTodayGarbage && (!garbageData || garbageData.length === 0))
+            }
+          >
+            Export CSV
+          </Button>
+        </Box>
+
         <TableContainer
           component={Paper}
           elevation={2}
