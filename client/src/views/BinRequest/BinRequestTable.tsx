@@ -114,11 +114,10 @@ function BinRequestTable() {
               <TableRow>
                 <TableCell align="left">Bin ID</TableCell>
                 <TableCell align="left">Location</TableCell>
-                <TableCell align="left">Current Waste Level (%)</TableCell>
-                <TableCell align="left">Threshold Level (%)</TableCell>
+                <TableCell align="left">Current Waste Level</TableCell>
+                <TableCell align="left">Threshold Level</TableCell>
                 <TableCell align="left">Bin Type</TableCell>
                 <TableCell align="left">Availability</TableCell>
-                <TableCell align="left">Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -138,9 +137,9 @@ function BinRequestTable() {
                     <TableCell align="left">{row.binId}</TableCell>
                     <TableCell align="left">{row.location}</TableCell>
                     <TableCell component="th" scope="row">
-                      {row.currentWasteLevel}%
+                      {row.currentWasteLevel}
                     </TableCell>
-                    <TableCell align="left">{row.thresholdLevel}%</TableCell>
+                    <TableCell align="left">{row.thresholdLevel}</TableCell>
                     <TableCell align="left">{row.binType}</TableCell>
                     <TableCell align="left">
                       <Chip
@@ -148,27 +147,6 @@ function BinRequestTable() {
                         color={row.availability ? "success" : "error"}
                         size="small"
                       />
-                    </TableCell>
-                    <TableCell align="left">
-                      <Button
-                        variant="contained"
-                        size="small"
-                        sx={{
-                          backgroundColor: row.availability
-                            ? "var(--eco-waste-blue)"
-                            : "#9e9e9e",
-                        }}
-                        disabled={!row.availability}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (row.availability) {
-                            setSelectedRow(row);
-                            setOpenViewDrawer(true);
-                          }
-                        }}
-                      >
-                        {row.availability ? "Request" : "Pending"}
-                      </Button>
                     </TableCell>
                   </TableRow>
                 ))

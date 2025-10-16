@@ -31,6 +31,7 @@ import {
 import queryClient from "../../state/queryClient";
 import { enqueueSnackbar } from "notistack";
 import UserAutoComplete from "../../components/UserAutoComplete";
+import { fetchWasteBinsByOwner } from "../../api/wasteBin";
 
 type DialogProps = {
   open: boolean;
@@ -54,6 +55,7 @@ export default function AddOrEditGarbageDialog({
     reset,
     control,
     watch,
+    setValue,
   } = useForm<Garbage>({
     defaultValues,
   });
@@ -78,11 +80,12 @@ export default function AddOrEditGarbageDialog({
       createGarbageMutation(data);
     }
   };
-
+  const watchGarbageCategory = watch("garbageCategory");
   const { data: garbageBinData, isFetching: isDoctorDataFetching } = useQuery({
-    queryKey: ["waste-bin"],
-    queryFn: fetchGarbageBins,
+    queryKey: ["waste-bin", watchGarbageCategory],
+    queryFn: () => fetchWasteBinsByOwner(watchGarbageCategory),
   });
+  console.log("garbageBinData", watchGarbageCategory);
 
   //   const { data: divisionData, isFetching: isDivisionDataFetching } = useQuery({
   //     queryKey: ["divisions"],
@@ -109,8 +112,11 @@ export default function AddOrEditGarbageDialog({
       reset();
       handleClose();
     },
-    onError: () => {
-      enqueueSnackbar(`Waste Added To Bin Failed!`, {
+    onError: (error: any) => {
+      const errorMessage =
+        error?.message || error?.data?.message || "Waste Added To Bin Failed!";
+
+      enqueueSnackbar(errorMessage, {
         variant: "error",
       });
     },
@@ -189,23 +195,35 @@ export default function AddOrEditGarbageDialog({
               height: "fit-content",
             }}
           >
-            <Autocomplete
-              {...register("garbageCategory", { required: false })}
-              size="small"
-              options={
-                garbageCategory?.length
-                  ? garbageCategory.map((category) => category.label)
-                  : []
-              }
-              defaultValue={defaultValues?.garbageCategory}
-              sx={{ flex: 1, margin: "0.5rem" }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  required
-                  error={!!errors.garbageCategory}
-                  label="Garbage Category"
-                  name="garbageCategory"
+            <Controller
+              name="garbageCategory"
+              control={control}
+              defaultValue={defaultValues?.garbageCategory ?? null}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <Autocomplete
+                  {...field}
+                  onChange={(event, newValue) => {
+                    field.onChange(newValue);
+                    setValue("binId", null);
+                  }}
+                  size="small"
+                  options={
+                    garbageCategory?.length
+                      ? garbageCategory.map((division) => division.label)
+                      : []
+                  }
+                  sx={{ flex: 1, margin: "0.5rem" }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      required
+                      error={!!errors.garbageCategory}
+                      helperText={errors.garbageCategory && "Required"}
+                      label="Garbage Category"
+                      name="garbageCategory"
+                    />
+                  )}
                 />
               )}
             />
@@ -237,38 +255,40 @@ export default function AddOrEditGarbageDialog({
               )}
             /> */}
 
-            <Box sx={{ flex: 1 }}>
-              <Controller
-                name="binId"
-                control={control}
-                defaultValue={defaultValues?.binId}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <Autocomplete
-                    {...field}
-                    onChange={(_, data) => field.onChange(data)}
-                    getOptionLabel={(option) => option?.binId || ""}
-                    size="small"
-                    options={garbageBinData || []}
-                    sx={{ flex: 1, margin: "0.5rem" }}
-                    renderOption={(props, option) => (
-                      <li {...props} key={option._id}>
-                        {option.binId}
-                      </li>
-                    )}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        required
-                        error={!!errors.binId}
-                        label="Bin Id"
-                        name="binId"
-                      />
-                    )}
-                  />
-                )}
-              />
-            </Box>
+            {watchGarbageCategory && (
+              <Box sx={{ flex: 1 }}>
+                <Controller
+                  name="binId"
+                  control={control}
+                  defaultValue={defaultValues?.binId}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...field}
+                      onChange={(_, data) => field.onChange(data)}
+                      getOptionLabel={(option) => option?.binId || ""}
+                      size="small"
+                      options={garbageBinData || []}
+                      sx={{ flex: 1, margin: "0.5rem" }}
+                      renderOption={(props, option) => (
+                        <li {...props} key={option._id}>
+                          {option.binId}
+                        </li>
+                      )}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          required
+                          error={!!errors.binId}
+                          label="Bin Id"
+                          name="binId"
+                        />
+                      )}
+                    />
+                  )}
+                />
+              </Box>
+            )}
           </Stack>
         </Stack>
       </DialogContent>

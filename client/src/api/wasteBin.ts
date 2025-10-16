@@ -21,6 +21,11 @@ export async function fetchWasteBins() {
   return res.data;
 }
 
+export async function fetchWasteBinsByOwner(category: string) {
+  const res = await axios.get(`/api/waste/bin-owner/${category}`);
+  return res.data;
+}
+
 export async function fetchWasteBinById(id: string) {
   const res = await axios.get(`/api/waste/${id}`);
   return res.data;
