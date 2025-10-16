@@ -33,7 +33,6 @@ const OrganizationTable = React.lazy(
 //Waste Management
 const GarbageTable = React.lazy(() => import("./views/Garbage/GarbageTable"));
 
-
 //Waste Collection Management
 const DailyCollection = React.lazy(
   () => import("./views/WasteCollection/DailyCollection.tsx")
@@ -47,8 +46,12 @@ const BinRequestTable = React.lazy(
 const TruckTable = React.lazy(
   () => import("./views/TruckManagement/TruckTable.tsx")
 );
-const WasteBinTable = React.lazy(() => import("./views/WasteBin/WasteBinTable"));
-const WasteBinDashboard = React.lazy(() => import("./views/WasteBin/WasteBinDashboard"));
+const WasteBinTable = React.lazy(
+  () => import("./views/WasteBin/WasteBinTable")
+);
+const WasteBinDashboard = React.lazy(
+  () => import("./views/WasteBin/WasteBinDashboard")
+);
 
 //Waste Collection Requests
 const WasteCollectionRequestTable = React.lazy(
@@ -170,11 +173,9 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             () => {
-              return <GarbageTable isTodayGarbage={false} isGarbage={true}/>;
+              return <GarbageTable isTodayGarbage={false} isGarbage={true} />;
             },
-            !userPermissionObject?.[
-              PermissionKeys.WASTE_MNG_HISTORY_VIEW
-            ]
+            !userPermissionObject?.[PermissionKeys.WASTE_MNG_HISTORY_VIEW]
           )}
         />
         <Route
@@ -182,11 +183,9 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             () => {
-              return <GarbageTable isTodayGarbage={true} isGarbage={false}/>;
+              return <GarbageTable isTodayGarbage={true} isGarbage={false} />;
             },
-            !userPermissionObject?.[
-              PermissionKeys.WASTE_MNG_HISTORY_VIEW
-            ]
+            !userPermissionObject?.[PermissionKeys.WASTE_MNG_HISTORY_VIEW]
           )}
         />
         <Route
@@ -225,8 +224,30 @@ const AppRoutes = () => {
           path="/admin/waste-collection-requests"
           element={withLayout(
             MainLayout,
-            WasteCollectionRequestTable,
-            !userPermissionObject?.[PermissionKeys.ADMIN_BIN_MNG_VIEW]
+            () => {
+              return (
+                <WasteCollectionRequestTable
+                  isPendingData={true}
+                  isApprovedData={false}
+                />
+              );
+            },
+            !userPermissionObject?.[PermissionKeys.WASTE_MNG_HISTORY_VIEW]
+          )}
+        />
+        <Route
+          path="/admin/waste-collection-approved"
+          element={withLayout(
+            MainLayout,
+            () => {
+              return (
+                <WasteCollectionRequestTable
+                  isPendingData={false}
+                  isApprovedData={true}
+                />
+              );
+            },
+            !userPermissionObject?.[PermissionKeys.WASTE_MNG_HISTORY_VIEW]
           )}
         />
       </Route>

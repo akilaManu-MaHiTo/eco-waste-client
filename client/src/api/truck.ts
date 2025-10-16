@@ -40,7 +40,7 @@ export async function deleteTruck(id: string) {
 }
 
 export async function updateTruckAvailable(  truckId: string, collectId: string) {
-  const res = await axios.put(`/api/truck/available/${truckId}/${collectId}}`);
+  const res = await axios.put(`/api/truck/available/${truckId}/${collectId}`);
   return res.data;  
 }
 

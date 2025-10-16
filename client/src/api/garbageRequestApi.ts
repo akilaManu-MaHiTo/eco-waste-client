@@ -21,7 +21,10 @@ export async function fetchGarbageCollectionData() {
   const res = await axios.get(`/api/garbage-request`);
   return res.data;
 }
-
+export async function fetchGarbageCollectionDataApproved() {
+  const res = await axios.get(`/api/garbage-request/approved`);
+  return res.data;
+}
 export async function createGarbageCollectionRoute(data: any) {
   const res = await axios.post(`/api/collection-route`, data);
   return res.data;

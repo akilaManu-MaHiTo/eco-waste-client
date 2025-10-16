@@ -213,6 +213,7 @@ const CollectionRouteModal: React.FC<CollectionRouteModalProps> = ({
           <CustomButton
             onClick={handleCreateRoute}
             disabled={isPending || !selectedTruck}
+            variant="contained"
             sx={{ mt: 2 }}
           >
             {isPending ? "Creating..." : "Create Route"}
