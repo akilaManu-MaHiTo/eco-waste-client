@@ -45,6 +45,7 @@ import {
   Marker,
   InfoWindow,
   useLoadScript,
+  MarkerF,
 } from "@react-google-maps/api";
 import theme from "../../theme";
 import PageTitle from "../../components/PageTitle";
@@ -709,7 +710,7 @@ function DailyCollection() {
                     }}
                   >
                     {/* Truck marker */}
-                    <Marker
+                    <MarkerF
                       position={getValidCoordinates(
                         selectedDelivery.truck.latitude,
                         selectedDelivery.truck.longitude,
@@ -728,7 +729,7 @@ function DailyCollection() {
                       );
 
                       return (
-                        <Marker
+                        <MarkerF
                           key={item._id}
                           position={position}
                           title={`Bin: ${item.garbageId?.binId?.binId} - ${isCompleted ? 'Completed' : 'Pending'}`}
@@ -742,7 +743,7 @@ function DailyCollection() {
                     })}
 
                     {/* Dump location marker */}
-                    <Marker
+                    <MarkerF
                       position={DEFAULT_DUMP_LOCATION}
                       title="Dump Location"
                       onClick={() => setSelectedMarker("dump")}
