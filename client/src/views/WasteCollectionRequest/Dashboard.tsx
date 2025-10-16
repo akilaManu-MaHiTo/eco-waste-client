@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Grid, Container, Typography, Stack } from "@mui/material";
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -10,6 +10,17 @@ import {
   fetchMonthlyRequests,
   fetchDailyRequestsByDateAndTime,
 } from "../../api/garbageRequestApi";
+import {
+  GarbageByCategoryChart,
+  RequestsByStatusChart,
+  WasteByBinTypeChart,
+  DailyCollectionsChart,
+  RevenueByCategoryChart,
+  MonthlyRequestsChart,
+  DailyRequestsChart,
+} from "./Charts";
+import PageTitle from "../../components/PageTitle";
+import Breadcrumb from "../../components/BreadCrumb";
 
 export default function Dashboard() {
   const { data: garbageByCategory, isFetching: isGarbageByCategoryFetching } =
@@ -55,5 +66,72 @@ export default function Dashboard() {
     }
   );
 
-  return <Box>Dashboard</Box>;
+  return (
+    <Stack>
+      <Box sx={{ p: 2, boxShadow: 2, borderRadius: 1, overflowX: "hidden",mb:5 }}>
+        <PageTitle title="Waste Collection" />
+        <Breadcrumb
+          breadcrumbs={[
+            { title: "Home", href: "/home" },
+            { title: "Waste Collection Dashboard" },
+          ]}
+        />
+      </Box>
+
+      <Grid container spacing={3}>
+        {/* First Row - Pie Charts */}
+        <Grid item xs={12} md={6}>
+          <GarbageByCategoryChart
+            data={garbageByCategory}
+            isLoading={isGarbageByCategoryFetching}
+          />
+        </Grid>
+
+        {/* <Grid item xs={12} md={6}>
+          <WasteByBinTypeChart
+            data={wasteByBinType}
+            isLoading={isWasteByBinTypeFetching}
+          />
+        </Grid> */}
+
+        {/* Second Row - Bar and Revenue Charts */}
+        <Grid item xs={12} md={6}>
+          <RequestsByStatusChart
+            data={requestsByStatus}
+            isLoading={isRequestsByStatusFetching}
+          />
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <RevenueByCategoryChart
+            data={revenueByCategory}
+            isLoading={isRevenueByCategoryFetching}
+          />
+        </Grid>
+
+        {/* Third Row - Line Charts */}
+        <Grid item xs={12} md={6}>
+          <DailyCollectionsChart
+            data={dailyCollections}
+            isLoading={isDailyCollectionsFetching}
+          />
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <DailyRequestsChart
+            data={dailyRequests}
+            isLoading={isDailyRequestsFetching}
+          />
+        </Grid>
+
+        {/* Fourth Row - Monthly Requests (Full Width) */}
+        <Grid item xs={12} md={6}>
+          <MonthlyRequestsChart
+            data={monthlyRequests}
+            isLoading={isMonthlyRequestsFetching}
+          />
+        </Grid>
+      </Grid>
+    </Stack>
+  );
 }
