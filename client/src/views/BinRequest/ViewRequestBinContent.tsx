@@ -302,7 +302,7 @@ function ViewRequestBinContent({
               }
               onClick={() => setApproveDialogOpen(true)}
             >
-              Request Bin Collection
+              Request Bin 
             </CustomButton>
             {(!latitude || !longitude) && !locationLoading && (
               <Typography
@@ -328,10 +328,10 @@ function ViewRequestBinContent({
       {approveDialogOpen && (
         <ApproveConfirmationModal
           open={approveDialogOpen}
-          title="Request Bin Collection"
+          title="Request Bin"
           content={
             <>
-              Are you sure you want to Request this bin collection? LKR{" "}
+              Are you sure you want to Request this bin? LKR{" "}
               {BIN_REQUEST_PRICE.toFixed(2)} will be charged to your account.
               <Alert severity="warning" style={{ marginTop: "1rem" }}>
                 This action is not reversible.
