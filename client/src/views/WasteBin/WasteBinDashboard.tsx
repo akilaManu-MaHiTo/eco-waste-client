@@ -1,6 +1,5 @@
 import {
 	Box,
-	Grid,
 	Skeleton,
 	Stack,
 	Typography,
@@ -23,9 +22,6 @@ import { CurrentLevelCard, LastCollectionCard, NextCollectionCard, WasteCategori
 import TrendChartCard from "./components/TrendChartCard";
 import PieChartCard from "./components/PieChartCard";
 import CollectionHistory from "./components/CollectionHistory";
-import BinUtilization from "./components/BinUtilization";
-import UserCategoryList from "./components/UserCategoryList";
-
 type TrendChartPoint = {
 	date: string;
 	totalWeight: number;
@@ -75,11 +71,35 @@ type GarbageLevelResponse = {
 	bins: GarbageLevelBin[];
 };
 
-type GarbageSummaryItem = {
+type GarbageSummaryUser = {
+	_id: string;
+	name?: string;
+	email?: string;
+};
+
+type GarbageSummaryRange = {
+	start?: string;
+	end?: string;
+};
+
+type GarbageSummaryTotals = {
+	totalWeight?: number;
+	count?: number;
+	lastDepositAt?: string;
+};
+
+type GarbageSummaryCategory = {
+	category: string;
 	totalWeight: number;
 	count: number;
-	user?: { _id: string; email?: string };
-	category: string;
+	lastDepositAt?: string;
+};
+
+type GarbageSummaryResponse = {
+	user?: GarbageSummaryUser;
+	range?: GarbageSummaryRange;
+	totals?: GarbageSummaryTotals;
+	summary?: GarbageSummaryCategory[];
 };
 
 const breadcrumbItems = [
@@ -107,7 +127,7 @@ const WasteBinDashboard: React.FC = () => {
 		data: summaryData,
 		isLoading: isSummaryLoading,
 		isError: isSummaryError,
-	} = useQuery<GarbageSummaryItem[]>({
+	} = useQuery<GarbageSummaryResponse>({
 		queryKey: ["garbage-summary"],
 		queryFn: () => fetchCurrentSummary(),
 		staleTime: 60_000,
@@ -134,9 +154,10 @@ const WasteBinDashboard: React.FC = () => {
 	});
 
 	const categoryBreakdown = useMemo<CategoryBreakdown[]>(() => {
-		if (!summaryData || summaryData.length === 0) return [];
+		const categories = summaryData?.summary ?? [];
+		if (categories.length === 0) return [];
 
-		const categoryTotals = summaryData.reduce<Record<string, { weight: number; count: number }>>(
+		const categoryTotals = categories.reduce<Record<string, { weight: number; count: number }>>(
 			(acc, entry) => {
 				const category = entry.category || "Uncategorized";
 				const previous = acc[category] ?? { weight: 0, count: 0 };
@@ -151,10 +172,9 @@ const WasteBinDashboard: React.FC = () => {
 			{}
 		);
 
-		const grandTotal = Object.values(categoryTotals).reduce(
-			(sum, value) => sum + value.weight,
-			0
-		);
+		const grandTotal =
+			summaryData?.totals?.totalWeight ??
+			Object.values(categoryTotals).reduce((sum, value) => sum + value.weight, 0);
 
 		if (grandTotal === 0) return [];
 
@@ -259,49 +279,81 @@ const WasteBinDashboard: React.FC = () => {
 				</Stack>
 			</Box>
 
-			<Grid container spacing={3}>
-				<Grid item xs={12} md={3}>
-					<CurrentLevelCard loading={isLevelLoading} error={isLevelError} overallPercentFilled={overallPercentFilled} />
-				</Grid>
+			{/* Summary cards row (4 equal columns on md+, stacked on xs) */}
+			<Stack
+				spacing={3}
+				direction={{ xs: "column", md: "row" }}
+				sx={{ width: "100%" }}
+			>
+				<Box sx={{ flex: { md: 1 }, width: { xs: "100%" } }}>
+					<CurrentLevelCard
+						loading={isLevelLoading}
+						error={isLevelError}
+						overallPercentFilled={overallPercentFilled}
+					/>
+				</Box>
 
-				<Grid item xs={12} md={3}>
-					<LastCollectionCard loading={isHistoryLoading} error={isHistoryError} lastCollected={lastCollected} formatDate={formatDate} formatTime={formatTime} />
-				</Grid>
+				<Box sx={{ flex: { md: 1 }, width: { xs: "100%" } }}>
+					<LastCollectionCard
+						loading={isHistoryLoading}
+						error={isHistoryError}
+						lastCollected={lastCollected}
+						formatDate={formatDate}
+						formatTime={formatTime}
+					/>
+				</Box>
 
-				<Grid item xs={12} md={3}>
-					<NextCollectionCard loading={isHistoryLoading} error={isHistoryError} nextCollection={nextCollection} formatDate={formatDate} formatTime={formatTime} />
-				</Grid>
+				<Box sx={{ flex: { md: 1 }, width: { xs: "100%" } }}>
+					<NextCollectionCard
+						loading={isHistoryLoading}
+						error={isHistoryError}
+						nextCollection={nextCollection}
+						formatDate={formatDate}
+						formatTime={formatTime}
+					/>
+				</Box>
 
-				<Grid item xs={12} md={3}>
-					<WasteCategoriesCard loading={isSummaryLoading} error={isSummaryError} categoryBreakdown={categoryBreakdown} />
-				</Grid>
-			</Grid>
+				<Box sx={{ flex: { md: 1 }, width: { xs: "100%" } }}>
+					<WasteCategoriesCard
+						loading={isSummaryLoading}
+						error={isSummaryError}
+						categoryBreakdown={categoryBreakdown}
+					/>
+				</Box>
+			</Stack>
 
-			<Grid container spacing={3}>
-				<Grid item xs={12} md={7}>
-					<TrendChartCard loading={isTrendLoading} error={isTrendError} trendChartData={trendChartData} startDate={trendData?.startDate} endDate={trendData?.endDate} theme={theme} />
-				</Grid>
+			{/* Trend and pie charts row (7:5 on md+, stacked on xs) */}
+			<Stack spacing={3} direction={{ xs: "column", md: "row" }}>
+				<Box sx={{ flex: { md: 7 }, width: { xs: "100%" } }}>
+					<TrendChartCard
+						loading={isTrendLoading}
+						error={isTrendError}
+						trendChartData={trendChartData}
+						startDate={trendData?.startDate}
+						endDate={trendData?.endDate}
+						theme={theme}
+					/>
+				</Box>
 
-				<Grid item xs={12} md={5}>
-					<PieChartCard loading={isSummaryLoading} error={isSummaryError} pieChartData={pieChartData} />
-				</Grid>
-			</Grid>
+				<Box sx={{ flex: { md: 5 }, width: { xs: "100%" } }}>
+					<PieChartCard
+						loading={isSummaryLoading}
+						error={isSummaryError}
+						pieChartData={pieChartData}
+					/>
+				</Box>
+			</Stack>
 
-			<CollectionHistory loading={isHistoryLoading} error={isHistoryError} historyPreview={historyPreview} formatDate={formatDate} formatTime={formatTime} />
+			<CollectionHistory
+				loading={isHistoryLoading}
+				error={isHistoryError}
+				historyPreview={historyPreview}
+				formatDate={formatDate}
+				formatTime={formatTime}
+			/>
+
 			
-			<Grid container spacing={3}>
 
-				<Grid item xs={12} md={3}>
-					<UserCategoryList items={summaryData} />
-				</Grid>
-
-				<Grid item xs={12} md={3}>
-					<BinUtilization loading={isLevelLoading} error={isLevelError} levelData={levelData} />
-
-			
-				</Grid>
-			</Grid>
-			
 		</Stack>
 	);
 };
