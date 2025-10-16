@@ -34,10 +34,17 @@ import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 
 import {
   fetchGarbageCollectionData,
+  fetchGarbageCollectionDataApproved,
   GarbageRequest,
 } from "../../api/garbageRequestApi";
 
-function WasteCollectionRequestTable() {
+function WasteCollectionRequestTable({
+  isPendingData,
+  isApprovedData,
+}: {
+  isPendingData?: boolean;
+  isApprovedData?: boolean;
+}) {
   const { enqueueSnackbar } = useSnackbar();
   const [openViewDrawer, setOpenViewDrawer] = useState(false);
   const [selectedRow, setSelectedRow] = useState<GarbageRequest | null>(null);
@@ -54,6 +61,15 @@ function WasteCollectionRequestTable() {
     queryKey: ["garbage-collection"],
     queryFn: fetchGarbageCollectionData,
   });
+  console.log(garbageCollectionData);
+  const {
+    data: garbageCollectionDataApproved,
+    isFetching: isFetchingApproved,
+  } = useQuery({
+    queryKey: ["garbage-collection-approved"],
+    queryFn: fetchGarbageCollectionDataApproved,
+  });
+  console.log(garbageCollectionDataApproved);
 
   const handleCheckboxChange = (row: GarbageRequest) => {
     setCheckedRows((prev) =>
@@ -64,13 +80,33 @@ function WasteCollectionRequestTable() {
   };
 
   const paginatedData = useMemo(() => {
-    if (!garbageCollectionData) return [];
-    if (rowsPerPage === -1) return garbageCollectionData;
-    return garbageCollectionData.slice(
-      page * rowsPerPage,
-      page * rowsPerPage + rowsPerPage
-    );
-  }, [garbageCollectionData, page, rowsPerPage]);
+    if (isPendingData) {
+      if (!garbageCollectionData) return [];
+      if (rowsPerPage === -1) {
+        return garbageCollectionData;
+      }
+      return garbageCollectionData.slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage
+      );
+    } else {
+      if (!garbageCollectionDataApproved) return [];
+      if (rowsPerPage === -1) {
+        return garbageCollectionDataApproved;
+      }
+      return garbageCollectionDataApproved.slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage
+      );
+    }
+  }, [
+    garbageCollectionData,
+    page,
+    rowsPerPage,
+    garbageCollectionDataApproved,
+    isPendingData,
+    isApprovedData,
+  ]);
 
   return (
     <Stack spacing={2}>
@@ -103,7 +139,8 @@ function WasteCollectionRequestTable() {
           elevation={2}
           sx={{ overflowX: "auto", maxWidth: isMobile ? "88vw" : "100%" }}
         >
-          {isFetching && <LinearProgress sx={{ width: "100%" }} />}
+          {isFetching ||
+            (isFetchingApproved && <LinearProgress sx={{ width: "100%" }} />)}
 
           <Table>
             <TableHead
@@ -116,7 +153,7 @@ function WasteCollectionRequestTable() {
                 <TableCell>Mobile</TableCell>
                 <TableCell>Weight</TableCell>
                 <TableCell>Status</TableCell>
-                <TableCell>Select</TableCell>
+                {isApprovedData && <TableCell>Select</TableCell>}
               </TableRow>
             </TableHead>
 
