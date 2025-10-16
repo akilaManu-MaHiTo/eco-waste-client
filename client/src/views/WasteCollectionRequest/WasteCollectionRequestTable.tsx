@@ -23,6 +23,9 @@ import { useSnackbar } from "notistack";
 import { format } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import AddIcon from "@mui/icons-material/Add";
+import DownloadIcon from "@mui/icons-material/Download";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 import theme from "../../theme";
 import PageTitle from "../../components/PageTitle";
@@ -79,6 +82,58 @@ function WasteCollectionRequestTable({
     );
   };
 
+  const generatePDFReport = () => {
+    try {
+      const doc = new jsPDF();
+      
+      // Add title
+      doc.setFontSize(18);
+      doc.text("Waste Collection Requests Report", 14, 20);
+      
+      // Add report type
+      doc.setFontSize(12);
+      const reportType = isApprovedData ? "Approved Requests" : "Pending Requests";
+      doc.text(reportType, 14, 30);
+      
+      // Add generation date
+      doc.setFontSize(10);
+      doc.text(`Generated on: ${format(new Date(), "PPpp")}`, 14, 38);
+      
+      // Prepare table data
+      const tableData = paginatedData.map((row) => [
+        row._id,
+        row.dateAndTime || "N/A",
+        row.garbageId?.createdBy?.username || "N/A",
+        row.garbageId?.createdBy?.mobile || "N/A",
+        `${row.garbageId?.binId?.thresholdLevel || 0} Kg`,
+        row.status,
+      ]);
+      
+      // Add table
+      autoTable(doc, {
+        head: [["Reference", "Date & Time", "User", "Mobile", "Weight", "Status"]],
+        body: tableData,
+        startY: 45,
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [76, 175, 80] }, // Green color matching your theme
+      });
+      
+      // Add summary
+      const finalY = (doc as any).lastAutoTable.finalY || 45;
+      doc.setFontSize(10);
+      doc.text(`Total Records: ${paginatedData.length}`, 14, finalY + 10);
+      
+      // Save the PDF
+      const fileName = `waste-collection-${isApprovedData ? "approved" : "pending"}-${format(new Date(), "yyyy-MM-dd")}.pdf`;
+      doc.save(fileName);
+      
+      enqueueSnackbar("Report generated successfully!", { variant: "success" });
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      enqueueSnackbar("Failed to generate report", { variant: "error" });
+    }
+  };
+
   const paginatedData = useMemo(() => {
     if (isPendingData) {
       if (!garbageCollectionData) return [];
@@ -125,6 +180,25 @@ function WasteCollectionRequestTable({
       </Box>
 
       <Stack alignItems="flex-end">
+        <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
+          <Button
+            variant="outlined"
+            sx={{ 
+              borderColor: "var(--eco-waste-blue)",
+              color: "var(--eco-waste-blue)",
+              "&:hover": {
+                borderColor: "var(--eco-waste-blue)",
+                backgroundColor: "rgba(0, 123, 255, 0.04)",
+              }
+            }}
+            startIcon={<DownloadIcon />}
+            onClick={generatePDFReport}
+            disabled={paginatedData.length === 0}
+          >
+            Generate Report
+          </Button>
+        </Stack>
+
         {checkedRows.length > 0 && (
           <Box sx={{ py: 2, display: "flex", justifyContent: "flex-end" }}>
             <Button
