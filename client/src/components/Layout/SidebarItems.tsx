@@ -155,9 +155,9 @@ export const sidebarItems: Array<SidebarItem> = [
     accessKey: PermissionKeys.INSIGHT_VIEW,
   },
   {
-    title: "Collection History",
-    icon: <HistoryOutlinedIcon fontSize="small" />,
-    href: "/waste-collection/history",
+    title: "Daily Collection",
+    icon: <CalendarMonthIcon fontSize="small" />,
+    href: "/waste-collection/daily-collection",
     accessKey: PermissionKeys.INSIGHT_VIEW,
   },
 ];

@@ -39,7 +39,7 @@ import CustomButton from "../../components/CustomButton";
 import { deleteWasteBin, fetchWasteBins, WasteBin } from "../../api/wasteBin";
 import { deleteTruck, fetchTrucks, Truck } from "../../api/truck.ts";
 
-function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
+function TruckTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
   const { enqueueSnackbar } = useSnackbar();
   const [openViewDrawer, setOpenViewDrawer] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Truck>(null);
@@ -345,4 +345,4 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
   );
 }
 
-export default WasteBinTable;
+export default TruckTable;

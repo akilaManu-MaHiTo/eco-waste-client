@@ -32,3 +32,26 @@ export async function fetchRouteByTruckId(truckId: string) {
   const res = await axios.get(`/api/collection-route/${truckId}`);
   return res.data;
 }
+
+//get all routes
+export async function fetchAllRoutes() {
+  const res = await axios.get(`/api/collection-route`);
+  return res.data;
+}
+
+//get all pending requests
+export async function fetchAllPendingRequests() {
+  const res = await axios.get(`/api/collection-route/pending`);
+  return res.data;
+}
+
+//delivery status update
+export async function updateDeliveryStatusInProgress(truckId: string, collectionRouteId: string) {
+  const res = await axios.put(`/api/collection-route/inprogress/${truckId}/${collectionRouteId}`);
+  return res.data;
+}
+
+export async function updateDeliveryStatusCompleted(truckId: string, collectionRouteId: string) {
+  const res = await axios.put(`/api/collection-route/completed/${truckId}/${collectionRouteId}`);
+  return res.data;
+}
