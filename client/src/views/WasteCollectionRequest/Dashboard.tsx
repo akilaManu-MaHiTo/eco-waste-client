@@ -1,5 +1,5 @@
 import { Box, Grid, Container, Typography, Stack } from "@mui/material";
-import React from "react";
+import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   fetchGarbageByCategory,
@@ -21,6 +21,12 @@ import {
 } from "./Charts";
 import PageTitle from "../../components/PageTitle";
 import Breadcrumb from "../../components/BreadCrumb";
+import DashboardStatsCard from "../../components/DashboardStatsCard";
+import { 
+  Assessment, 
+  AttachMoney, 
+  RecyclingOutlined 
+} from "@mui/icons-material";
 
 export default function Dashboard() {
   const { data: garbageByCategory, isFetching: isGarbageByCategoryFetching } =
@@ -66,6 +72,23 @@ export default function Dashboard() {
     }
   );
 
+  // Calculate dashboard stats using useMemo
+  const dashboardStats = useMemo(() => {
+    const totalRequests = requestsByStatus?.reduce((sum, status) => sum + status.count, 0) || 0;
+    
+    const totalRevenue = revenueByCategory?.reduce((sum, category) => sum + category.totalRevenue, 0) || 0;
+    const currency = revenueByCategory?.[0]?.currency || 'LKR';
+    
+    const totalWaste = garbageByCategory?.reduce((sum, category) => sum + category.totalWeight, 0) || 0;
+
+    return {
+      totalRequests,
+      totalRevenue,
+      currency,
+      totalWaste
+    };
+  }, [requestsByStatus, revenueByCategory, garbageByCategory]);
+
   return (
     <Stack>
       <Box sx={{ p: 2, boxShadow: 2, borderRadius: 1, overflowX: "hidden",mb:5 }}>
@@ -77,6 +100,42 @@ export default function Dashboard() {
           ]}
         />
       </Box>
+
+      {/* Dashboard Stats Cards */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={6} md={4}>
+          <DashboardStatsCard
+            title="Total Requests"
+            value={dashboardStats.totalRequests}
+            icon={Assessment}
+            color="#1976d2"
+            isLoading={isRequestsByStatusFetching}
+            subtitle="All time requests"
+          />
+        </Grid>
+        
+        <Grid item xs={12} sm={6} md={4}>
+          <DashboardStatsCard
+            title="Total Revenue"
+            value={`${dashboardStats.totalRevenue} ${dashboardStats.currency}`}
+            icon={AttachMoney}
+            color="#2e7d32"
+            isLoading={isRevenueByCategoryFetching}
+            subtitle="Revenue generated"
+          />
+        </Grid>
+        
+        <Grid item xs={12} sm={6} md={4}>
+          <DashboardStatsCard
+            title="Total Waste Collected"
+            value={`${dashboardStats.totalWaste} kg`}
+            icon={RecyclingOutlined}
+            color="#ed6c02"
+            isLoading={isGarbageByCategoryFetching}
+            subtitle="Weight collected"
+          />
+        </Grid>
+      </Grid>
 
       <Grid container spacing={3}>
         {/* First Row - Pie Charts */}
