@@ -48,4 +48,5 @@ export async function deleteWasteBin(id: string) {
 export const binTypeData = [
   { _id: "a", label: "Plastic" },
   { _id: "b", label: "Paper" },
+  { _id: "c", label: "Food" },
 ];
