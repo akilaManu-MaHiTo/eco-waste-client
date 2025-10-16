@@ -155,6 +155,12 @@ export const sidebarItems: Array<SidebarItem> = [
     accessKey: PermissionKeys.INSIGHT_VIEW,
   },
   {
+    title: "Collector Dashboard",
+    icon: <DashboardOutlinedIcon fontSize="small" />,
+    href: "/waste-collection/dashboard-collection",
+    accessKey: PermissionKeys.INSIGHT_VIEW,
+  },
+  {
     title: "Daily Collection",
     icon: <CalendarMonthIcon fontSize="small" />,
     href: "/waste-collection/daily-collection",
