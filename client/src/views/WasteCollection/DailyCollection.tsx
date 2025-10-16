@@ -40,11 +40,16 @@ import {
   CheckCircle as CheckIcon,
   Assignment as AssignmentIcon,
 } from "@mui/icons-material";
-import { GoogleMap, Marker, InfoWindow, useLoadScript } from '@react-google-maps/api';
+import {
+  GoogleMap,
+  Marker,
+  InfoWindow,
+  useLoadScript,
+} from "@react-google-maps/api";
 import theme from "../../theme";
 import PageTitle from "../../components/PageTitle";
 import Breadcrumb from "../../components/BreadCrumb";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import ViewDataDrawer, { DrawerHeader } from "../../components/ViewDataDrawer";
 import AddIcon from "@mui/icons-material/Add";
 import { differenceInDays, format } from "date-fns";
@@ -57,17 +62,18 @@ import queryClient from "../../state/queryClient";
 import useCurrentUserHaveAccess from "../../hooks/useCurrentUserHaveAccess";
 import CustomButton from "../../components/CustomButton";
 import { deleteWasteBin, fetchWasteBins, WasteBin } from "../../api/wasteBin";
-import { 
-  deleteTruck, 
-  fetchTrucks, 
-  Truck, 
-  updateTruckAvailable, 
-  updateTruckInService, 
-  updateTruckWasteLoad 
+import {
+  deleteTruck,
+  fetchTrucks,
+  Truck,
+  updateTruckAvailable,
+  updateTruckInService,
+  updateTruckWasteLoad,
 } from "../../api/truck.ts";
-import { 
+import {
   fetchAllPendingRequests,
-  updateDeliveryStatusCompleted 
+  fetchAllInProgressRequests,
+  updateDeliveryStatusCompleted,
 } from "../../api/garbageRequestApi.ts";
 
 // Types for the delivery data
@@ -117,25 +123,38 @@ interface DeliveryData {
 
 const DEFAULT_DUMP_LOCATION = { lat: 6.9271, lng: 79.8612 };
 
-const libraries: ('places')[] = ['places'];
+const libraries: ("places" | "geometry")[] = ["places", "geometry"];
 
 const mapContainerStyle = {
-  width: '100%',
-  height: '400px',
+  width: "100%",
+  height: "400px",
 };
+
+// Custom marker icons
+const createCustomIcon = (color: string) => ({
+  path: window.google?.maps.SymbolPath.CIRCLE || 0,
+  fillColor: color,
+  fillOpacity: 1,
+  strokeWeight: 2,
+  strokeColor: "#ffffff",
+  scale: 10,
+});
 
 function DailyCollection() {
   const { enqueueSnackbar } = useSnackbar();
-  const [selectedDelivery, setSelectedDelivery] = useState<DeliveryData | null>(null);
+  const [selectedDelivery, setSelectedDelivery] = useState<DeliveryData | null>(
+    null
+  );
   const [showJobDetails, setShowJobDetails] = useState(false);
   const [showRouteMap, setShowRouteMap] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
   const [completedBins, setCompletedBins] = useState<Set<string>>(new Set());
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [map, setMap] = useState<google.maps.Map | null>(null);
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
     libraries,
   });
 
@@ -163,53 +182,87 @@ function DailyCollection() {
     theme.breakpoints.down("md")
   );
 
-  const { data: deliveryData, isFetching: isDeliveryDataFetching, refetch } = useQuery({
+  const {
+    data: deliveryData,
+    isFetching: isDeliveryDataFetching,
+    refetch,
+  } = useQuery({
     queryKey: ["delivery-data"],
     queryFn: fetchAllPendingRequests,
   });
 
+  const {
+    data: inProgressData,
+    isFetching: isInProgressDataFetching,
+    refetch: refetchInProgress,
+  } = useQuery({
+    queryKey: ["inprogress-delivery-data"],
+    queryFn: fetchAllInProgressRequests,
+  });
+
   // Mutations
   const acceptJobMutation = useMutation({
-    mutationFn: ({ truckId, collectId }: { truckId: string; collectId: string }) =>
-      updateTruckInService(truckId, collectId),
+    mutationFn: ({
+      truckId,
+      collectId,
+    }: {
+      truckId: string;
+      collectId: string;
+    }) => updateTruckInService(truckId, collectId),
     onSuccess: () => {
-      enqueueSnackbar('Job accepted successfully!', { variant: 'success' });
+      enqueueSnackbar("Job accepted successfully!", { variant: "success" });
       refetch();
+      refetchInProgress();
       setShowJobDetails(false);
       setShowRouteMap(true);
     },
     onError: (error) => {
-      enqueueSnackbar('Failed to accept job', { variant: 'error' });
-      console.error('Accept job error:', error);
+      enqueueSnackbar("Failed to accept job", { variant: "error" });
+      console.error("Accept job error:", error);
     },
   });
 
   const completeCollectionMutation = useMutation({
-    mutationFn: ({ truckId, garbageId }: { truckId: string; garbageId: string }) =>
-      updateTruckWasteLoad(truckId, garbageId),
+    mutationFn: ({
+      truckId,
+      garbageId,
+    }: {
+      truckId: string;
+      garbageId: string;
+    }) => updateTruckWasteLoad(truckId, garbageId),
     onSuccess: (_, variables) => {
-      enqueueSnackbar('Bin collection completed!', { variant: 'success' });
-      setCompletedBins(prev => new Set(prev).add(variables.garbageId));
+      enqueueSnackbar("Bin collection completed!", { variant: "success" });
+      setCompletedBins((prev) => new Set(prev).add(variables.garbageId));
     },
     onError: (error) => {
-      enqueueSnackbar('Failed to complete bin collection', { variant: 'error' });
-      console.error('Complete collection error:', error);
+      enqueueSnackbar("Failed to complete bin collection", {
+        variant: "error",
+      });
+      console.error("Complete collection error:", error);
     },
   });
 
   const completeDeliveryMutation = useMutation({
-    mutationFn: ({ truckId, collectId }: { truckId: string; collectId: string }) =>
-      updateTruckAvailable(truckId, collectId),
+    mutationFn: ({
+      truckId,
+      collectId,
+    }: {
+      truckId: string;
+      collectId: string;
+    }) => updateTruckAvailable(truckId, collectId),
     onSuccess: () => {
-      enqueueSnackbar('Delivery completed successfully!', { variant: 'success' });
+      enqueueSnackbar("Delivery completed successfully!", {
+        variant: "success",
+      });
       refetch();
+      refetchInProgress();
       setShowRouteMap(false);
       setSelectedDelivery(null);
       setCompletedBins(new Set());
     },
     onError: (error) => {
-      enqueueSnackbar('Failed to complete delivery', { variant: 'error' });
-      console.error('Complete delivery error:', error);
+      enqueueSnackbar("Failed to complete delivery", { variant: "error" });
+      console.error("Complete delivery error:", error);
     },
   });
 
@@ -255,14 +308,48 @@ function DailyCollection() {
     }
   };
 
-  const allBinsCompleted = selectedDelivery?.garbage.every(item => 
-    completedBins.has(item.garbageId._id)
-  ) || false;
+  const allBinsCompleted =
+    selectedDelivery?.garbage.every((item) =>
+      completedBins.has(item.garbageId._id)
+    ) || false;
 
-  const paginatedData = deliveryData?.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  ) || [];
+  const paginatedData =
+    deliveryData?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) ||
+    [];
+
+  // Fix for map loading and markers
+  const onMapLoad = useCallback((map: google.maps.Map) => {
+    setMap(map);
+  }, []);
+
+  // Get valid coordinates for markers
+  const getValidCoordinates = (lat: number | undefined, lng: number | undefined, fallback = DEFAULT_DUMP_LOCATION) => {
+    if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
+      return { lat, lng };
+    }
+    return fallback;
+  };
+
+  // Calculate map center based on available points
+  const getMapCenter = useCallback(() => {
+    if (!selectedDelivery) return DEFAULT_DUMP_LOCATION;
+
+    const validPoints = [
+      getValidCoordinates(selectedDelivery.truck.latitude, selectedDelivery.truck.longitude),
+      ...selectedDelivery.garbage
+        .map(item => getValidCoordinates(item.garbageId?.binId?.latitude, item.garbageId?.binId?.longitude))
+        .filter(coord => coord !== DEFAULT_DUMP_LOCATION),
+      DEFAULT_DUMP_LOCATION
+    ];
+
+    if (validPoints.length === 0) return DEFAULT_DUMP_LOCATION;
+
+    // Calculate average of all points
+    const avgLat = validPoints.reduce((sum, point) => sum + point.lat, 0) / validPoints.length;
+    const avgLng = validPoints.reduce((sum, point) => sum + point.lng, 0) / validPoints.length;
+
+    return { lat: avgLat, lng: avgLng };
+  }, [selectedDelivery]);
 
   return (
     <Stack>
@@ -282,15 +369,15 @@ function DailyCollection() {
       {/* Jobs List */}
       <Box sx={{ padding: theme.spacing(2) }}>
         {isDeliveryDataFetching ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
-            <LinearProgress sx={{ width: '100%' }} />
+          <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
+            <LinearProgress sx={{ width: "100%" }} />
           </Box>
         ) : (
           <>
             <Typography variant="h6" sx={{ mb: 2 }}>
               Available Collection Jobs
             </Typography>
-            
+
             <TableContainer component={Paper}>
               <Table>
                 <TableHead>
@@ -325,14 +412,20 @@ function DailyCollection() {
                       </TableCell>
                       <TableCell>{delivery.garbage.length}</TableCell>
                       <TableCell>
-                        {delivery.garbage.reduce((total, item) => 
-                          total + item.garbageId.wasteWeight, 0
-                        )}kg
+                        {delivery.garbage.reduce(
+                          (total, item) => total + item.garbageId.wasteWeight,
+                          0
+                        )}
+                        kg
                       </TableCell>
                       <TableCell>
                         <Chip
                           label={delivery.deliveryStatus}
-                          color={delivery.deliveryStatus === 'Pending' ? 'warning' : 'success'}
+                          color={
+                            delivery.deliveryStatus === "Pending"
+                              ? "warning"
+                              : "success"
+                          }
                           size="small"
                         />
                       </TableCell>
@@ -341,7 +434,7 @@ function DailyCollection() {
                           variant="contained"
                           size="small"
                           onClick={() => handleAcceptJob(delivery)}
-                          disabled={delivery.deliveryStatus !== 'Pending'}
+                          disabled={delivery.deliveryStatus !== "Pending"}
                         >
                           Accept Job
                         </CustomButton>
@@ -368,8 +461,101 @@ function DailyCollection() {
         )}
       </Box>
 
+      {/* Accepted Jobs Section */}
+      <Box sx={{ padding: theme.spacing(2), mt: 2 }}>
+        {isInProgressDataFetching ? (
+          <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
+            <LinearProgress sx={{ width: "100%" }} />
+          </Box>
+        ) : (
+          <>
+            <Typography variant="h6" sx={{ mb: 2, color: "success.main" }}>
+              Accepted Jobs (In Progress)
+            </Typography>
+            
+            {inProgressData && inProgressData.length > 0 ? (
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Collection ID</TableCell>
+                      <TableCell>Truck</TableCell>
+                      <TableCell>Driver Location</TableCell>
+                      <TableCell>Bins Count</TableCell>
+                      <TableCell>Total Weight</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {inProgressData.map((delivery: DeliveryData) => (
+                      <TableRow key={delivery._id}>
+                        <TableCell>{delivery._id.slice(-8)}</TableCell>
+                        <TableCell>
+                          <Box>
+                            <Typography variant="body2" fontWeight="bold">
+                              {delivery.truck.truckId}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              Capacity: {delivery.truck.capacity}kg
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" sx={{ maxWidth: 200 }}>
+                            {delivery.truck.currentLocation}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>{delivery.garbage.length}</TableCell>
+                        <TableCell>
+                          {delivery.garbage.reduce(
+                            (total, item) => total + item.garbageId.wasteWeight,
+                            0
+                          )}
+                          kg
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={delivery.deliveryStatus}
+                            color="info"
+                            size="small"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <CustomButton
+                            variant="outlined"
+                            size="small"
+                            onClick={() => {
+                              setSelectedDelivery(delivery);
+                              setShowRouteMap(true);
+                            }}
+                          >
+                            View Route
+                          </CustomButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            ) : (
+              <Box sx={{ textAlign: "center", py: 4 }}>
+                <Typography variant="body1" color="text.secondary">
+                  No accepted jobs in progress
+                </Typography>
+              </Box>
+            )}
+          </>
+        )}
+      </Box>
+
       {/* Job Confirmation Dialog */}
-      <Dialog open={showJobDetails} onClose={() => setShowJobDetails(false)} maxWidth="md" fullWidth>
+      <Dialog
+        open={showJobDetails}
+        onClose={() => setShowJobDetails(false)}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>
           <Box display="flex" alignItems="center" gap={1}>
             <AssignmentIcon />
@@ -383,35 +569,52 @@ function DailyCollection() {
                 <Card>
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
-                      <TruckIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
+                      <TruckIcon sx={{ mr: 1, verticalAlign: "middle" }} />
                       Truck Details
                     </Typography>
-                    <Typography><strong>Truck ID:</strong> {selectedDelivery.truck.truckId}</Typography>
-                    <Typography><strong>Capacity:</strong> {selectedDelivery.truck.capacity}kg</Typography>
-                    <Typography><strong>Current Location:</strong> {selectedDelivery.truck.currentLocation}</Typography>
-                    <Typography><strong>Status:</strong> {selectedDelivery.truck.status}</Typography>
+                    <Typography>
+                      <strong>Truck ID:</strong>{" "}
+                      {selectedDelivery.truck.truckId}
+                    </Typography>
+                    <Typography>
+                      <strong>Capacity:</strong>{" "}
+                      {selectedDelivery.truck.capacity}kg
+                    </Typography>
+                    <Typography>
+                      <strong>Current Location:</strong>{" "}
+                      {selectedDelivery.truck.currentLocation}
+                    </Typography>
+                    <Typography>
+                      <strong>Status:</strong> {selectedDelivery.truck.status}
+                    </Typography>
                   </CardContent>
                 </Card>
               </Grid>
-              
+
               <Grid item xs={12} md={6}>
                 <Card>
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
-                      <WasteIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
+                      <WasteIcon sx={{ mr: 1, verticalAlign: "middle" }} />
                       Collection Summary
                     </Typography>
-                    <Typography><strong>Total Bins:</strong> {selectedDelivery.garbage.length}</Typography>
                     <Typography>
-                      <strong>Total Weight:</strong> {' '}
-                      {selectedDelivery.garbage.reduce((total, item) => 
-                        total + item.garbageId.wasteWeight, 0
-                      )}kg
+                      <strong>Total Bins:</strong>{" "}
+                      {selectedDelivery.garbage.length}
                     </Typography>
                     <Typography>
-                      <strong>Total Price:</strong> LKR {' '}
-                      {selectedDelivery.garbage.reduce((total, item) => 
-                        total + item.price, 0
+                      <strong>Total Weight:</strong>{" "}
+                      {selectedDelivery.garbage.reduce(
+                        (total, item) => total + item.garbageId.wasteWeight,
+                        0
+                      )}
+                      kg
+                    </Typography>
+                    <Typography>
+                      <strong>Total Price:</strong> LKR{" "}
+                      {selectedDelivery.garbage.reduce(
+                        (total, item) => total + item.price,
+                        0
                       )}
                     </Typography>
                   </CardContent>
@@ -419,7 +622,9 @@ function DailyCollection() {
               </Grid>
 
               <Grid item xs={12}>
-                <Typography variant="h6" gutterBottom>Collection Points</Typography>
+                <Typography variant="h6" gutterBottom>
+                  Collection Points
+                </Typography>
                 <List>
                   {selectedDelivery.garbage.map((item, index) => (
                     <ListItem key={item._id} divider>
@@ -431,10 +636,12 @@ function DailyCollection() {
                         secondary={
                           <Box>
                             <Typography variant="body2">
-                              Weight: {item.garbageId.wasteWeight}kg | Category: {item.garbageId.garbageCategory}
+                              Weight: {item.garbageId.wasteWeight}kg | Category:{" "}
+                              {item.garbageId.garbageCategory}
                             </Typography>
                             <Typography variant="body2">
-                              Owner: {item.garbageId.createdBy.username} | Price: LKR {item.price}
+                              Owner: {item.garbageId.createdBy.username} |
+                              Price: LKR {item.price}
                             </Typography>
                           </Box>
                         }
@@ -453,13 +660,19 @@ function DailyCollection() {
             onClick={confirmAcceptJob}
             disabled={acceptJobMutation.isPending}
           >
-            {acceptJobMutation.isPending ? 'Accepting...' : 'Accept Job'}
+            {acceptJobMutation.isPending ? "Accepting..." : "Accept Job"}
           </CustomButton>
         </DialogActions>
       </Dialog>
 
       {/* Route Map Dialog */}
-      <Dialog open={showRouteMap} onClose={() => setShowRouteMap(false)} maxWidth="lg" fullWidth>
+      <Dialog
+        open={showRouteMap}
+        onClose={() => setShowRouteMap(false)}
+        maxWidth="lg"
+        fullWidth
+        sx={{ '& .MuiDialog-paper': { maxHeight: '90vh' } }}
+      >
         <DialogTitle>
           <Box display="flex" alignItems="center" gap={1}>
             <LocationOnIcon />
@@ -471,138 +684,129 @@ function DailyCollection() {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 {loadError && (
-                  <Box sx={{ p: 3, textAlign: 'center', color: 'error.main' }}>
-                    <Typography>Error loading maps: {loadError.message}</Typography>
+                  <Box sx={{ p: 3, textAlign: "center", color: "error.main" }}>
+                    <Typography>
+                      Error loading maps: {loadError.message}
+                    </Typography>
                   </Box>
                 )}
-                {isLoaded && !loadError ? (
+                {!isLoaded && !loadError && (
+                  <Box sx={{ p: 3, textAlign: "center" }}>
+                    <LinearProgress sx={{ width: '100%', mb: 2 }} />
+                    <Typography>Loading map...</Typography>
+                  </Box>
+                )}
+                {isLoaded && !loadError && (
                   <GoogleMap
                     mapContainerStyle={mapContainerStyle}
-                    center={{
-                      lat: selectedDelivery.truck.latitude || 6.9271,
-                      lng: selectedDelivery.truck.longitude || 79.8612,
-                    }}
+                    center={getMapCenter()}
                     zoom={12}
+                    onLoad={onMapLoad}
+                    options={{
+                      streetViewControl: false,
+                      mapTypeControl: false,
+                      fullscreenControl: true,
+                    }}
                   >
                     {/* Truck marker */}
-                    {selectedDelivery.truck.latitude && selectedDelivery.truck.longitude && (
-                      <Marker
-                        position={{
-                          lat: selectedDelivery.truck.latitude,
-                          lng: selectedDelivery.truck.longitude,
-                        }}
-                        icon="https://maps.google.com/mapfiles/ms/icons/truck.png"
-                        onClick={() => setSelectedMarker('truck')}
-                        title={`Truck: ${selectedDelivery.truck.truckId}`}
-                      />
-                    )}
+                    <Marker
+                      position={getValidCoordinates(
+                        selectedDelivery.truck.latitude,
+                        selectedDelivery.truck.longitude,
+                        DEFAULT_DUMP_LOCATION
+                      )}
+                      title={`Truck: ${selectedDelivery.truck.truckId}`}
+                      onClick={() => setSelectedMarker("truck")}
+                    />
 
                     {/* Bin markers */}
-                    {selectedDelivery.garbage.map((item) => 
-                      item.garbageId.binId.latitude && item.garbageId.binId.longitude ? (
+                    {selectedDelivery.garbage.map((item) => {
+                      const isCompleted = completedBins.has(item.garbageId._id);
+                      const position = getValidCoordinates(
+                        item.garbageId?.binId?.latitude,
+                        item.garbageId?.binId?.longitude
+                      );
+
+                      return (
                         <Marker
                           key={item._id}
-                          position={{
-                            lat: item.garbageId.binId.latitude,
-                            lng: item.garbageId.binId.longitude,
-                          }}
-                          icon={
-                            completedBins.has(item.garbageId._id)
-                              ? "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
-                              : "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
-                          }
+                          position={position}
+                          title={`Bin: ${item.garbageId?.binId?.binId} - ${isCompleted ? 'Completed' : 'Pending'}`}
                           onClick={() => setSelectedMarker(item._id)}
-                          title={`Bin: ${item.garbageId.binId.binId}`}
+                          icon={isCompleted ? 
+                            { url: "https://maps.google.com/mapfiles/ms/icons/green-dot.png" } :
+                            { url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png" }
+                          }
                         />
-                      ) : null
-                    )}
+                      );
+                    })}
 
                     {/* Dump location marker */}
                     <Marker
                       position={DEFAULT_DUMP_LOCATION}
-                      icon="https://maps.google.com/mapfiles/ms/icons/ltblue-dot.png"
-                      onClick={() => setSelectedMarker('dump')}
                       title="Dump Location"
+                      onClick={() => setSelectedMarker("dump")}
+                      icon={{ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" }}
                     />
 
-                    {/* Info windows */}
-                    {selectedMarker === 'truck' && selectedDelivery.truck.latitude && selectedDelivery.truck.longitude && (
+                    {/* Info Windows for markers */}
+                    {selectedMarker && (
                       <InfoWindow
-                        position={{
-                          lat: selectedDelivery.truck.latitude,
-                          lng: selectedDelivery.truck.longitude,
-                        }}
+                        position={
+                          selectedMarker === "truck" 
+                            ? getValidCoordinates(selectedDelivery.truck.latitude, selectedDelivery.truck.longitude)
+                            : selectedMarker === "dump"
+                            ? DEFAULT_DUMP_LOCATION
+                            : getValidCoordinates(
+                                selectedDelivery.garbage.find(g => g._id === selectedMarker)?.garbageId?.binId?.latitude,
+                                selectedDelivery.garbage.find(g => g._id === selectedMarker)?.garbageId?.binId?.longitude
+                              )
+                        }
                         onCloseClick={() => setSelectedMarker(null)}
                       >
                         <div>
-                          <Typography variant="body2" fontWeight="bold">
-                            {selectedDelivery.truck.truckId}
-                          </Typography>
-                          <Typography variant="caption">Current Location</Typography>
+                          {selectedMarker === "truck" && (
+                            <div>
+                              <strong>Truck</strong>
+                              <br />
+                              ID: {selectedDelivery.truck.truckId}
+                              <br />
+                              Status: {selectedDelivery.truck.status}
+                            </div>
+                          )}
+                          {selectedMarker === "dump" && (
+                            <div>
+                              <strong>Dump Location</strong>
+                              <br />
+                              Final destination
+                            </div>
+                          )}
+                          {selectedMarker !== "truck" && selectedMarker !== "dump" && (
+                            (() => {
+                              const garbageItem = selectedDelivery.garbage.find(g => g._id === selectedMarker);
+                              const isCompleted = completedBins.has(garbageItem?.garbageId._id || '');
+                              return (
+                                <div>
+                                  <strong>Bin {garbageItem?.garbageId.binId.binId}</strong>
+                                  <br />
+                                  Status: {isCompleted ? 'Completed' : 'Pending'}
+                                  <br />
+                                  Weight: {garbageItem?.garbageId.wasteWeight}kg
+                                </div>
+                              );
+                            })()
+                          )}
                         </div>
                       </InfoWindow>
-                    )}
-
-                    {selectedMarker === 'dump' && (
-                      <InfoWindow
-                        position={DEFAULT_DUMP_LOCATION}
-                        onCloseClick={() => setSelectedMarker(null)}
-                      >
-                        <div>
-                          <Typography variant="body2" fontWeight="bold">Dump Location</Typography>
-                          <Typography variant="caption">Final destination</Typography>
-                        </div>
-                      </InfoWindow>
-                    )}
-
-                    {selectedDelivery.garbage.map((item) => 
-                      selectedMarker === item._id && item.garbageId.binId.latitude && item.garbageId.binId.longitude ? (
-                        <InfoWindow
-                          key={`info-${item._id}`}
-                          position={{
-                            lat: item.garbageId.binId.latitude,
-                            lng: item.garbageId.binId.longitude,
-                          }}
-                          onCloseClick={() => setSelectedMarker(null)}
-                        >
-                          <div>
-                            <Typography variant="body2" fontWeight="bold">
-                              {item.garbageId.binId.binId}
-                            </Typography>
-                            <Typography variant="caption">
-                              {item.garbageId.binId.location}
-                            </Typography>
-                            <br />
-                            <Typography variant="caption">
-                              Weight: {item.garbageId.wasteWeight}kg
-                            </Typography>
-                          </div>
-                        </InfoWindow>
-                      ) : null
                     )}
                   </GoogleMap>
-                ) : (
-                  <Box sx={{ p: 3, textAlign: 'center' }}>
-                    <Typography>
-                      {!isLoaded ? 'Loading map...' : 'Map is not available'}
-                    </Typography>
-                    {!import.meta.env.VITE_GOOGLE_MAPS_API_KEY && (
-                      <Typography color="error" variant="caption" display="block">
-                        Warning: Google Maps API key not found
-                      </Typography>
-                    )}
-                  </Box>
                 )}
               </Grid>
 
               <Grid item xs={12}>
-                <Typography variant="h6" gutterBottom>Collection Points</Typography>
-                {/* Debug info - remove this in production */}
-                <Box sx={{ mb: 2, p: 1, backgroundColor: 'grey.100', fontSize: '0.75rem' }}>
-                  <Typography variant="caption">
-                    Debug: Truck coords: ({selectedDelivery.truck.latitude}, {selectedDelivery.truck.longitude})
-                  </Typography>
-                </Box>
+                <Typography variant="h6" gutterBottom>
+                  Collection Points
+                </Typography>
                 <List>
                   {selectedDelivery.garbage.map((item) => {
                     const isCompleted = completedBins.has(item.garbageId._id);
@@ -620,10 +824,12 @@ function DailyCollection() {
                           secondary={
                             <Box>
                               <Typography variant="body2">
-                                Weight: {item.garbageId.wasteWeight}kg | Category: {item.garbageId.garbageCategory}
+                                Weight: {item.garbageId.wasteWeight}kg |
+                                Category: {item.garbageId.garbageCategory}
                               </Typography>
                               <Typography variant="body2">
-                                Owner: {item.garbageId.createdBy.username} ({item.garbageId.createdBy.mobile})
+                                Owner: {item.garbageId.createdBy.username} (
+                                {item.garbageId.createdBy.mobile})
                               </Typography>
                             </Box>
                           }
@@ -633,13 +839,19 @@ function DailyCollection() {
                             <CustomButton
                               variant="contained"
                               size="small"
-                              onClick={() => handleCompleteBinCollection(item.garbageId._id)}
+                              onClick={() =>
+                                handleCompleteBinCollection(item.garbageId._id)
+                              }
                               disabled={completeCollectionMutation.isPending}
                             >
                               Complete
                             </CustomButton>
                           ) : (
-                            <Chip label="Completed" color="success" size="small" />
+                            <Chip
+                              label="Completed"
+                              color="success"
+                              size="small"
+                            />
                           )}
                         </Box>
                       </ListItem>
@@ -650,12 +862,23 @@ function DailyCollection() {
 
               {allBinsCompleted && (
                 <Grid item xs={12}>
-                  <Card sx={{ bgcolor: 'success.light', color: 'success.contrastText' }}>
+                  <Card
+                    sx={{
+                      bgcolor: "success.light",
+                      color: "success.contrastText",
+                    }}
+                  >
                     <CardContent>
-                      <Box display="flex" alignItems="center" justifyContent="space-between">
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="space-between"
+                      >
                         <Box display="flex" alignItems="center" gap={1}>
                           <CheckIcon />
-                          <Typography variant="h6">All bins collected!</Typography>
+                          <Typography variant="h6">
+                            All bins collected!
+                          </Typography>
                         </Box>
                         <CustomButton
                           variant="contained"
@@ -663,7 +886,9 @@ function DailyCollection() {
                           onClick={handleCompleteDelivery}
                           disabled={completeDeliveryMutation.isPending}
                         >
-                          {completeDeliveryMutation.isPending ? 'Completing...' : 'Complete Delivery'}
+                          {completeDeliveryMutation.isPending
+                            ? "Completing..."
+                            : "Complete Delivery"}
                         </CustomButton>
                       </Box>
                     </CardContent>
