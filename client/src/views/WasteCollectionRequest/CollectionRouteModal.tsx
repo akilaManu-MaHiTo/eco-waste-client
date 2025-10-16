@@ -8,6 +8,7 @@ import {
   CircularProgress,
   Autocomplete,
   TextField,
+  useMediaQuery,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import {
@@ -51,6 +52,7 @@ const CollectionRouteModal: React.FC<CollectionRouteModalProps> = ({
   const [selectedTruck, setSelectedTruck] = useState<any | null>(null);
   const startLat = selectedTruck?.latitude ?? DEFAULT_START_LOCATION.lat;
   const startLng = selectedTruck?.longitude ?? DEFAULT_START_LOCATION.lng;
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
   const waypoints = useMemo(
     () =>
@@ -150,7 +152,7 @@ const CollectionRouteModal: React.FC<CollectionRouteModalProps> = ({
   if (!isLoaded) return <CircularProgress />;
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md" fullScreen={isMobile}>
       <DialogTitle>
         Collection Route
         <IconButton
