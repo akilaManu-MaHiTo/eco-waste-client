@@ -573,7 +573,7 @@ const NestedItem = React.memo(
             style={{
               marginRight: "0.5rem",
               marginBottom: -4,
-              color: item.disabled ? "grey" : "var(--eco-waste-primary-green)",
+              color: item.disabled ? "grey" : "var(--eco-waste-blue)",
             }}
           >
             {item.icon}
@@ -582,7 +582,7 @@ const NestedItem = React.memo(
             variant="body2"
             sx={{
               textTransform: "capitalize",
-              color: item.disabled ? "grey" : "var(--eco-waste-primary-green)",
+              color: item.disabled ? "grey" : "var(--eco-waste-blue)",
             }}
           >
             {item.title}

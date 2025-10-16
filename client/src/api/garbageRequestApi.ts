@@ -66,3 +66,38 @@ export async function updateDeliveryStatusCompleted(truckId: string, collectionR
   return res.data;
 }
 
+// Dashboard API s
+export async function fetchGarbageByCategory() {
+  const res = await axios.get(`/api/dashboard/garbage-by-category`);
+  return res.data;
+}
+
+export async function fetchRequestsByStatus() {
+  const res = await axios.get(`/api/dashboard/requests-by-status`);
+  return res.data;
+}
+
+export async function fetchWasteByBinType() {
+  const res = await axios.get(`/api/dashboard/waste-by-bin-type`);
+  return res.data;
+}
+
+export async function fetchDailyCollections() {
+  const res = await axios.get(`/api/dashboard/daily-collections`);
+  return res.data;
+}
+
+export async function fetchRevenueByCategory() {
+  const res = await axios.get(`/api/dashboard/revenue-by-category`);
+  return res.data;
+}
+
+export async function fetchMonthlyRequests() {
+  const res = await axios.get(`/api/dashboard/monthly-requests`);
+  return res.data;
+}
+
+export async function fetchDailyRequestsByDateAndTime() {
+  const res = await axios.get(`/api/dashboard/daily-requests`);
+  return res.data;
+}

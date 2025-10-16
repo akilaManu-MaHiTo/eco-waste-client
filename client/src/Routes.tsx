@@ -16,18 +16,14 @@ const RegistrationPage = React.lazy(
 
 //Insights
 const InsightsPage = React.lazy(() => import("./views/Insights/Insight"));
-const PaymentPage = React.lazy(() => import("./views/Insights/Payment"));
 
 //Administration
 const UserTable = React.lazy(() => import("./views/Administration/UserTable"));
 const AccessManagementTable = React.lazy(
   () => import("./views/Administration/AccessManagementTable")
 );
-const OrganizationTable = React.lazy(
-  () =>
-    import(
-      "./views/Administration/OrganizationSettings/OrganizationSettingsTable"
-    )
+const CollectionRequestDashboard = React.lazy(
+  () => import("./views/WasteCollectionRequest/Dashboard.tsx")
 );
 
 //Waste Management
@@ -118,6 +114,7 @@ const AppRoutes = () => {
       <Route path="/" element={withoutLayout(LoginPage)} />
       <Route path="/register" element={withoutLayout(RegistrationPage)} />
       <Route element={<ProtectedRoute />}>
+        {/* Home */}
         <Route
           path="/home"
           element={withLayout(
@@ -128,22 +125,6 @@ const AppRoutes = () => {
         />
 
         {/* Administration */}
-        <Route
-          path="/admin/organization-settings"
-          element={withLayout(
-            MainLayout,
-            OrganizationTable,
-            !userPermissionObject?.[PermissionKeys.ADMIN_USERS_VIEW]
-          )}
-        />
-        <Route
-          path="/admin/truck-management"
-          element={withLayout(
-            MainLayout,
-            TruckTable,
-            !userPermissionObject?.[PermissionKeys.ADMIN_USERS_VIEW]
-          )}
-        />
         <Route
           path="/admin/users"
           element={withLayout(
@@ -161,42 +142,6 @@ const AppRoutes = () => {
           )}
         />
         <Route
-          path="/payment"
-          element={withLayout(
-            MainLayout,
-            PaymentPage,
-            !userPermissionObject?.[PermissionKeys.PAYMENT_VIEW]
-          )}
-        />
-        <Route
-          path="/waste-management/history"
-          element={withLayout(
-            MainLayout,
-            () => {
-              return <GarbageTable isTodayGarbage={false} isGarbage={true} />;
-            },
-            !userPermissionObject?.[PermissionKeys.WASTE_MNG_HISTORY_VIEW]
-          )}
-        />
-        <Route
-          path="/waste-management/today-history"
-          element={withLayout(
-            MainLayout,
-            () => {
-              return <GarbageTable isTodayGarbage={true} isGarbage={false} />;
-            },
-            !userPermissionObject?.[PermissionKeys.WASTE_MNG_HISTORY_VIEW]
-          )}
-        />
-        <Route
-          path="/waste-management/dashboard"
-          element={withLayout(
-            MainLayout,
-            WasteBinDashboard,
-            !userPermissionObject?.[PermissionKeys.WASTE_MNG_DASHBOARD_VIEW]
-          )}
-        />
-        <Route
           path="/admin/bin-management"
           element={withLayout(
             MainLayout,
@@ -205,19 +150,19 @@ const AppRoutes = () => {
           )}
         />
         <Route
-          path="/waste-collection/daily-collection"
+          path="/admin/truck-management"
           element={withLayout(
             MainLayout,
-            DailyCollection,
-            !userPermissionObject?.[PermissionKeys.INSIGHT_VIEW]
+            TruckTable,
+            !userPermissionObject?.[PermissionKeys.ADMIN_TRUCK_MNG_VIEW]
           )}
         />
         <Route
-          path="/waste-management/bin-request"
+          path="/admin/collection-dashboard"
           element={withLayout(
             MainLayout,
-            BinRequestTable,
-            !userPermissionObject?.[PermissionKeys.BIN_REQUEST_VIEW]
+            CollectionRequestDashboard,
+            !userPermissionObject?.[PermissionKeys.ADMIN_COLLECTION_MNG_DASHBOARD_VIEW]
           )}
         />
         <Route
@@ -232,7 +177,7 @@ const AppRoutes = () => {
                 />
               );
             },
-            !userPermissionObject?.[PermissionKeys.WASTE_MNG_HISTORY_VIEW]
+            !userPermissionObject?.[PermissionKeys.ADMIN_COLLECTION_MNG_PENDING_VIEW]
           )}
         />
         <Route
@@ -247,7 +192,55 @@ const AppRoutes = () => {
                 />
               );
             },
+            !userPermissionObject?.[PermissionKeys.ADMIN_COLLECTION_MNG_APPROVED_VIEW]
+          )}
+        />
+
+        {/* Waste Management */}
+        <Route
+          path="/waste-management/dashboard"
+          element={withLayout(
+            MainLayout,
+            WasteBinDashboard,
+            !userPermissionObject?.[PermissionKeys.WASTE_MNG_DASHBOARD_VIEW]
+          )}
+        />
+        <Route
+          path="/waste-management/bin-request"
+          element={withLayout(
+            MainLayout,
+            BinRequestTable,
+            !userPermissionObject?.[PermissionKeys.BIN_REQUEST_VIEW]
+          )}
+        />
+        <Route
+          path="/waste-management/today-history"
+          element={withLayout(
+            MainLayout,
+            () => {
+              return <GarbageTable isTodayGarbage={true} isGarbage={false} />;
+            },
+            !userPermissionObject?.[PermissionKeys.WASTE_MNG_HISTORY_DAILY_VIEW]
+          )}
+        />
+        <Route
+          path="/waste-management/history"
+          element={withLayout(
+            MainLayout,
+            () => {
+              return <GarbageTable isTodayGarbage={false} isGarbage={true} />;
+            },
             !userPermissionObject?.[PermissionKeys.WASTE_MNG_HISTORY_VIEW]
+          )}
+        />
+
+        {/* Waste Collection */}
+        <Route
+          path="/waste-collection/daily-collection"
+          element={withLayout(
+            MainLayout,
+            DailyCollection,
+            !userPermissionObject?.[PermissionKeys.WASTE_COLLECTION_DAILY_VIEW]
           )}
         />
       </Route>
