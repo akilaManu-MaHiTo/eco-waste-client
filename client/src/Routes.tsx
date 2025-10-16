@@ -36,10 +36,10 @@ const DailyCollection = React.lazy(
 const CollectionDashboard = React.lazy(
   () => import("./views/WasteCollection/CollectorDashboard.tsx")
 );
-//Waste Collection Management
-const BinRequestTable = React.lazy(
-  () => import("./views/BinRequest/BinRequestTable.tsx")
+const CollectionHistory = React.lazy(
+  () => import("./views/WasteCollection/CollectionHistory.tsx")
 );
+
 
 // Truck Management
 const TruckTable = React.lazy(
@@ -48,8 +48,14 @@ const TruckTable = React.lazy(
 const WasteBinTable = React.lazy(
   () => import("./views/WasteBin/WasteBinTable")
 );
+
+
 const WasteBinDashboard = React.lazy(
   () => import("./views/WasteBin/WasteBinDashboard")
+);
+
+const BinRequestTable = React.lazy(
+  () => import("./views/BinRequest/BinRequestTable.tsx")
 );
 
 //Waste Collection Requests
@@ -251,6 +257,14 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             DailyCollection,
+            !userPermissionObject?.[PermissionKeys.WASTE_COLLECTION_DAILY_VIEW]
+          )}
+        />
+        <Route
+          path="/waste-collection/history-collection"
+          element={withLayout(
+            MainLayout,
+            CollectionHistory,
             !userPermissionObject?.[PermissionKeys.WASTE_COLLECTION_DAILY_VIEW]
           )}
         />
