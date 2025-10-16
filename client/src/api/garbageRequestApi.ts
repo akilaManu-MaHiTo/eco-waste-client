@@ -45,6 +45,12 @@ export async function fetchAllPendingRequests() {
   return res.data;
 }
 
+//get all inprogress requests
+export async function fetchAllInProgressRequests() {
+  const res = await axios.get(`/api/collection-route/in-progress`);
+  return res.data;
+}
+
 //delivery status update
 export async function updateDeliveryStatusInProgress(truckId: string, collectionRouteId: string) {
   const res = await axios.put(`/api/collection-route/inprogress/${truckId}/${collectionRouteId}`);
@@ -52,6 +58,8 @@ export async function updateDeliveryStatusInProgress(truckId: string, collection
 }
 
 export async function updateDeliveryStatusCompleted(truckId: string, collectionRouteId: string) {
+  console.log("Updating to completed:", truckId, collectionRouteId);
   const res = await axios.put(`/api/collection-route/completed/${truckId}/${collectionRouteId}`);
   return res.data;
 }
+
