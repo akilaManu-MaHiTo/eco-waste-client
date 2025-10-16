@@ -213,7 +213,7 @@ const AppRoutes = () => {
           element={withLayout(
             MainLayout,
             CollectionDashboard,
-            !userPermissionObject?.[PermissionKeys.INSIGHT_VIEW]
+            !userPermissionObject?.[PermissionKeys.WASTE_COLLECTION_DASHBOARD_VIEW]
           )}
         />
         <Route

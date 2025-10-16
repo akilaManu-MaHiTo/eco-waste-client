@@ -138,7 +138,7 @@ export const sidebarItems: Array<SidebarItem> = [
     title: "Collector Dashboard",
     icon: <DashboardOutlinedIcon fontSize="small" />,
     href: "/waste-collection/dashboard-collection",
-    accessKey: PermissionKeys.INSIGHT_VIEW,
+    accessKey: PermissionKeys.WASTE_COLLECTION_DASHBOARD_VIEW,
   },
   {
     title: "Daily Collection",
