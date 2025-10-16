@@ -146,4 +146,10 @@ export const sidebarItems: Array<SidebarItem> = [
     href: "/waste-collection/daily-collection",
     accessKey: PermissionKeys.WASTE_COLLECTION_DAILY_VIEW,
   },
+  {
+    title: "Collection History",
+    icon: <HistoryOutlinedIcon fontSize="small" />,
+    href: "/waste-collection/history-collection",
+    accessKey: PermissionKeys.WASTE_COLLECTION_DAILY_VIEW,
+  },
 ];

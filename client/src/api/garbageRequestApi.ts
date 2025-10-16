@@ -48,6 +48,12 @@ export async function fetchAllPendingRequests() {
   return res.data;
 }
 
+//get all completed requests
+export async function fetchAllCompletedRequests() {
+  const res = await axios.get(`/api/collection-route/completed`);
+  return res.data;
+}
+
 //get all inprogress requests
 export async function fetchAllInProgressRequests() {
   const res = await axios.get(`/api/collection-route/in-progress`);

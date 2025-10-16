@@ -47,3 +47,4 @@ export const deliverySchema = z.object({
   deliveryStatus: z.string(),
 });
 export type Delivery = z.infer<typeof deliverySchema>;
+
