@@ -35,8 +35,8 @@ const GarbageTable = React.lazy(() => import("./views/Garbage/GarbageTable"));
 
 
 //Waste Collection Management
-const WasteCollectionTable = React.lazy(
-  () => import("./views/WasteCollection/WasteCollectionTable.tsx")
+const DailyCollection = React.lazy(
+  () => import("./views/WasteCollection/DailyCollection.tsx")
 );
 //Waste Collection Management
 const BinRequestTable = React.lazy(
@@ -206,10 +206,10 @@ const AppRoutes = () => {
           )}
         />
         <Route
-          path="/waste-collection/collection-status"
+          path="/waste-collection/daily-collection"
           element={withLayout(
             MainLayout,
-            WasteCollectionTable,
+            DailyCollection,
             !userPermissionObject?.[PermissionKeys.INSIGHT_VIEW]
           )}
         />

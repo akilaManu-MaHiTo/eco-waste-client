@@ -12,6 +12,7 @@ export const truckSchema = z.object({
   currentLocation: z.string().nullable(),
   latitude: z.number().nullable(),
   longitude: z.number().nullable(),  
+  currentWasteLoad: z.number().nullable(),
   assignRoute: garbageRequestSchema.nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
@@ -35,6 +36,21 @@ export async function updateTruck(data: Truck) {
 
 export async function deleteTruck(id: string) {
   const res = await axios.delete(`/api/truck/${id}`);
+  return res.data;
+}
+
+export async function updateTruckAvailable(  truckId: string, collectId: string) {
+  const res = await axios.put(`/api/truck/available/${truckId}/${collectId}}`);
+  return res.data;  
+}
+
+export async function updateTruckInService(  truckId: string, collectId: string) {
+  const res = await axios.put(`/api/truck/inservice/${truckId}/${collectId}`);
+  return res.data;  
+}
+
+export async function updateTruckWasteLoad( truckId: string, garbageId: string) {
+  const res = await axios.put(`/api/truck/collect/${truckId}/${garbageId}`);
   return res.data;
 }
 
