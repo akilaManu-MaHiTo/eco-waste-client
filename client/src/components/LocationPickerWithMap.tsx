@@ -28,7 +28,7 @@ interface LocationPickerWithMapProps {
   onLocationChange: (latitude: number, longitude: number, address?: string) => void;
   disabled?: boolean;
   label?: string;
-  googleMapsApiKey?: string; // Optional Google Maps API key
+  googleMapsApiKey?: string; 
 }
 
 const libraries: ('places')[] = ['places'];
@@ -39,7 +39,7 @@ const mapContainerStyle = {
 };
 
 const defaultCenter = {
-  lat: 6.9271, // Default to Colombo, Sri Lanka
+  lat: 6.9271,
   lng: 79.8612,
 };
 
@@ -61,8 +61,6 @@ export default function LocationPickerWithMap({
   const [manualLng, setManualLng] = useState<string>(longitude?.toString() || '');
   const [isMapDialogOpen, setIsMapDialogOpen] = useState(false);
   const [mapCenter, setMapCenter] = useState(defaultCenter);
-
-  // Load Google Maps script only if API key is provided
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: googleMapsApiKey || '',
     libraries,

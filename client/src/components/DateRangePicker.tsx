@@ -19,7 +19,7 @@ function DateRangePicker({
   control: Control<any>;
   register: UseFormRegister<any>;
   errors: FieldErrors<any>;
-  year?: number; // watched year
+  year?: number; 
 }) {
   const [startDate, setStartDate] = useState<Date | null>(null);
 

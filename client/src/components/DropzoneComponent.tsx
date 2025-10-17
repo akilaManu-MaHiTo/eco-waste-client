@@ -15,7 +15,6 @@ function DropzoneComponent({
 }) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      // Do something with the files
       setFiles([...files, ...acceptedFiles]);
     },
     [files, setFiles]
@@ -59,7 +58,7 @@ function DropzoneComponent({
                       <IconButton
                         onClick={() => {
                           setFiles(files.filter((f) => f !== file));
-                          URL.revokeObjectURL(fileURL); // Clean up the object URL
+                          URL.revokeObjectURL(fileURL); 
                         }}
                         size="small"
                         style={{

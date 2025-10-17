@@ -3,7 +3,6 @@ import { Controller } from "react-hook-form";
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 
 const AutoCheckBox = ({ name, control, options = [] }) => {
-  // Ensure options is always an array
   const safeOptions = Array.isArray(options) ? options : [];
 
   return (

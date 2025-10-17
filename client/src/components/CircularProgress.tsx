@@ -11,7 +11,7 @@ function ColoredCircularProgressWithLabel(
     size?: number;
     textSize?: number;
     textLabel?: string;
-    customColor?: string; // New prop for progress color
+    customColor?: string; 
   }
 ) {
   const {
@@ -19,7 +19,7 @@ function ColoredCircularProgressWithLabel(
     size = 40,
     textSize = 12,
     textLabel,
-    customColor = "var(--pallet-blue)", // Default color if not provided
+    customColor = "var(--pallet-blue)", 
   } = props;
 
   return (
@@ -37,7 +37,7 @@ function ColoredCircularProgressWithLabel(
         value={value}
         size={size}
         sx={{
-          color: value > 0 ? customColor : "transparent", // Use provided color
+          color: value > 0 ? customColor : "transparent", 
           position: "absolute",
         }}
       />

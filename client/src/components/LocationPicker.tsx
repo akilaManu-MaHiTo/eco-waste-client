@@ -114,7 +114,6 @@ export default function LocationPicker({
   };
 
   const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
-    // Using OpenStreetMap Nominatim API for reverse geocoding (free)
     const response = await fetch(
       `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`
     );

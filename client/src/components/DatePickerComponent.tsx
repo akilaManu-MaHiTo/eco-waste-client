@@ -9,7 +9,7 @@ function DatePickerComponent({
   defaultValue,
   label,
   error,
-  disablePast, // Accept disablePast as a prop
+  disablePast, 
   disableFuture,
   minDate,
   maxDate,
@@ -20,7 +20,7 @@ function DatePickerComponent({
   defaultValue?: Date;
   label?: string;
   error?: string;
-  disablePast?: boolean; // Type it as a boolean
+  disablePast?: boolean; 
   disableFuture?: boolean;
   minDate?: Date;
   maxDate?: Date;
@@ -43,7 +43,7 @@ function DatePickerComponent({
           value={value}
           onChange={onChange}
           defaultValue={defaultValue}
-          disablePast={disablePast} // Use the passed prop
+          disablePast={disablePast} 
           disableFuture={disableFuture}
           minDate={minDate}
           maxDate={maxDate}
@@ -58,7 +58,7 @@ function DatePickerComponent({
           onChange={onChange}
           defaultValue={defaultValue}
           className="date-picker"
-          disablePast={disablePast} // Use the passed prop
+          disablePast={disablePast} 
           disableFuture={disableFuture}
           minDate={minDate}
           maxDate={maxDate}
