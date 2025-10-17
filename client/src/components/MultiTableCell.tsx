@@ -16,7 +16,6 @@ const MultiTableCell: React.FC<MultiTableCellProps> = ({ row, columnKey }) => {
           const parsedValue =
             typeof value === "string" ? JSON.parse(value) : value;
 
-          // If it's an array, clean up quotes and join the elements with <br/>
           if (Array.isArray(parsedValue)) {
             return parsedValue.map((item, index) => (
               <div key={index}>{item.replace(/^"|"$/g, "")}</div>

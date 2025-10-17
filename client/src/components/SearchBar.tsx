@@ -3,7 +3,6 @@ import { styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
-import { CircularProgress } from "@mui/material";
 
 interface SearchInputProps {
   placeholder?: string;

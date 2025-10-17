@@ -4,7 +4,7 @@ import { SxProps } from "@mui/system";
 
 interface DrawerContentItemProps {
   label: string;
-  value?: string | string[]; // Removed number type to match expected usage
+  value?: string | string[]; 
   isRichText?: boolean;
   sx?: SxProps;
 }
@@ -15,7 +15,6 @@ export function MultiDrawerContent({
   isRichText,
   sx,
 }: DrawerContentItemProps) {
-  // Parse value if it's a stringified JSON array
   let displayValue: string | string[] = value ?? "--";
 
   try {
