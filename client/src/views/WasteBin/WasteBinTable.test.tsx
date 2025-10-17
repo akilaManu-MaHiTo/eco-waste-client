@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import WasteBinTable from './WasteBinTable';
 import * as wasteApi from '../../api/wasteBin';
@@ -40,6 +40,36 @@ describe('WasteBinTable', () => {
     // Click row to open drawer
     await user.click(screen.getByText('BIN-1'));
     await waitFor(() => expect(screen.getByTestId('view-drawer')).toBeInTheDocument());
+  });
+
+  it('shows error message when fetch API fails', async () => {
+    vi.spyOn(wasteApi, 'fetchWasteBins').mockRejectedValue(new Error('Network Error') as any);
+    const wrapper = createWrapper();
+    render(<WasteBinTable isAssignedTasks={false} />, { wrapper });
+
+    await waitFor(() => expect(screen.getByText(/No Records found|No Records/i)).toBeInTheDocument());
+  });
+
+
+  it('opens edit dialog when Edit clicked in drawer header', async () => {
+    const bins = [
+      { _id: 'b2', binId: 'BIN-EDIT', currentWasteLevel: 10, thresholdLevel: 80, binType: 'Glass', availability: true },
+    ];
+    vi.spyOn(wasteApi, 'fetchWasteBins').mockResolvedValue(bins as any);
+    const wrapper = createWrapper();
+    const user = userEvent.setup();
+
+    render(<WasteBinTable isAssignedTasks={false} />, { wrapper });
+
+    await waitFor(() => expect(screen.getByText('BIN-EDIT')).toBeInTheDocument());
+    await user.click(screen.getByText('BIN-EDIT'));
+
+    await waitFor(() => expect(screen.getByTestId('drawer-header')).toBeInTheDocument());
+    await user.click(screen.getByText('Edit'));
+
+    // AddOrEditWasteBinDialog should appear
+    const dialogTitle = await screen.findByText(/Add Waste|Edit Waste/i);
+    expect(dialogTitle).toBeTruthy();
   });
 
   it('allows opening add dialog and closing it', async () => {

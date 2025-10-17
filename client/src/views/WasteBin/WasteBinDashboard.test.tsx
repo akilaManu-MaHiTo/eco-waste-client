@@ -39,4 +39,35 @@ describe('WasteBinDashboard', () => {
     // Check that user email is displayed
     expect(screen.getByText(/Signed in as a@b.com/i)).toBeInTheDocument();
   });
+
+  it('handles empty API responses without crashing', async () => {
+    const wrapper = createWrapper();
+    (useCurrentUser as any).mockReturnValue({ user: { _id: 'u1', email: 'a@b.com' }, status: 'success' });
+
+    vi.spyOn(garbageApi, 'fetchgetCurrentGarbageLevel').mockResolvedValue({ overall: { percentFilled: 0 }, bins: [] } as any);
+    vi.spyOn(garbageApi, 'fetchCurrentSummary').mockResolvedValue({ totals: { totalWeight: 0 }, summary: [] } as any);
+    vi.spyOn(garbageApi, 'fetchgetGarbageTrend').mockResolvedValue({ startDate: '', endDate: '', trend: [] } as any);
+    vi.spyOn(garbageApi, 'fetchGarbage').mockResolvedValue([] as any);
+
+    render(<WasteBinDashboard />, { wrapper });
+
+    await waitFor(() => expect(screen.getByText(/Waste Management Dashboard/i)).toBeInTheDocument());
+    expect(screen.getByText(/Waste Categories/i)).toBeInTheDocument();
+  });
+
+  it('shows fallback when user missing and handles API errors', async () => {
+    const wrapper = createWrapper();
+    (useCurrentUser as any).mockReturnValue({ user: null, status: 'success' });
+
+    vi.spyOn(garbageApi, 'fetchgetCurrentGarbageLevel').mockRejectedValue(new Error('api fail') as any);
+    vi.spyOn(garbageApi, 'fetchCurrentSummary').mockRejectedValue(new Error('api fail') as any);
+    vi.spyOn(garbageApi, 'fetchgetGarbageTrend').mockRejectedValue(new Error('api fail') as any);
+    vi.spyOn(garbageApi, 'fetchGarbage').mockRejectedValue(new Error('api fail') as any);
+
+    render(<WasteBinDashboard />, { wrapper });
+
+    await waitFor(() => expect(screen.getByText(/Waste Management Dashboard/i)).toBeInTheDocument());
+    // With missing user, the signed in text should not show
+    expect(screen.queryByText(/Signed in as/i)).toBeNull();
+  });
 });
