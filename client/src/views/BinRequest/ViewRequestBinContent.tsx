@@ -10,10 +10,6 @@ import queryClient from "../../state/queryClient";
 import { Payment } from "../../api/payhere";
 import { v4 as uuidv4 } from "uuid";
 import { Controller, useForm } from "react-hook-form";
-import DatePickerComponent from "../../components/DatePickerComponent";
-import TimePickerComponent from "../../components/TimePickerComponent";
-import { format } from "date-fns";
-import { createBinCollectionRequest } from "../../api/binCollectionRequest";
 import { useSnackbar } from "notistack";
 import { useGeolocation } from "../../hooks/useGeolocation";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -25,7 +21,6 @@ interface BinRequestForm {
 
 function ViewRequestBinContent({
   wasteBin,
-  isWasteBinDataFetching,
   onClose,
 }: {
   wasteBin: WasteBin;
@@ -45,13 +40,8 @@ function ViewRequestBinContent({
     loading: locationLoading,
   } = useGeolocation();
   const {
-    register,
-    handleSubmit,
     watch,
-    control,
     formState: { errors },
-    reset,
-    setValue,
   } = useForm<BinRequestForm>({});
   const selectedDate = watch("collectionDate");
 
