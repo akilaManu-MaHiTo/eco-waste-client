@@ -26,15 +26,12 @@ import AddIcon from "@mui/icons-material/Add";
 import DownloadIcon from "@mui/icons-material/Download";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-
-import theme from "../../theme";
 import PageTitle from "../../components/PageTitle";
 import Breadcrumb from "../../components/BreadCrumb";
 import ViewDataDrawer, { DrawerHeader } from "../../components/ViewDataDrawer";
 import ViewGarbageCollectionContent from "./ViewWasteCollectionContent";
 import CollectionRouteModal from "./CollectionRouteModal";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
-
 import {
   fetchGarbageCollectionData,
   fetchGarbageCollectionDataApproved,
@@ -115,7 +112,7 @@ function WasteCollectionRequestTable({
         body: tableData,
         startY: 45,
         styles: { fontSize: 8 },
-        headStyles: { fillColor: [76, 175, 80] }, // Green color matching your theme
+        headStyles: { fillColor: [76, 175, 80] },
       });
       
       // Add summary
@@ -364,7 +361,6 @@ function WasteCollectionRequestTable({
           }
           handleClose={() => setDeleteDialogOpen(false)}
           deleteFunc={async () => {
-            // Implement delete logic here
           }}
           onSuccess={() => {
             setOpenViewDrawer(false);

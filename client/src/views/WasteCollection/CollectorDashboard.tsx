@@ -67,11 +67,9 @@ function CollectorDashboard() {
     const availableTrucks = trucks.filter((t: Truck) => t.status === "Available").length;
     const inServiceTrucks = trucks.filter((t: Truck) => t.status === "In Service").length;
     const maintenanceTrucks = trucks.filter((t: Truck) => t.status === "Under Maintenance").length;
-
     const pendingRoutes = routes.filter(r => r.deliveryStatus === "pending").length;
     const inProgressRoutes = routes.filter(r => r.deliveryStatus === "in-progress").length;
     const completedRoutes = routes.filter(r => r.deliveryStatus === "completed").length;
-
     const totalWasteLoad = trucks.reduce((sum: number, t: Truck) => 
       sum + (t.currentWasteLoad || 0), 0
     );

@@ -5,7 +5,6 @@ import useCurrentUser from "../../hooks/useCurrentUser";
 import { GarbageRequest } from "../../api/garbageRequestApi";
 import {
   GoogleMap,
-  Marker,
   MarkerF,
   useJsApiLoader,
 } from "@react-google-maps/api";
