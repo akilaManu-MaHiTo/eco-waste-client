@@ -14,7 +14,6 @@ function LoginPage() {
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up(990));
   const navigate = useNavigate();
-
   const { user, status } = useCurrentUser();
 
   if (status === "loading" || status === "idle" || status === "pending") {

@@ -43,7 +43,7 @@ type GarbageTrendCategory = {
 };
 
 type GarbageTrendDay = {
-	date: string; // YYYY-MM-DD
+	date: string; 
 	categories: GarbageTrendCategory[];
 };
 

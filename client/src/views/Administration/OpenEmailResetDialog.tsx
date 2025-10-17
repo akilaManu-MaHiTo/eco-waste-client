@@ -43,7 +43,6 @@ function ResetEmailDialog({
     formState: { errors, isSubmitting },
     reset,
     trigger,
-    watch,
     control,
   } = useForm({
     mode: "onBlur",

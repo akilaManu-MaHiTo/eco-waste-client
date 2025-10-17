@@ -5,7 +5,6 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import {
   Autocomplete,
-  Box,
   Divider,
   IconButton,
   Stack,
@@ -20,19 +19,9 @@ import useIsMobile from "../../customHooks/useIsMobile";
 import CustomButton from "../../components/CustomButton";
 import LocationPicker from "../../components/LocationPicker";
 import { useMutation, useQuery } from "@tanstack/react-query";
-
-import {
-  binTypeData,
-  createWasteBin,
-  fetchWasteBins,
-  updateWasteBin,
-  WasteBin
-} from "../../api/wasteBin";
 import queryClient from "../../state/queryClient";
 import { enqueueSnackbar } from "notistack";
-import UserAutoComplete from "../../components/UserAutoComplete";
-import SwitchButton from "../../components/SwitchButton";
-import { createTruck, fetchTrucks, Truck, truckStatusData, updateTruck } from "../../api/truck";
+import { createTruck, Truck, truckStatusData, updateTruck } from "../../api/truck";
 
 type DialogProps = {
   open: boolean;
@@ -89,23 +78,6 @@ export default function AddOrEditTruckDialog({
       createTruckMutation(data);
     }
   };
-
-
-
-  //   const { data: divisionData, isFetching: isDivisionDataFetching } = useQuery({
-  //     queryKey: ["divisions"],
-  //     queryFn: fetchDivision,
-  //   });
-
-  //   const { data: userData, isFetching: isUserDataFetching } = useQuery({
-  //     queryKey: ["users"],
-  //     queryFn: fetchAllUsers,
-  //   });
-
-  //   const { data: asigneeData, isFetching: isAssigneeDataFetching } = useQuery({
-  //     queryKey: ["medicine-assignee"],
-  //     queryFn: fetchMedicineRequestAssignee,
-  //   });
 
   const { mutate: createTruckMutation } = useMutation({
     mutationFn: createTruck,

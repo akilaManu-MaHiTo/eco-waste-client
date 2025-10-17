@@ -1,5 +1,4 @@
 import { Box, Stack } from "@mui/material";
-import { format } from "date-fns";
 import useIsMobile from "../../customHooks/useIsMobile";
 import { DrawerContentItem } from "../../components/ViewDataDrawer";
 import { WasteBin } from "../../api/wasteBin";
@@ -25,15 +24,6 @@ function ViewGarbageContent({ wasteBin }: { wasteBin: WasteBin }) {
           value={wasteBin?.binId}
           sx={{ flex: 1 }}
         />
-        {/* <DrawerContentItem
-          label="Requested Date"
-          value={
-            medicalRequest.created_at
-              ? format(medicalRequest.created_at, "dd/MM/yyyy hh:mm a")
-              : "--"
-          }
-          sx={{ flex: 1 }}
-        /> */}
         <DrawerContentItem
           label="Waste Bin ID"
           value={wasteBin?.binId}

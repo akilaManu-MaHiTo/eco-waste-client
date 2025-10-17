@@ -121,40 +121,6 @@ function ViewOrganizationContent({
               }
               {...a11yProps(1)}
             />
-            {/* <Tab
-              label={
-                <Box
-                  sx={{
-                    color: "var(--pallet-blue)",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <WarehouseOutlinedIcon fontSize="small" />
-                  <Typography variant="body2" sx={{ ml: "0.3rem" }}>
-                    Departments
-                  </Typography>
-                </Box>
-              }
-              {...a11yProps(2)}
-            /> */}
-            {/* <Tab
-              label={
-                <Box
-                  sx={{
-                    color: "var(--pallet-blue)",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <StairsOutlinedIcon fontSize="small" />
-                  <Typography variant="body2" sx={{ ml: "0.3rem" }}>
-                    User Level
-                  </Typography>
-                </Box>
-              }
-              {...a11yProps(3)}
-            /> */}
           </Tabs>
         </AppBar>
         <TabPanel value={activeTab} index={0} dir={theme.direction}>

@@ -18,10 +18,9 @@ import { grey } from "@mui/material/colors";
 import { useEffect, useState } from "react";
 import CustomButton from "../../components/CustomButton";
 import useIsMobile from "../../customHooks/useIsMobile";
-import { fetchAllAssigneeLevel, User, UserRole } from "../../api/userApi";
+import { User, UserRole } from "../../api/userApi";
 import { getAccessRolesList } from "../../api/accessManagementApi";
 import { useQuery } from "@tanstack/react-query";
-import { useSnackbar } from "notistack";
 
 type DialogProps = {
   open: boolean;

@@ -1,4 +1,4 @@
-import { Box, Grid, Container, Typography, Stack } from "@mui/material";
+import { Box, Grid, Stack } from "@mui/material";
 import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -13,7 +13,6 @@ import {
 import {
   GarbageByCategoryChart,
   RequestsByStatusChart,
-  WasteByBinTypeChart,
   DailyCollectionsChart,
   RevenueByCategoryChart,
   MonthlyRequestsChart,

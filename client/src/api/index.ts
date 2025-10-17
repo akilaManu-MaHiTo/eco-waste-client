@@ -12,7 +12,6 @@ axios.interceptors.request.use(
       }
 
       config.headers.Authorization = token;
-
       config.validateStatus = (status: number) => status >= 200 && status < 300;
     } catch (error) {
       console.error(
