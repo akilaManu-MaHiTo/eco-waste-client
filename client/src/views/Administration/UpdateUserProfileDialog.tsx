@@ -1,5 +1,4 @@
 import {
-  Autocomplete,
   Box,
   Divider,
   IconButton,
@@ -15,14 +14,13 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { grey } from "@mui/material/colors";
 import { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import CustomButton from "../../components/CustomButton";
 import useIsMobile from "../../customHooks/useIsMobile";
 import { updateUserProfileDetails, User } from "../../api/userApi";
 import queryClient from "../../state/queryClient";
-import { genderOptions } from "../../constants/accidentConstants";
 
 type DialogProps = {
   open: boolean;
@@ -43,9 +41,7 @@ export default function UpdateUserProfile({
     control,
     formState: { errors },
     reset,
-    watch,
     register,
-    setValue,
   } = useForm<User>({
     defaultValues: {
       ...defaultValues,

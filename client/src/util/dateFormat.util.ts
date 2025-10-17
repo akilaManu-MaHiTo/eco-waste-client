@@ -19,8 +19,7 @@ const auditColors: Record<string, string> = {
   Follow_up: "#4f46e5",
   Initial: "#10b981",
   Reaudit: "#f59e0b",
-  // add more known types here...
 };
 
 export const getColorForType = (type: string): string =>
-  auditColors[type] || "#94a3b8"; // default color
+  auditColors[type] || "#94a3b8";

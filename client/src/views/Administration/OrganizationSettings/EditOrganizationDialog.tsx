@@ -8,9 +8,6 @@ import {
   Stack,
   IconButton,
   Typography,
-  AppBar,
-  Tabs,
-  Tab,
   Box,
   CircularProgress,
 } from "@mui/material";
@@ -24,7 +21,6 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { Controller, useForm } from "react-hook-form";
 import { ChromePicker } from "react-color";
-import theme from "../../../theme";
 import RichTextComponent from "../../../components/RichTextComponent";
 import useIsMobile from "../../../customHooks/useIsMobile";
 import { StorageFile } from "../../../utils/StorageFiles.util";
@@ -80,7 +76,6 @@ const EditOrganizationDialog = ({
   } = useForm<Organization>({
     defaultValues: {
       logoUrl: [],
-      // insightImage: [],
       ...defaultValues,
     },
     reValidateMode: "onChange",
@@ -301,7 +296,6 @@ const EditOrganizationDialog = ({
             {formData.colorPallet.map((palette, index) => (
               <div key={`palette-${index}`}>
                 {" "}
-                {/* Added proper key */}
                 <Typography
                   variant="caption"
                   sx={{ paddingBottom: 0, color: "var(--pallet-grey)" }}
@@ -325,7 +319,7 @@ const EditOrganizationDialog = ({
                       onChangeComplete={(color) =>
                         handleColorChange(index, "primaryColor", color.hex)
                       }
-                      disableAlpha // Optional: if you don't need alpha channel
+                      disableAlpha
                     />
                   </Box>
 
@@ -355,7 +349,6 @@ const EditOrganizationDialog = ({
             ))}
           </Box>
         </Stack>
-        {/* <TabPanel value={activeTab} index={1} dir={theme.direction}> */}
         <Stack
           display="flex"
           justifyContent="center"
@@ -426,7 +419,6 @@ const EditOrganizationDialog = ({
             />
           </Box>
         </Stack>
-        {/* </TabPanel> */}
       </DialogContent>
       <DialogActions sx={{ padding: "1rem" }}>
         <Button

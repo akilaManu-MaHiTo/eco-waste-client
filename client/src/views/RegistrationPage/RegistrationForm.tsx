@@ -8,7 +8,6 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-  Autocomplete,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import companyLogo from "../../assets/eco waste logo.png";
@@ -20,8 +19,6 @@ import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { registerUser } from "../../api/userApi";
-import SwitchButton from "../../components/SwitchButton";
-import AutoCheckBox from "../../components/AutoCheckbox";
 
 function RegistrationForm() {
   const theme = useTheme();
@@ -31,18 +28,11 @@ function RegistrationForm() {
   const queryClient = useQueryClient();
   const [selectedFactories, setSelectedFactories] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
-
-  //API Fetch Data
-  // const [departments, setDepartments] = useState<departmentSchema[]>([]);
-  // const [factory, setFactory] = useState<factorySchema[]>([]);
-  // const [jobPositions, setJobPositions] = useState<jobPositionSchema[]>([]);
-
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
-    control,
   } = useForm({
     mode: "all",
     defaultValues: {

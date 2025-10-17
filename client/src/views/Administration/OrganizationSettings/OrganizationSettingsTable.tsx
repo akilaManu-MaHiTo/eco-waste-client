@@ -4,7 +4,7 @@ import Breadcrumb from "../../../components/BreadCrumb";
 import { useQuery } from "@tanstack/react-query";
 import ViewOrganizationContent from "./ViewOrganizationContent";
 import { getOrganization } from "../../../api/OrganizationSettings/organizationSettingsApi";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import EditOrganizationDialog from "./EditOrganizationDialog";
 import { Box, Stack } from "@mui/material";
 import CustomButton from "../../../components/CustomButton";

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { User, validateUser } from "../api/userApi"; // Ensure this import is correct
+import { User, validateUser } from "../api/userApi";
 
 interface UseCurrentUserResult {
   user: User | undefined;

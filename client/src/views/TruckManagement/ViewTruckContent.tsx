@@ -1,8 +1,6 @@
 import { Box, Stack, Typography, Divider, Chip, Paper, Alert, Grid } from "@mui/material";
-import { format } from "date-fns";
 import useIsMobile from "../../customHooks/useIsMobile";
 import { DrawerContentItem } from "../../components/ViewDataDrawer";
-import { WasteBin } from "../../api/wasteBin";
 import { Truck } from "../../api/truck";
 import { useQuery } from "@tanstack/react-query";
 import { fetchRouteByTruckId } from "../../api/garbageRequestApi";
@@ -36,7 +34,6 @@ function ViewTruckContent({ truck }: { truck: Truck }) {
   } : null;
   return (
     <Stack spacing={2}>
-      {/* Quick Summary Alert */}
       {routeData && (
         <Alert 
           severity="info" 

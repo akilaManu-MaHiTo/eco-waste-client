@@ -1,9 +1,8 @@
-import { Avatar, Badge, Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { DrawerContentItem } from "../../components/ViewDataDrawer";
 import useIsMobile from "../../customHooks/useIsMobile";
 import { User } from "../../api/userApi";
 import { useState } from "react";
-import MultiDrawerContent from "../../components/MultiDrawerContent";
 import ProfileImage from "../../components/ProfileImageComponent";
 
 function ViewUserContent({ selectedUser }: { selectedUser: User }) {

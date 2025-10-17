@@ -34,9 +34,7 @@ import {
   RouteMapDialog,
 } from "./components";
 
-
 const DEFAULT_DUMP_LOCATION = { lat: 6.9271, lng: 79.8612 };
-
 const libraries: ("places" | "geometry")[] = ["places", "geometry"];
 
 function DailyCollection() {
@@ -55,7 +53,6 @@ function DailyCollection() {
     useState<google.maps.DirectionsResult | null>(null);
   const [directionsSelected, setDirectionsSelected] =
     useState<google.maps.DirectionsResult | null>(null);
-
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
     libraries,

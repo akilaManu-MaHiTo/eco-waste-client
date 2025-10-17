@@ -1,4 +1,4 @@
-import { Stack, Box, Badge, IconButton, Typography } from "@mui/material";
+import { Stack, Box, Typography } from "@mui/material";
 import React, { useMemo } from "react";
 import { DrawerContentItem } from "../../../components/ViewDataDrawer";
 import {
@@ -8,7 +8,6 @@ import {
 } from "../../../api/OrganizationSettings/organizationSettingsApi";
 import useIsMobile from "../../../customHooks/useIsMobile";
 import { hasSignedUrl } from "./orgUtils";
-import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 
 function OrganizationGeneralDetails({
   organizationSettings,

@@ -23,14 +23,13 @@ import {
 import { useState, useEffect } from 'react';
 
 const libraries: ('places' | 'geometry')[] = ['places', 'geometry'];
-
 const mapContainerStyle = {
   width: '100%',
   height: '300px',
 };
 
 const defaultCenter = {
-  lat: 6.9271, // Default to Colombo, Sri Lanka
+  lat: 6.9271, 
   lng: 79.8612,
 };
 

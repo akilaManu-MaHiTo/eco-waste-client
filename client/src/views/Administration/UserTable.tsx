@@ -20,13 +20,12 @@ import {
 import theme from "../../theme";
 import PageTitle from "../../components/PageTitle";
 import Breadcrumb from "../../components/BreadCrumb";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import ViewDataDrawer, { DrawerHeader } from "../../components/ViewDataDrawer";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import { useSnackbar } from "notistack";
 import {
   fetchAllUsers,
-  searchUser,
   updateUserTypes,
   User,
 } from "../../api/userApi";
@@ -35,18 +34,14 @@ import EditUserRoleDialog from "./EditUserRoleDialog";
 import { PermissionKeys } from "./SectionList";
 import useCurrentUserHaveAccess from "../../hooks/useCurrentUserHaveAccess";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { green, grey } from "@mui/material/colors";
 import queryClient from "../../state/queryClient";
-import SearchBar from "../../components/SearchBar";
 import { useDebounce } from "../../util/useDebounce";
-import { set } from "zod";
 
 function UserTable() {
   const { enqueueSnackbar } = useSnackbar();
   const [openViewDrawer, setOpenViewDrawer] = useState(false);
   const [selectedRow, setSelectedRow] = useState<User>(null);
   const [openEditUserRoleDialog, setOpenEditUserRoleDialog] = useState(false);
-  // const [userData, setUserData] = useState<User[]>(sampleUsers);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -86,10 +81,6 @@ function UserTable() {
     queryKey: ["users", debouncedQuery],
     queryFn: fetchAllUsers,
   });
-
-  // useEffect(() => {
-  //   researchUser();
-  // }, [debouncedQuery]);
 
   const handleSearch = async (query: string) => {
     console.log("Searching for:", query);
@@ -146,8 +137,6 @@ function UserTable() {
         <PageTitle title="Users" />
         <Breadcrumb breadcrumbs={breadcrumbItems} />
       </Box>
-
-      
 
       <Stack sx={{ alignItems: "center" }}>
         <TableContainer
@@ -234,10 +223,6 @@ function UserTable() {
               disableEdit={
                 !useCurrentUserHaveAccess(PermissionKeys.ADMIN_USERS_VIEW)
               }
-              // onDelete={() => setDeleteDialogOpen(true)}
-              // disableDelete={
-              //   !useCurrentUserHaveAccess(PermissionKeys.ADMIN_USERS_DELETE)
-              // }
             />
 
             {selectedRow && (

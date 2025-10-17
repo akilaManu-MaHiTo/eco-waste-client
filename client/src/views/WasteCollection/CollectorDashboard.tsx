@@ -9,7 +9,6 @@ import {
   Avatar,
   Divider,
   CircularProgress,
-  Paper,
 } from "@mui/material";
 import theme from "../../theme";
 import PageTitle from "../../components/PageTitle";

@@ -36,8 +36,6 @@ import { PermissionKeysObject, PermissionSectionsMap } from "./SectionList";
 import { grey } from "@mui/material/colors";
 import CustomButton from "../../components/CustomButton";
 import { useForm } from "react-hook-form";
-import { v4 as uuid } from "uuid";
-import { generateRandomNumberId } from "../../util/numbers.util";
 
 function AddOrEditAccessRoleDialog({
   open,

@@ -27,7 +27,6 @@ const PayHereCheckout: React.FC = () => {
 
     window.payhere = window.payhere || {};
     window.payhere.onCompleted = (orderId: string) =>
-      console.log("Payment completed. OrderID:", orderId);
     window.payhere.onDismissed = () => console.log("Payment dismissed");
     window.payhere.onError = (error: string) =>
       console.error("Payment error:", error);
@@ -46,9 +45,7 @@ const PayHereCheckout: React.FC = () => {
       const orderId = uuidv4();
       const BASE_URL = import.meta.env.VITE_API_BASE_URL;
       const MERCHANT_ID = import.meta.env.VITE_MERCHANT_ID;
-
       const token = localStorage.getItem("token");
-
       const response = await fetch(`${BASE_URL}/api/payhere/hash`, {
         method: "POST",
         headers: {

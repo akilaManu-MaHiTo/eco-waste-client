@@ -40,7 +40,6 @@ export default function AddOrEditWasteBinDialog({
   open,
   handleClose,
   defaultValues,
-  onSubmit,
 }: DialogProps) {
   const { isTablet, isMobile } = useIsMobile();
 

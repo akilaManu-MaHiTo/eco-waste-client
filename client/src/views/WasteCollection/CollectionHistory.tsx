@@ -195,7 +195,6 @@ function CollectionHistory() {
       },
     });
 
-    // Add detailed breakdown for each route
     let finalY = (doc as any).lastAutoTable.finalY + 10;
 
     completedRoutes?.forEach((route: Delivery, index: number) => {

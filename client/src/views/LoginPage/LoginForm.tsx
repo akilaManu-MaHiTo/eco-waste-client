@@ -27,11 +27,9 @@ function LoginForm() {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-
   const [showPassword, setShowPassword] = useState(false);
   const [openForgotPasswordDialog, setOpenForgotPasswordDialog] =
     useState(false);
-
   const {
     register,
     handleSubmit,

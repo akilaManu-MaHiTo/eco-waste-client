@@ -68,7 +68,6 @@ function Insight() {
 
   return (
     <Box ref={containerRef} sx={{ width: "100%", minHeight: "100vh" }}>
-      {/* Hero Section - Modern Design */}
       <Box
         sx={{
           minHeight: { xs: "90vh", md: "100vh" },
@@ -609,7 +608,6 @@ function Insight() {
       >
         <Container maxWidth="lg">
           <Grid container spacing={{ xs: 4, md: 6 }}>
-            {/* Brand Section */}
             <Grid item xs={12} md={4}>
               <Typography
                 variant="h5"
