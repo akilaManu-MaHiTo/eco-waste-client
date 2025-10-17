@@ -27,6 +27,13 @@ global.IntersectionObserver = class IntersectionObserver {
   unobserve() {}
 } as any;
 
+// Mock ResizeObserver used by recharts ResponsiveContainer
+global.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+} as any;
+
 // Mock Google Maps
 global.google = {
   maps: {
