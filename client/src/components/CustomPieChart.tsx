@@ -26,7 +26,6 @@ type CustomPieChartProps = {
   outerRadius?: number;
 };
 
-// Custom tooltip to display just the value without a dash
 const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
     return (

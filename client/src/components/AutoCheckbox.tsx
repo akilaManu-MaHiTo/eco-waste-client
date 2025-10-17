@@ -2,7 +2,6 @@ import React from "react";
 import { Controller, Control } from "react-hook-form";
 import { Autocomplete, Checkbox, TextField } from "@mui/material";
 
-// ✅ Constrain T so `optionValueKey` must be `string | number`
 interface AutocompleteCheckboxProps<T extends Record<string, any>> {
   control: Control<any>;
   name: string;
@@ -20,7 +19,6 @@ interface AutocompleteCheckboxProps<T extends Record<string, any>> {
   style?: React.CSSProperties; // ✅ Optional style prop
 }
 
-// ✅ Works with any data type while ensuring `optionValueKey` is `string | number`
 const AutocompleteCheckbox = <T extends Record<string, any>>({
   control,
   name,
