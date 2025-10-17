@@ -1,7 +1,6 @@
 import axios from "axios";
 import { z } from "zod";
 import { userSchema } from "./userApi";
-import { wasteBinSchema } from "./wasteBin";
 import { garbageSchema } from "./garbage";
 
 export const garbageRequestSchema = z.object({

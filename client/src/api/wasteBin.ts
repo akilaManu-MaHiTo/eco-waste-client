@@ -1,5 +1,4 @@
 import axios from "axios";
-import { create } from "domain";
 import { z } from "zod";
 
 export const wasteBinSchema = z.object({
