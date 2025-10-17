@@ -1,13 +1,9 @@
 import React from "react";
 import {
   Box,
-  Typography,
   Card,
   CardMedia,
-  IconButton,
-  Badge,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
 
 type StorageFile = {
   signedUrl?: string;

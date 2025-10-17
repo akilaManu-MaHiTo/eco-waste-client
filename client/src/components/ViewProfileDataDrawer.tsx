@@ -48,10 +48,6 @@ function ViewProfileDataDrawer({
 export function DrawerProfileHeader({
   title,
   handleClose,
-  onEdit,
-  onDelete,
-  disableEdit,
-  disableDelete,
 }: {
   title: string;
   handleClose: () => void;

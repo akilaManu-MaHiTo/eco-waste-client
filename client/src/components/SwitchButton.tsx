@@ -81,7 +81,7 @@ function SwitchButton({
     <Box
       sx={{
         display: "flex",
-        alignItems: "center", // Better alignment
+        alignItems: "center",
         marginY: "0.75rem",
       }}
     >
@@ -97,10 +97,10 @@ function SwitchButton({
         variant="body1"
         id={`${switchId}-label`}
         sx={{
-          color: disabled ? "text.disabled" : "text.primary", // Use theme colors
+          color: disabled ? "text.disabled" : "text.primary", 
           marginBottom: 0,
           marginLeft: "0.75rem",
-          fontWeight: 500, // Slightly bolder text
+          fontWeight: 500, 
         }}
       >
         {label}

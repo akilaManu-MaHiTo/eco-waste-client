@@ -6,14 +6,14 @@ interface PieArcLabelChartProps {
   data: { name: string; value: number }[];
   width?: number;
   height?: number;
-  title?: string; // Added title prop
+  title?: string; 
 }
 
 export default function PieArcLabelChart({
   data,
   width = 200,
   height = 200,
-  title, // Destructure title from props
+  title, 
 }: PieArcLabelChartProps) {
   // Predefined colors for the pie chart slices
   const colors = ["#4f46e5", "#10b981", "#f59e0b", "#ef4444", "#34d399"];
@@ -35,7 +35,6 @@ export default function PieArcLabelChart({
             label
             labelLine={false}
           >
-            {/* Use predefined colors for each pie slice */}
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
             ))}

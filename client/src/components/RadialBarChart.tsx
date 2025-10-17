@@ -1,4 +1,3 @@
-// components/Charts/ResponsiveRadialBar.jsx
 import React from 'react';
 import {
   ResponsiveContainer,

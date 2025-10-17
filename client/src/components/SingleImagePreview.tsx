@@ -1,13 +1,7 @@
 import React from "react";
 import {
   Box,
-  Typography,
-  Card,
-  CardMedia,
-  IconButton,
-  Badge,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
 import useIsMobile from "../customHooks/useIsMobile";
 
 type StorageFile = {

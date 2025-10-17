@@ -41,7 +41,7 @@ function CircularProgressWithLabelAI(
         value={progress}
         size={size}
         sx={{
-          color: progress > 0 ? 'var(--pallet-blue)' : 'transparent', // Blue progress bar
+          color: progress > 0 ? 'var(--pallet-blue)' : 'transparent', 
           position: 'absolute',
         }}
       />
@@ -60,13 +60,6 @@ function CircularProgressWithLabelAI(
           flexDirection: 'column',
         }}
       >
-        {/* <Typography
-          variant="overline"
-          component="div"
-          sx={{ color: 'text.secondary', whiteSpace: 'nowrap' }}
-        >
-          {`Days Since Last ${nameValue}`}
-        </Typography> */}
         <Typography
           variant='h5'
         >

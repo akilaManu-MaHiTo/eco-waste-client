@@ -32,9 +32,7 @@ interface CollectionRouteModalProps {
 
 const MemoizedDirectionsRenderer = React.memo(DirectionsRenderer);
 const MemoizedMarkerF = React.memo(MarkerF);
-
 const DEFAULT_START_LOCATION = { lat: 6.9271, lng: 79.8612 };
-
 const CollectionRouteModal: React.FC<CollectionRouteModalProps> = ({
   open,
   handleClose,
@@ -48,7 +46,6 @@ const CollectionRouteModal: React.FC<CollectionRouteModalProps> = ({
     queryKey: ["trucks"],
     queryFn: fetchTrucks,
   });
-
   const [selectedTruck, setSelectedTruck] = useState<any | null>(null);
   const startLat = selectedTruck?.latitude ?? DEFAULT_START_LOCATION.lat;
   const startLng = selectedTruck?.longitude ?? DEFAULT_START_LOCATION.lng;
