@@ -2,17 +2,21 @@ import React from "react";
 import { Paper, Skeleton, Typography } from "@mui/material";
 import CustomPieChart from "../../../components/CustomPieChart";
 
+// Renders a pie chart summary of waste distribution with resilient fallbacks.
 const PieChartCard = ({ loading, error, pieChartData }: any) => {
   return (
     <Paper elevation={2} sx={{ padding: 3, height: "100%" }}>
       <Typography variant="h6" mb={2}>Waste Distribution</Typography>
+      {/* Skeleton preserves layout while distribution data loads. */}
       {loading && <Skeleton variant="rectangular" height={260} />}
       {error && (
         <Typography variant="body2" color="error">Unable to load distribution breakdown.</Typography>
       )}
+      {/* Provide a friendly message when the dataset is empty. */}
       {!loading && !error && pieChartData?.length === 0 && (
         <Typography variant="body2" color="text.secondary">No distribution data available yet.</Typography>
       )}
+      {/* Visualise category proportions using the shared CustomPieChart component. */}
       {!loading && !error && pieChartData?.length > 0 && (
         <CustomPieChart data={pieChartData} height={260} width="100%" innerRadius={70} outerRadius={110} centerLabel="kg" />
       )}

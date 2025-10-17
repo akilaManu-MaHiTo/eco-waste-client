@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Paper, Skeleton, Stack, Typography } from "@mui/material";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
+// Visualises recent waste generation trends with contextual date range copy.
 const TrendChartCard = ({ loading, error, trendChartData, startDate, endDate, theme }: any) => {
   return (
     <Paper elevation={2} sx={{ padding: 3, height: "100%" }}>
@@ -11,15 +12,18 @@ const TrendChartCard = ({ loading, error, trendChartData, startDate, endDate, th
           <Typography variant="caption" color="text.secondary">{`${startDate} - ${endDate}`}</Typography>
         )}
       </Stack>
+      {/* Keep chart footprint reserved while analytics data loads. */}
       {loading && <Skeleton variant="rectangular" height={260} />}
       {error && (
         <Typography variant="body2" color="error">Unable to load trend data.</Typography>
       )}
+      {/* Avoid rendering empty charts when the dataset has no points. */}
       {!loading && !error && trendChartData?.length === 0 && (
         <Typography variant="body2" color="text.secondary">No waste generation data found for the selected period.</Typography>
       )}
       {!loading && !error && trendChartData?.length > 0 && (
         <Box sx={{ width: "100%", height: 260 }}>
+          {/* Responsive container ensures the line chart adjusts to the card layout. */}
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={trendChartData}>
               <XAxis dataKey="date" tick={{ fontSize: 12 }} />

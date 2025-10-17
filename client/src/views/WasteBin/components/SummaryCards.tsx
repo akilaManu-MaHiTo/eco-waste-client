@@ -6,6 +6,7 @@ import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import RecyclingIcon from "@mui/icons-material/Recycling";
 import { format, parseISO } from "date-fns";
 
+// Summarises the current capacity utilisation across monitored bins.
 export const CurrentLevelCard = ({ loading, error, overallPercentFilled }: any) => {
   const theme = useTheme();
   const renderLoader = (active = true) => (active ? <Skeleton variant="rectangular" height={128} /> : null);
@@ -40,6 +41,7 @@ export const CurrentLevelCard = ({ loading, error, overallPercentFilled }: any) 
           Current Garbage Level
         </Typography>
       </Stack>
+      {/* Preserve visual structure while utilisation data is in-flight. */}
       {loading && renderLoader(true)}
       {error && (
         <Typography variant="body2" color="error" sx={{ mt: 2 }}>
@@ -73,6 +75,7 @@ export const CurrentLevelCard = ({ loading, error, overallPercentFilled }: any) 
   );
 };
 
+// Highlights the most recent collection event with formatted schedule details.
 export const LastCollectionCard = ({ loading, error, lastCollected, formatDate, formatTime }: any) => {
   const theme = useTheme();
   const renderLoader = (active = true) => (active ? <Skeleton variant="rectangular" height={128} /> : null);
@@ -114,6 +117,7 @@ export const LastCollectionCard = ({ loading, error, lastCollected, formatDate, 
           Last Collection
         </Typography>
       </Stack>
+      {/* Maintain layout consistently while querying history. */}
       {loading && renderLoader(true)}
       {error && (
         <Typography variant="body2" color="error" sx={{ mt: 2 }}>
@@ -144,6 +148,7 @@ export const LastCollectionCard = ({ loading, error, lastCollected, formatDate, 
   );
 };
 
+// Surfaces the next pending collection request for operational awareness.
 export const NextCollectionCard = ({ loading, error, nextCollection, formatDate, formatTime }: any) => {
   const theme = useTheme();
   const renderLoader = (active = true) => (active ? <Skeleton variant="rectangular" height={128} /> : null);
@@ -185,6 +190,7 @@ export const NextCollectionCard = ({ loading, error, nextCollection, formatDate,
           Next Collection
         </Typography>
       </Stack>
+      {/* Show placeholder graphic while awaiting upcoming schedule data. */}
       {loading && renderLoader(true)}
       {error && (
         <Typography variant="body2" color="error" sx={{ mt: 2 }}>
@@ -215,6 +221,7 @@ export const NextCollectionCard = ({ loading, error, nextCollection, formatDate,
   );
 };
 
+// Provides a compact breakdown of the leading waste categories collected.
 export const WasteCategoriesCard = ({ loading, error, categoryBreakdown }: any) => {
   const theme = useTheme();
   return (
@@ -247,6 +254,7 @@ export const WasteCategoriesCard = ({ loading, error, categoryBreakdown }: any) 
           Waste Categories
         </Typography>
       </Stack>
+      {/* Lightweight skeleton keeps card height stable during data fetch. */}
       {loading && <Skeleton variant="rectangular" height={120} />}
       {error && (
         <Typography variant="body2" color="error" sx={{ mt: 2 }}>
