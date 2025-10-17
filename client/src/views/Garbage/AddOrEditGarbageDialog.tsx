@@ -22,15 +22,12 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import {
   createGarbage,
-  fetchGarbageBins,
   Garbage,
-  garbageBinId,
   garbageCategory,
   updateGarbage,
 } from "../../api/garbage";
 import queryClient from "../../state/queryClient";
 import { enqueueSnackbar } from "notistack";
-import UserAutoComplete from "../../components/UserAutoComplete";
 import { fetchWasteBinsByOwner } from "../../api/wasteBin";
 
 type DialogProps = {
@@ -44,7 +41,6 @@ export default function AddOrEditGarbageDialog({
   open,
   handleClose,
   defaultValues,
-  onSubmit,
 }: DialogProps) {
   const { isTablet, isMobile } = useIsMobile();
 
@@ -85,23 +81,6 @@ export default function AddOrEditGarbageDialog({
     queryKey: ["waste-bin", watchGarbageCategory],
     queryFn: () => fetchWasteBinsByOwner(watchGarbageCategory),
   });
-  console.log("garbageBinData", watchGarbageCategory);
-
-  //   const { data: divisionData, isFetching: isDivisionDataFetching } = useQuery({
-  //     queryKey: ["divisions"],
-  //     queryFn: fetchDivision,
-  //   });
-
-  //   const { data: userData, isFetching: isUserDataFetching } = useQuery({
-  //     queryKey: ["users"],
-  //     queryFn: fetchAllUsers,
-  //   });
-
-  //   const { data: asigneeData, isFetching: isAssigneeDataFetching } = useQuery({
-  //     queryKey: ["medicine-assignee"],
-  //     queryFn: fetchMedicineRequestAssignee,
-  //   });
-
   const { mutate: createGarbageMutation } = useMutation({
     mutationFn: createGarbage,
     onSuccess: () => {
@@ -236,25 +215,6 @@ export default function AddOrEditGarbageDialog({
               sx={{ flex: 1, margin: "0.5rem" }}
               {...register("wasteWeight", { required: true })}
             />
-            {/* <Autocomplete
-              {...register("garbageId", { required: true })}
-              size="small"
-              options={
-                garbageBinId?.length ? garbageBinId.map((bin) => bin.label) : []
-              }
-              defaultValue={defaultValues?.garbageId}
-              sx={{ flex: 1, margin: "0.5rem" }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  required
-                  error={!!errors.garbageId}
-                  label="Select Your Bin"
-                  name="garbageId"
-                />
-              )}
-            /> */}
-
             {watchGarbageCategory && (
               <Box sx={{ flex: 1 }}>
                 <Controller

@@ -31,12 +31,9 @@ function ViewGarbageContent({
   const GARBAGE_REQUEST_PRICE = 100 * garbage.wasteWeight;
   const {
     register,
-    handleSubmit,
     watch,
     control,
     formState: { errors },
-    reset,
-    setValue,
   } = useForm<GarbageRequest>({});
   const selectedDate = watch("collectionDate");
   useEffect(() => {
@@ -71,9 +68,7 @@ function ViewGarbageContent({
       const orderId = uuidv4();
       const BASE_URL = import.meta.env.VITE_API_BASE_URL;
       const MERCHANT_ID = import.meta.env.VITE_MERCHANT_ID;
-
       const token = localStorage.getItem("token");
-
       const response = await fetch(`${BASE_URL}/api/payhere/hash`, {
         method: "POST",
         headers: {
@@ -87,7 +82,6 @@ function ViewGarbageContent({
         }),
       });
       const { hash } = await response.json();
-
       const payment = {
         sandbox: true,
         merchant_id: MERCHANT_ID,
@@ -145,15 +139,6 @@ function ViewGarbageContent({
           value={garbage?._id}
           sx={{ flex: 1 }}
         />
-        {/* <DrawerContentItem
-          label="Requested Date"
-          value={
-            medicalRequest.created_at
-              ? format(medicalRequest.created_at, "dd/MM/yyyy hh:mm a")
-              : "--"
-          }
-          sx={{ flex: 1 }}
-        /> */}
         <DrawerContentItem
           label="Garbage Bin ID"
           value={garbage?.binId?.binId}

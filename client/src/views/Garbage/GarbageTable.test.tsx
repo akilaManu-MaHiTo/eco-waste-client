@@ -1,31 +1,30 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, cleanup } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { SnackbarProvider } from 'notistack';
-import { MemoryRouter } from 'react-router';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import GarbageTable from './GarbageTable';
-import * as garbageApi from '../../api/garbage';
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { render, screen, waitFor, cleanup } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SnackbarProvider } from "notistack";
+import { MemoryRouter } from "react-router";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import GarbageTable from "./GarbageTable";
+import * as garbageApi from "../../api/garbage";
 
 // Mock the API module
-vi.mock('../../api/garbage');
+vi.mock("../../api/garbage");
 
 // Mock the custom hooks
-vi.mock('../../hooks/useCurrentUserHaveAccess', () => ({
-  default: vi.fn(() => true), // Default to having access
+vi.mock("../../hooks/useCurrentUserHaveAccess", () => ({
+  default: vi.fn(() => true),
 }));
 
-// Mock components that aren't critical for these tests
-vi.mock('../../components/PageTitle', () => ({
+vi.mock("../../components/PageTitle", () => ({
   default: ({ title }: any) => <h1>{title}</h1>,
 }));
 
-vi.mock('../../components/BreadCrumb', () => ({
+vi.mock("../../components/BreadCrumb", () => ({
   default: () => <div data-testid="breadcrumb">Breadcrumb</div>,
 }));
 
-vi.mock('./AddOrEditGarbageDialog', () => ({
+vi.mock("./AddOrEditGarbageDialog", () => ({
   default: ({ open, handleClose }: any) =>
     open ? (
       <div data-testid="add-edit-dialog">
@@ -34,7 +33,7 @@ vi.mock('./AddOrEditGarbageDialog', () => ({
     ) : null,
 }));
 
-vi.mock('./ViewGarbageContent', () => ({
+vi.mock("./ViewGarbageContent", () => ({
   default: ({ garbage }: any) => (
     <div data-testid="view-garbage-content">
       <div>Garbage ID: {garbage._id}</div>
@@ -43,7 +42,7 @@ vi.mock('./ViewGarbageContent', () => ({
   ),
 }));
 
-vi.mock('../../components/ViewDataDrawer', () => ({
+vi.mock("../../components/ViewDataDrawer", () => ({
   default: ({ open, drawerContent }: any) =>
     open ? <div data-testid="view-drawer">{drawerContent}</div> : null,
   DrawerHeader: ({ title, onEdit, onDelete, handleClose }: any) => (
@@ -56,7 +55,7 @@ vi.mock('../../components/ViewDataDrawer', () => ({
   ),
 }));
 
-vi.mock('../../components/DeleteConfirmationModal', () => ({
+vi.mock("../../components/DeleteConfirmationModal", () => ({
   default: ({ open, handleClose, deleteFunc }: any) =>
     open ? (
       <div data-testid="delete-modal">
@@ -69,55 +68,40 @@ vi.mock('../../components/DeleteConfirmationModal', () => ({
 // Sample test data
 const mockGarbageData = [
   {
-    _id: 'garbage-001',
-    createdAt: '2024-10-15T10:00:00Z',
-    garbageCategory: 'Plastic',
+    _id: "garbage-001",
+    createdAt: "2024-10-15T10:00:00Z",
+    garbageCategory: "Plastic",
     binId: {
-      _id: 'bin-001',
-      binId: 'BIN-001',
+      _id: "bin-001",
+      binId: "BIN-001",
     },
     wasteWeight: 50,
-    status: 'Pending',
+    status: "Pending",
   },
   {
-    _id: 'garbage-002',
-    createdAt: '2024-10-16T11:00:00Z',
-    garbageCategory: 'Organic',
+    _id: "garbage-002",
+    createdAt: "2024-10-16T11:00:00Z",
+    garbageCategory: "Organic",
     binId: {
-      _id: 'bin-002',
-      binId: 'BIN-002',
+      _id: "bin-002",
+      binId: "BIN-002",
     },
     wasteWeight: 75,
-    status: 'Collected',
+    status: "Collected",
   },
   {
-    _id: 'garbage-003',
-    createdAt: '2024-10-17T12:00:00Z',
-    garbageCategory: 'Metal',
+    _id: "garbage-003",
+    createdAt: "2024-10-17T12:00:00Z",
+    garbageCategory: "Metal",
     binId: {
-      _id: 'bin-003',
-      binId: 'BIN-003',
+      _id: "bin-003",
+      binId: "BIN-003",
     },
     wasteWeight: 100,
-    status: 'Requested',
+    status: "Requested",
   },
 ];
 
-const mockTodayGarbageData = [
-  {
-    _id: 'today-001',
-    createdAt: '2024-10-17T08:00:00Z',
-    garbageCategory: 'Glass',
-    binId: {
-      _id: 'bin-004',
-      binId: 'BIN-004',
-    },
-    wasteWeight: 30,
-    status: 'Pending',
-  },
-];
-
-// Test wrapper component
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -140,7 +124,7 @@ const createWrapper = () => {
   );
 };
 
-describe('GarbageTable', () => {
+describe("GarbageTable", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -149,12 +133,12 @@ describe('GarbageTable', () => {
     cleanup();
   });
 
-  it('should render waste management table with garbage data and allow CSV export', async () => {
+  it("should render waste management table with garbage data and allow CSV export", async () => {
     // Mock the API calls
     vi.mocked(garbageApi.fetchGarbage).mockResolvedValue(mockGarbageData);
 
     // Mock URL and Blob for CSV download
-    const mockCreateObjectURL = vi.fn((blob: Blob) => 'mock-url');
+    const mockCreateObjectURL = vi.fn((blob: Blob) => "mock-url");
     const mockRevokeObjectURL = vi.fn();
     global.URL.createObjectURL = mockCreateObjectURL as any;
     global.URL.revokeObjectURL = mockRevokeObjectURL;
@@ -164,8 +148,8 @@ describe('GarbageTable', () => {
     const originalCreateElement = document.createElement.bind(document);
 
     document.createElement = vi.fn((tagName: string) => {
-      if (tagName === 'a') {
-        const anchor = originalCreateElement('a');
+      if (tagName === "a") {
+        const anchor = originalCreateElement("a");
         anchor.click = mockClick;
         return anchor;
       }
@@ -175,7 +159,7 @@ describe('GarbageTable', () => {
     const user = userEvent.setup();
 
     // Create a container for this test
-    const container = document.createElement('div');
+    const container = document.createElement("div");
     document.body.appendChild(container);
 
     const { container: renderContainer } = render(
@@ -183,36 +167,34 @@ describe('GarbageTable', () => {
       { wrapper: createWrapper(), container }
     );
 
-    // Wait for data to load
     await waitFor(() => {
-      expect(screen.getByText('Waste Management')).toBeInTheDocument();
+      expect(screen.getByText("Waste Management")).toBeInTheDocument();
     });
 
     // Check if table headers are rendered
-    expect(screen.getByText('Reference')).toBeInTheDocument();
-    expect(screen.getByText('Date')).toBeInTheDocument();
-    expect(screen.getByText('Waste Category')).toBeInTheDocument();
-    expect(screen.getByText('Bin Number')).toBeInTheDocument();
-    expect(screen.getByText('Weight')).toBeInTheDocument();
-    expect(screen.getByText('Status')).toBeInTheDocument();
+    expect(screen.getByText("Reference")).toBeInTheDocument();
+    expect(screen.getByText("Date")).toBeInTheDocument();
+    expect(screen.getByText("Waste Category")).toBeInTheDocument();
+    expect(screen.getByText("Bin Number")).toBeInTheDocument();
+    expect(screen.getByText("Weight")).toBeInTheDocument();
+    expect(screen.getByText("Status")).toBeInTheDocument();
 
     // Check if garbage data is displayed in the table
     await waitFor(() => {
-      expect(screen.getByText('garbage-001')).toBeInTheDocument();
-      expect(screen.getByText('Plastic')).toBeInTheDocument();
-      expect(screen.getByText('BIN-001')).toBeInTheDocument();
-      expect(screen.getByText('50 Kg')).toBeInTheDocument();
-      expect(screen.getByText('Pending')).toBeInTheDocument();
+      expect(screen.getByText("garbage-001")).toBeInTheDocument();
+      expect(screen.getByText("Plastic")).toBeInTheDocument();
+      expect(screen.getByText("BIN-001")).toBeInTheDocument();
+      expect(screen.getByText("50 Kg")).toBeInTheDocument();
+      expect(screen.getByText("Pending")).toBeInTheDocument();
     });
 
-    // Check if other records are displayed
-    expect(screen.getByText('garbage-002')).toBeInTheDocument();
-    expect(screen.getByText('Organic')).toBeInTheDocument();
-    expect(screen.getByText('garbage-003')).toBeInTheDocument();
-    expect(screen.getByText('Metal')).toBeInTheDocument();
+    expect(screen.getByText("garbage-002")).toBeInTheDocument();
+    expect(screen.getByText("Organic")).toBeInTheDocument();
+    expect(screen.getByText("garbage-003")).toBeInTheDocument();
+    expect(screen.getByText("Metal")).toBeInTheDocument();
 
     // Test CSV export functionality
-    const exportCSVButton = screen.getByRole('button', { name: /export csv/i });
+    const exportCSVButton = screen.getByRole("button", { name: /export csv/i });
     expect(exportCSVButton).toBeInTheDocument();
     expect(exportCSVButton).not.toBeDisabled();
 
@@ -229,47 +211,45 @@ describe('GarbageTable', () => {
     if (mockCreateObjectURL.mock.calls.length > 0) {
       const blobCall = mockCreateObjectURL.mock.calls[0][0] as Blob;
       expect(blobCall).toBeInstanceOf(Blob);
-      expect(blobCall.type).toBe('text/csv');
+      expect(blobCall.type).toBe("text/csv");
     }
   });
 
-  it('should display waste records with correct status chips and handle pagination', async () => {
+  it("should display waste records with correct status chips and handle pagination", async () => {
     // Mock the API calls with multiple records to test pagination
     vi.mocked(garbageApi.fetchGarbage).mockResolvedValue(mockGarbageData);
 
-    // Create a container for this test
-    const container = document.createElement('div');
+    const container = document.createElement("div");
     document.body.appendChild(container);
 
-    render(
-      <GarbageTable isGarbage={true} isTodayGarbage={false} />,
-      { wrapper: createWrapper(), container }
-    );
+    render(<GarbageTable isGarbage={true} isTodayGarbage={false} />, {
+      wrapper: createWrapper(),
+      container,
+    });
 
-    // Wait for data to load - check for table headers first
     await waitFor(() => {
-      expect(screen.getByText('Reference')).toBeInTheDocument();
+      expect(screen.getByText("Reference")).toBeInTheDocument();
     });
 
     // Check if different status chips are rendered correctly
     await waitFor(() => {
       // "Pending" status chip
-      const pendingChip = screen.getByText('Pending');
+      const pendingChip = screen.getByText("Pending");
       expect(pendingChip).toBeInTheDocument();
 
       // "Collected" status chip
-      const collectedChip = screen.getByText('Collected');
+      const collectedChip = screen.getByText("Collected");
       expect(collectedChip).toBeInTheDocument();
 
-      // "Requested" status chip  
-      const requestedChip = screen.getByText('Requested');
+      // "Requested" status chip
+      const requestedChip = screen.getByText("Requested");
       expect(requestedChip).toBeInTheDocument();
     });
 
     // Verify all three garbage records are displayed
-    expect(screen.getByText('garbage-001')).toBeInTheDocument();
-    expect(screen.getByText('garbage-002')).toBeInTheDocument();
-    expect(screen.getByText('garbage-003')).toBeInTheDocument();
+    expect(screen.getByText("garbage-001")).toBeInTheDocument();
+    expect(screen.getByText("garbage-002")).toBeInTheDocument();
+    expect(screen.getByText("garbage-003")).toBeInTheDocument();
 
     // Verify pagination controls are present
     await waitFor(() => {

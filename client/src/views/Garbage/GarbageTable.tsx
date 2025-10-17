@@ -10,7 +10,6 @@ import {
   Box,
   Button,
   Chip,
-  colors,
   LinearProgress,
   Stack,
   TableFooter,
@@ -25,7 +24,6 @@ import Breadcrumb from "../../components/BreadCrumb";
 import { useMemo, useState } from "react";
 import ViewDataDrawer, { DrawerHeader } from "../../components/ViewDataDrawer";
 import AddIcon from "@mui/icons-material/Add";
-import DownloadIcon from "@mui/icons-material/Download";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import AddOrEditGarbageDialog from "./AddOrEditGarbageDialog";
@@ -46,7 +44,6 @@ import {
   fetchTodayGarbage,
   Garbage,
 } from "../../api/garbage";
-import CustomButton from "../../components/CustomButton";
 
 function GarbageTable({
   isTodayGarbage = false,
@@ -169,9 +166,15 @@ function GarbageTable({
       0
     );
     const totalRecords = dataSource.length;
-    const pendingCount = dataSource.filter((item) => item.status === "Pending").length;
-    const requestedCount = dataSource.filter((item) => item.status === "Requested").length;
-    const collectedCount = dataSource.filter((item) => item.status === "Collected").length;
+    const pendingCount = dataSource.filter(
+      (item) => item.status === "Pending"
+    ).length;
+    const requestedCount = dataSource.filter(
+      (item) => item.status === "Requested"
+    ).length;
+    const collectedCount = dataSource.filter(
+      (item) => item.status === "Collected"
+    ).length;
 
     return {
       totalWeight: totalWeight.toFixed(2),
@@ -190,11 +193,12 @@ function GarbageTable({
       const dataSource = isTodayGarbage ? todayGarbageData : garbageData;
 
       if (!dataSource || dataSource.length === 0) {
-        enqueueSnackbar("No data available to generate report", { variant: "warning" });
+        enqueueSnackbar("No data available to generate report", {
+          variant: "warning",
+        });
         return;
       }
 
-      // Add title
       doc.setFontSize(20);
       doc.setFont("helvetica", "bold");
       doc.text(
@@ -235,12 +239,14 @@ function GarbageTable({
 
       // Add table
       autoTable(doc, {
-        head: [["Reference", "Date", "Category", "Bin Number", "Weight", "Status"]],
+        head: [
+          ["Reference", "Date", "Category", "Bin Number", "Weight", "Status"],
+        ],
         body: tableData,
         startY: 65,
         styles: { fontSize: 8 },
         headStyles: {
-          fillColor: [76, 175, 80], // Green color matching theme
+          fillColor: [76, 175, 80],
           textColor: [255, 255, 255],
         },
         columnStyles: {
@@ -259,7 +265,9 @@ function GarbageTable({
         : `waste-management-report-${currentDate}.pdf`;
       doc.save(fileName);
 
-      enqueueSnackbar("PDF report generated successfully!", { variant: "success" });
+      enqueueSnackbar("PDF report generated successfully!", {
+        variant: "success",
+      });
     } catch (error) {
       console.error("Error generating PDF:", error);
       enqueueSnackbar("Failed to generate PDF report", { variant: "error" });
@@ -272,18 +280,21 @@ function GarbageTable({
       const dataSource = isTodayGarbage ? todayGarbageData : garbageData;
 
       if (!dataSource || dataSource.length === 0) {
-        enqueueSnackbar("No data available to generate report", { variant: "warning" });
+        enqueueSnackbar("No data available to generate report", {
+          variant: "warning",
+        });
         return;
       }
 
-      let csvContent = "Reference,Date,Waste Category,Bin Number,Weight (Kg),Status\n";
+      let csvContent =
+        "Reference,Date,Waste Category,Bin Number,Weight (Kg),Status\n";
 
       dataSource.forEach((row) => {
         const date = row?.createdAt
           ? format(new Date(row.createdAt), "yyyy-MM-dd")
           : "N/A";
         const binId = row?.binId?.binId || "N/A";
-        
+
         csvContent += `${row._id},`;
         csvContent += `${date},`;
         csvContent += `${row.garbageCategory},`;
@@ -306,7 +317,9 @@ function GarbageTable({
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
 
-      enqueueSnackbar("CSV report generated successfully!", { variant: "success" });
+      enqueueSnackbar("CSV report generated successfully!", {
+        variant: "success",
+      });
     } catch (error) {
       console.error("Error generating CSV:", error);
       enqueueSnackbar("Failed to generate CSV report", { variant: "error" });
@@ -350,7 +363,8 @@ function GarbageTable({
               "&:hover": { bgcolor: "#b71c1c" },
             }}
             disabled={
-              (isTodayGarbage && (!todayGarbageData || todayGarbageData.length === 0)) ||
+              (isTodayGarbage &&
+                (!todayGarbageData || todayGarbageData.length === 0)) ||
               (!isTodayGarbage && (!garbageData || garbageData.length === 0))
             }
           >
@@ -365,7 +379,8 @@ function GarbageTable({
               "&:hover": { bgcolor: "#1b5e20" },
             }}
             disabled={
-              (isTodayGarbage && (!todayGarbageData || todayGarbageData.length === 0)) ||
+              (isTodayGarbage &&
+                (!todayGarbageData || todayGarbageData.length === 0)) ||
               (!isTodayGarbage && (!garbageData || garbageData.length === 0))
             }
           >

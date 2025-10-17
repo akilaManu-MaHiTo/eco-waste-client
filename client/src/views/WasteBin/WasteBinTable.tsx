@@ -9,8 +9,6 @@ import {
   Alert,
   Box,
   Button,
-  Chip,
-  colors,
   LinearProgress,
   Stack,
   TableFooter,
@@ -26,16 +24,13 @@ import { useMemo, useState } from "react";
 import ViewDataDrawer, { DrawerHeader } from "../../components/ViewDataDrawer";
 import AddIcon from "@mui/icons-material/Add";
 import AddOrEditWasteBinDialog from "./AddOrEditWasteBinDialog";
-import { differenceInDays, format } from "date-fns";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import { useSnackbar } from "notistack";
-
 import ViewWasteBinContent from "./ViewWasteBinContent";
 import { PermissionKeys } from "../Administration/SectionList";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import queryClient from "../../state/queryClient";
 import useCurrentUserHaveAccess from "../../hooks/useCurrentUserHaveAccess";
-import CustomButton from "../../components/CustomButton";
 import { deleteWasteBin, fetchWasteBins, WasteBin } from "../../api/wasteBin";
 
 function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
@@ -75,30 +70,6 @@ function WasteBinTable({ isAssignedTasks }: { isAssignedTasks: boolean }) {
     queryKey: ["wasteBin"],
     queryFn: fetchWasteBins,
   });
-
-  console.log("wasteBinData", wasteBinData);
-
-  //   const paginatedRiskData = useMemo(() => {
-  //     if (isAssignedTasks) {
-  //       if (!assignedRiskData) return [];
-  //       if (rowsPerPage === -1) {
-  //         return assignedRiskData;
-  //       }
-  //       return assignedRiskData.slice(
-  //         page * rowsPerPage,
-  //         page * rowsPerPage + rowsPerPage
-  //       );
-  //     } else {
-  //       if (!riskData) return [];
-  //       if (rowsPerPage === -1) {
-  //         return riskData;
-  //       }
-  //       return riskData.slice(
-  //         page * rowsPerPage,
-  //         page * rowsPerPage + rowsPerPage
-  //       );
-  //     }
-  //   }, [isAssignedTasks, assignedRiskData, page, rowsPerPage, riskData]);
 
   const { mutate: deleteWasteBinMutation, isPending: isDeleting } = useMutation(
     {

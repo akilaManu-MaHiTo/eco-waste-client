@@ -19,17 +19,14 @@ import { useEffect } from "react";
 import useIsMobile from "../../customHooks/useIsMobile";
 import CustomButton from "../../components/CustomButton";
 import { useMutation, useQuery } from "@tanstack/react-query";
-
 import {
   binTypeData,
   createWasteBin,
-  fetchWasteBins,
   updateWasteBin,
   WasteBin
 } from "../../api/wasteBin";
 import queryClient from "../../state/queryClient";
 import { enqueueSnackbar } from "notistack";
-import UserAutoComplete from "../../components/UserAutoComplete";
 import SwitchButton from "../../components/SwitchButton";
 
 type DialogProps = {
@@ -78,23 +75,6 @@ export default function AddOrEditWasteBinDialog({
       createWasteBinMutation(data);
     }
   };
-
-
-
-  //   const { data: divisionData, isFetching: isDivisionDataFetching } = useQuery({
-  //     queryKey: ["divisions"],
-  //     queryFn: fetchDivision,
-  //   });
-
-  //   const { data: userData, isFetching: isUserDataFetching } = useQuery({
-  //     queryKey: ["users"],
-  //     queryFn: fetchAllUsers,
-  //   });
-
-  //   const { data: asigneeData, isFetching: isAssigneeDataFetching } = useQuery({
-  //     queryKey: ["medicine-assignee"],
-  //     queryFn: fetchMedicineRequestAssignee,
-  //   });
 
   const { mutate: createWasteBinMutation } = useMutation({
     mutationFn: createWasteBin,
@@ -215,25 +195,6 @@ export default function AddOrEditWasteBinDialog({
               sx={{ flex: 1, margin: "0.5rem" }}
               {...register("thresholdLevel", { required: true })}
             />
-            {/* <Autocomplete
-              {...register("garbageId", { required: true })}
-              size="small"
-              options={
-                garbageBinId?.length ? garbageBinId.map((bin) => bin.label) : []
-              }
-              defaultValue={defaultValues?.garbageId}
-              sx={{ flex: 1, margin: "0.5rem" }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  required
-                  error={!!errors.garbageId}
-                  label="Select Your Bin"
-                  name="garbageId"
-                />
-              )}
-            /> */}
-
             <Box sx={{ flex: 1 }}>
               <Controller
                 name="availability"
