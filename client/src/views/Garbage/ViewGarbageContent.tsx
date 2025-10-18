@@ -121,6 +121,16 @@ function ViewGarbageContent({
       window.payhere.onCompleted = () => handlePaymentSuccess(payment.order_id);
     } catch (err) {
       console.error("Error starting payment:", err);
+      // Show a user-friendly error message when payment cannot be started
+      try {
+        enqueueSnackbar(
+          "Our systems are temporarily unavailable. Please try again in a few moments.",
+          { variant: "error" }
+        );
+      } catch (snackErr) {
+        // If snackbar fails for some reason, just log it and continue
+        console.error("Failed to show snackbar:", snackErr);
+      }
     } finally {
       queryClient.invalidateQueries({ queryKey: ["garbage"] });
       setLoadingPayment(false);
