@@ -102,6 +102,7 @@ type GarbageSummaryResponse = {
 	summary?: GarbageSummaryCategory[];
 };
 
+// Breadcrumb route definitions for the header navigation trail.
 const breadcrumbItems = [
 	{ title: "Home", href: "/home" },
 	{ title: "Waste Management" },
@@ -109,10 +110,13 @@ const breadcrumbItems = [
 ];
 
 const WasteBinDashboard: React.FC = () => {
+	// Align component styling with the active MUI theme.
 	const theme = useTheme();
 
+	// Fetch authenticated user details for personalised messaging.
 	const { user, status: userStatus } = useCurrentUser();
 
+	// Retrieve current fill percentages for each bin and overall capacity utilisation.
 	const {
 		data: levelData,
 		isLoading: isLevelLoading,
@@ -153,6 +157,7 @@ const WasteBinDashboard: React.FC = () => {
 		staleTime: 30_000,
 	});
 
+	// Build the category breakdown dataset used by the pie chart and summary card.
 	const categoryBreakdown = useMemo<CategoryBreakdown[]>(() => {
 		const categories = summaryData?.summary ?? [];
 		if (categories.length === 0) return [];
@@ -188,6 +193,7 @@ const WasteBinDashboard: React.FC = () => {
 			.sort((a, b) => b.percent - a.percent);
 	}, [summaryData]);
 
+	// Shape time-series data for the trend chart component.
 	const trendChartData = useMemo<TrendChartPoint[]>(() => {
 		if (!trendData?.trend?.length) return [];
 
@@ -197,6 +203,7 @@ const WasteBinDashboard: React.FC = () => {
 		}));
 	}, [trendData]);
 
+	// Sort historical records newest-first for consistent downstream consumption.
 	const sortedHistory = useMemo<Garbage[]>(() => {
 		if (!historyData?.length) return [];
 
@@ -207,25 +214,30 @@ const WasteBinDashboard: React.FC = () => {
 		});
 	}, [historyData]);
 
+	// Pinpoint the most recently collected job for the status card.
 	const lastCollected = useMemo(() => {
 		return sortedHistory.find(
 			(entry) => entry.status?.toLowerCase() === "collected"
 		);
 	}, [sortedHistory]);
 
-		const nextCollection = useMemo(() => {
+	// Identify the next non-collected waste entry, treated as an upcoming collection.
+	const nextCollection = useMemo(() => {
 		const upcoming = sortedHistory.filter(
 			(entry) => entry.status && entry.status.toLowerCase() !== "collected"
 		);
-			return upcoming.length > 0 ? upcoming[0] : undefined;
+		return upcoming.length > 0 ? upcoming[0] : undefined;
 	}, [sortedHistory]);
 
+	// Limit the history table to the most recent six records for concise display.
 	const historyPreview = useMemo(() => {
 		return sortedHistory.slice(0, 6);
 	}, [sortedHistory]);
 
+	// Fallback to zero when no level data is returned to keep cards stable.
 	const overallPercentFilled = levelData?.overall?.percentFilled ?? 0;
 
+	// Ensure pie chart values are standardised and human-readable.
 	const pieChartData = useMemo(
 		() =>
 			categoryBreakdown.map((item) => ({
@@ -235,6 +247,7 @@ const WasteBinDashboard: React.FC = () => {
 		[categoryBreakdown]
 	);
 
+	// Reusable pretty-date formatter for cards and history list items.
 	const formatDate = (value?: string | Date, fallback = "Not available") => {
 		if (!value) return fallback;
 		const dateInstance = typeof value === "string" ? parseISO(value) : value;
@@ -242,6 +255,7 @@ const WasteBinDashboard: React.FC = () => {
 		return format(dateInstance, "MMMM d, yyyy");
 	};
 
+	// Complementary time formatter for schedule-related copy.
 	const formatTime = (value?: string | Date, fallback = "--") => {
 		if (!value) return fallback;
 		const dateInstance = typeof value === "string" ? parseISO(value) : value;

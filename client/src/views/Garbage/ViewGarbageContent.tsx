@@ -4,7 +4,7 @@ import useIsMobile from "../../customHooks/useIsMobile";
 import { DrawerContentItem } from "../../components/ViewDataDrawer";
 import { Garbage } from "../../api/garbage";
 import ApproveConfirmationModal from "../../components/ApproveConfirmationModal";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CustomButton from "../../components/CustomButton";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import queryClient from "../../state/queryClient";
@@ -14,6 +14,7 @@ import { Controller, useForm } from "react-hook-form";
 import DatePickerComponent from "../../components/DatePickerComponent";
 import { GarbageRequest } from "../../api/garbageRequestApi";
 import TimePickerComponent from "../../components/TimePickerComponent";
+import { useSnackbar } from "notistack";
 
 function ViewGarbageContent({
   garbage,
@@ -28,6 +29,7 @@ function ViewGarbageContent({
   const [approveDialogOpen, setApproveDialogOpen] = useState(false);
   const { user } = useCurrentUser();
   const [loadingPayment, setLoadingPayment] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
   const GARBAGE_REQUEST_PRICE = 100 * garbage.wasteWeight;
   const {
     register,
@@ -36,6 +38,18 @@ function ViewGarbageContent({
     formState: { errors },
   } = useForm<GarbageRequest>({});
   const selectedDate = watch("collectionDate");
+
+  const handlePaymentSuccess = useCallback(
+    (orderId?: string) => {
+      enqueueSnackbar("Payment successful!", { variant: "success" });
+      queryClient.invalidateQueries({ queryKey: ["garbage"] });
+      console.log("Payment completed. OrderID:", orderId);
+      setLoadingPayment(false);
+      onClose();
+    },
+    [enqueueSnackbar, onClose]
+  );
+
   useEffect(() => {
     const script = document.createElement("script");
     const PAYHERE_URL = import.meta.env.VITE_PAYHERE_URL;
@@ -44,8 +58,7 @@ function ViewGarbageContent({
     document.body.appendChild(script);
 
     window.payhere = window.payhere || {};
-    window.payhere.onCompleted = (orderId: string) =>
-      console.log("Payment completed. OrderID:", orderId);
+    window.payhere.onCompleted = handlePaymentSuccess;
     window.payhere.onDismissed = () => console.log("Payment dismissed");
     window.payhere.onError = (error: string) =>
       console.error("Payment error:", error);
@@ -53,7 +66,7 @@ function ViewGarbageContent({
     return () => {
       document.body.removeChild(script);
     };
-  }, []);
+  }, [handlePaymentSuccess]);
   const startPayment = async (
     pkg: {
       name: string;
@@ -105,12 +118,7 @@ function ViewGarbageContent({
       };
 
       window.payhere.startPayment(payment);
-      window.payhere.onCompleted = function onCompleted() {
-        queryClient.invalidateQueries({ queryKey: ["garbage"] });
-        console.log("Payment completed. OrderID:", payment.order_id);
-        setLoadingPayment(false);
-        onClose();
-      };
+      window.payhere.onCompleted = () => handlePaymentSuccess(payment.order_id);
     } catch (err) {
       console.error("Error starting payment:", err);
     } finally {
